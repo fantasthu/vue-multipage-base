@@ -1,0 +1,186 @@
+@font-face {
+  font-family: 'fontChart';
+  src: url('http://velo-bucket.oss-cn-beijing.aliyuncs.com/temp/CoreSansA45Regular.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body,
+ul,
+li,
+ol,
+dl,
+dd,
+dt,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+form,
+fieldset,
+legend,
+img {
+  margin: 0;
+  padding: 0;
+}
+
+fieldset,
+img,
+input,
+button {
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline-style: none;
+}
+
+/*去掉input等聚焦时的蓝色边框*/
+
+ul,
+ol {
+  list-style: none;
+}
+
+input {
+  padding-top: 0;
+  padding-bottom: 0;
+  font-family: 'SimSun', '宋体';
+}
+
+select,
+input {
+  vertical-align: middle;
+}
+
+select,
+input,
+textarea {
+  font-size: 12px;
+  margin: 0;
+}
+
+/*防止拖动*/
+
+textarea {
+  resize: none;
+}
+
+/*  去掉图片低测默认的3像素空白缝隙，或者用display：block也可以*/
+
+img {
+  border: 0;
+  vertical-align: middle;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+.clearfix:before,
+.clearfix:after {
+  /*清楚浮动*/
+  content: '';
+  display: table;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.clearfix {
+  *zoom: 1;
+  /*IE/7/6*/
+}
+
+a {
+  color: #666;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #c81623;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-decoration: none;
+  font-weight: normal;
+  font-size: 100%;
+}
+
+/*设置h标签的大小，设置跟父亲一样大的字体font-size:100%;*/
+
+s,
+i,
+em {
+  font-style: normal;
+  text-decoration: none;
+}
+
+.flex-1 {
+  display: flex;
+  flex: 1;
+}
+
+.flex-1-2 {
+  display: flex;
+  flex: 0 0 50%;
+}
+
+.flex-1-3 {
+  display: flex;
+  flex: 0 0 33.333%;
+}
+
+.flex-1-4 {
+  display: flex;
+  flex: 0 0 25%;
+}
+
+.flex-2-4 {
+  display: flex;
+  flex: 0 0 50%;
+}
+
+.flex-1-5 {
+  display: flex;
+  flex: 0 0 20%;
+}
+
+.flex-h {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-v {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-bc {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-cc {
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+  color: transparent;
+}
