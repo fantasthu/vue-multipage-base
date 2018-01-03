@@ -1,9 +1,9 @@
-import About from '@/pages/index'
-
 export default [
   {
-    path: '/',
+    path: '/about',
     name: 'about',
-    component: About
+    component: resolve => {
+      require(['@/pages/aboutpage'], resolve)
+    }
   }
 ]

@@ -1,7 +1,6 @@
 const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
-const vueLoaderConfig = require('./vue-loader.conf')
 const getEntry = require('./getEntry')
 
 function resolve(dir) {
@@ -48,7 +47,7 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: vueLoaderConfig
+        include: [resolve('src'), resolve('test')]
       },
       {
         test: /\.js$/,

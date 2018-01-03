@@ -20,16 +20,6 @@ for (const chunkname in pages) {
     template: pages[chunkname],
     inject: true,
     cache: false,
-    minify: {
-      removeComments: true,
-      collapseWhitespace: true,
-      removeAttributeQuotes: true
-      // more options:
-      // https://github.com/kangax/html-minifier#options-quick-reference
-    },
-    // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-    chunksSortMode: 'dependency',
-    chunks: ['vendor', chunkname],
     hash: true
   }
   const titleC = {}
@@ -65,13 +55,8 @@ const webpackConfig = merge(baseWebpackConfig, {
       sourceMap: true
     }),
     new webpack.LoaderOptionsPlugin({
-      vue: {
+      options: {
         // 使用用户自定义插件
-        postcss: [
-          require('postcss-px2rem')({
-            remUtil: 75
-          })
-        ]
       }
     }),
     // extract css into its own file
@@ -88,20 +73,6 @@ const webpackConfig = merge(baseWebpackConfig, {
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
-    // new HtmlWebpackPlugin({
-    //   filename: config.build.index,
-    //   template: 'index.html',
-    //   inject: true,
-    //   minify: {
-    //     removeComments: true,
-    //     collapseWhitespace: true,
-    //     removeAttributeQuotes: true,
-    //     // more options:
-    //     // https://github.com/kangax/html-minifier#options-quick-reference
-    //   },
-    //   // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-    //   chunksSortMode: 'dependency',
-    // }),
     ...htmlplugins,
     // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({

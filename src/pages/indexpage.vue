@@ -1,15 +1,15 @@
 <template>
-  <div class="header">
+  <div class="indexpage">
     {{msg}}
   </div>
 </template>
 
 <script>
 export default {
-  name: 'hello',
+  name: 'indexpage',
   data() {
     return {
-      msg: 'this is header'
+      msg: 'this is indexpage'
     }
   }
 }
@@ -17,8 +17,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.header {
-  width: 50px;
-  background: red;
+.indexpage {
+  width: 100px;
 }
 </style>

@@ -8,7 +8,7 @@ const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const getEntry = require('./getEntry')
 
 const pages = getEntry('./src/*.html')
-
+console.log('pages', pages)
 const htmlplugins = []
 for (const chunkname in pages) {
   const conf = {
@@ -34,8 +34,6 @@ console.log('baseWebpackConfig.entry', baseWebpackConfig)
 
 // add hot-reload related code to entry chunks
 Object.keys(baseWebpackConfig.entry).forEach(name => {
-  console.log('name====>', name)
-
   baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(
     baseWebpackConfig.entry[name]
   )
@@ -46,19 +44,14 @@ module.exports = merge(baseWebpackConfig, {
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap })
   },
   // cheap-module-eval-source-map is faster for development
-  devtool: 'source-map',
+  devtool: 'cheap-module-eval-source-map',
   plugins: [
     new webpack.DefinePlugin({
       'process.env': config.dev.env
     }),
     new webpack.LoaderOptionsPlugin({
-      vue: {
+      options: {
         // 使用用户自定义插件
-        postcss: [
-          require('postcss-px2rem')({
-            remUtil: 75
-          })
-        ]
       }
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage

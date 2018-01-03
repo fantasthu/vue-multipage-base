@@ -1,21 +1,7 @@
-# app
+###  应用说明
 
-> qizhihui-pc
+这是 vue 的多页构建应用
 
-## Build Setup
+### 访问说明
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+http://192.168.1.180:8080/index.html#/
