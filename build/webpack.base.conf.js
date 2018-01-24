@@ -26,7 +26,7 @@ module.exports = {
     }
   },
   externals: {
-    // wx: 'jWeixin'
+    wx: 'wx'
   },
   module: {
     rules: [
