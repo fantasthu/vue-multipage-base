@@ -68,7 +68,7 @@
       </div>
     </div>
     
-    <div class="handle flex-v flex-cc" style="display:none">
+    <div class="handle flex-v flex-cc" >
         <div class="btn-box">
           <img src="../assets/img/btn_fail.png" alt="">
           <img src="../assets/img/btn_get.png" alt="">
