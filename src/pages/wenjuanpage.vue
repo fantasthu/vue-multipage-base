@@ -62,14 +62,6 @@ export default {
           goumaiyiyuan: '',
           sameBetter: '',
           pics: []
-        },
-        {
-          pname: '',
-          pingjia: '',
-          dafen: '',
-          goumaiyiyuan: '',
-          sameBetter: '',
-          pics: []
         }
       ]
     }

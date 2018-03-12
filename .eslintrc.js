@@ -24,6 +24,7 @@ module.exports = {
     // custom
     'space-before-function-paren': ['error', 'never'],
     'no-new': 0,
-    'no-useless-call': 0
+    'no-useless-call': 0,
+    'no-undef': 0
   }
 }

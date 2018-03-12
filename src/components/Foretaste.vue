@@ -25,11 +25,11 @@
       <input type="text" class="better-input" v-model="fdata.sameBetter">
     </div>
     <div class="food-pics flex-h ">
-      <input type="file" class="pic-file" :class="picFile" style="display:none" @change="handleFiles">      
+      <input type="file" filetype="image/*" class="pic-file" :class="picFile" style="display:none" @change="handleFiles">      
       <div v-for="(pic,picindex) in fdata.pics">
         <div class="item">
-          <img src="../assets/img/btn_finish.png" class="preview" alt="">
-          <div class="del" @click="delImgUrl(picindex,index)">删除</div>
+          <img :src="pic" class="preview" alt="">
+          <div class="del" @click="delImgUrl(picindex,index)"></div>
         </div>
       </div>
       <div class="add" @click="addPic"></div>
@@ -79,20 +79,50 @@ export default {
     delModel(index) {
       this.$emit('delModel', index)
     },
-    handleFiles(file) {
-      const fileValue = file.target.value
+    async handleFiles(obj) {
+      const fileValue = obj.target.value
       const fileType = fileValue.split('.')
-      if (/(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(fileType)) {
-        const imgUrl = this.handleImgUrl(file)
-        this.$emit('pushPic', { imgUrl, index: this.index })
+      const testType = fileType[fileType.length - 1]
+      // const filename = fileType[0]
+      const file = obj.target.files[0]
+      if (/(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(testType)) {
+        const imgUrl = await this.handleImgUrl(file)
         console.log('====================================')
-        console.log(file.target.value, fileType)
+        console.log(imgUrl)
+        console.log('====================================')
+        if (imgUrl.trim() === '') {
+          MessageBox.alert('网络问题,图片上传失败,请重试!')
+        }
+        this.$emit('pushPic', { imgUrl, index: this.index })
+
+        console.log(file)
       } else {
-        MessageBox.alert('上传图片格式不正确').then(action => {})
+        MessageBox.alert('上传图片格式不正确')
       }
     },
-    handleImgUrl() {
-      return ''
+    handleImgUrl(file) {
+      return new Promise((resolve, reject) => {
+        let url = ''
+        const client = new OSS.Wrapper({
+          region: 'oss-cn-beijing',
+          accessKeyId: 'LTAIqZNxHpwAnq9r',
+          accessKeySecret: '88mdWv9IiQMecrwevspKWyyllIcd0f',
+          bucket: 'velo-bucket'
+        })
+        const timestamp = +new Date()
+        const storeAs = `wenjuan/${timestamp}.png`
+        client
+          .multipartUpload(storeAs, file)
+          .then(function(result) {
+            console.log(result)
+            url = result.res.requestUrls[0]
+            resolve(url)
+          })
+          .catch(function(err) {
+            console.log(err)
+            resolve('')
+          })
+      })
     }
   }
 }
@@ -132,6 +162,32 @@ export default {
         position: absolute;
         right: 0;
         top: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #000;
+        transform: rotate(45deg);
+      }
+
+      .del::before {
+        content: ' ';
+        position: absolute;
+        height: 40px;
+        width: 4px;
+        left: 50%;
+        top: 0;
+        background: #ccc;
+        transform: translateX(-50%);
+      }
+      .del::after {
+        content: ' ';
+        position: absolute;
+        height: 4px;
+        width: 40px;
+        left: 0;
+        top: 50%;
+        background: #ccc;
+        transform: translateY(-50%);
       }
     }
     .add {
