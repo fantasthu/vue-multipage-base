@@ -1,9 +1,9 @@
 export default [
   {
     path: '/',
-    name: 'about',
+    name: 'wenjuan',
     component: resolve => {
-      require(['@/pages/aboutpage'], resolve)
+      require(['@/pages/wenjuanpage'], resolve)
     }
   }
 ]
