@@ -148,12 +148,15 @@ export default {
         )
         .then(_ => {
           Indicator.close()
+          this.$toast('提交完成!')
           console.log('====================================')
           console.log(_)
           console.log('====================================')
         })
         .catch(e => {
           console.log('请求失败:', e)
+          this.$toast('提交完成')
+
           Indicator.close()
         })
       console.log('====================================')
