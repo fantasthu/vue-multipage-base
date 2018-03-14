@@ -39,11 +39,11 @@ module.exports = {
           formatter: require('eslint-friendly-formatter')
         }
       },
-      // {
-      //   test: /\.html$/,
-      //   use: ['html-withimg-loader', 'raw-loader'],
-      //   exclude: /(node_modules)/
-      // },
+      {
+        test: /\.html$/,
+        use: ['html-withimg-loader', 'raw-loader'],
+        exclude: /(node_modules)/
+      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',

@@ -1,7 +1,7 @@
 <template>
   <div class="wenjuanpage">
     <div class="hint flex-v flex-cc">
-      <h3 class="title">友情提示</h3>
+      <h3 class="title">玩味新品试吃反馈</h3>
       <div class="line"></div>
       <p class="p1">好吃就是好吃,不好吃就是不好吃</p>
       <p class="p2">请填写您最真实的试吃体验</p>
@@ -9,33 +9,36 @@
     </div>
     <div class="question-container">
       <div class="name">
-        <mt-field label="1.姓名:" placeholder="" v-model="name"></mt-field>
+        <span class="q">1.您的姓名*</span>
+        <mt-field  placeholder="" v-model="name"></mt-field>
       </div>
       <div class="w-nickname">
-        <mt-field label="2.微信昵称:" placeholder="" v-model="wnickName"></mt-field>
+        <span class="q">2.您的微信昵称*</span>
+        <mt-field  placeholder="" v-model="wnickName"></mt-field>
       </div>
       <div class="hometown">
-        <mt-field label="3.家乡:" placeholder="" v-model="hometown"></mt-field>
+        <span class="q">3.您的家乡*</span>
+        <mt-field  placeholder="" v-model="hometown"></mt-field>
       </div>
 
       <div class="sex">
-        <mt-radio title="4.性别" v-model="sex" :options="['男', '女']">
+        <mt-radio title="4.您的性别*" v-model="sex" :options="['男', '女']">
         </mt-radio>
       </div>
       <div class="age">
-        <mt-radio title="5.年龄" v-model="age" :options="['18岁以下', '18-25','28-35','38-50','50岁以上']">
+        <mt-radio title="5.您的年龄*" v-model="age" :options="['18岁以下', '18-25','26-35','36-50','50岁以上']">
         </mt-radio>
       </div>
       
       <div class="taste">
-         <mt-radio title="6.口味" v-model="taste" :options="['重口', '清淡口味']">
+         <mt-radio title="6.您是重口味爱好者还是清淡口味？" v-model="taste" :options="['重口味', '清淡口味']">
         </mt-radio>
       </div>
       <div class="food-evaluate">
         <div class="evaluate-list"  v-for="(value,index) in productList">
           <Foretaste :index ="index" :fdata="value" @pushPic="pushPic" @delModel="delModel" @delImg="delImg"/>
         </div>
-        <div class="add-new-product flex-h flex-cc">
+        <div class="add-new-product flex-h flex-cc"  v-if="productList.length < 10">
           <mt-button type="primary" class="add-new-pro"  @click="addNewPro">+添加试吃商品</mt-button>
         </div>
       </div>
@@ -119,7 +122,7 @@ export default {
       console.log('名称:', this.name)
       console.log('性别:', this.sex)
       console.log('年龄:', this.age)
-      console.log('昵称:', this.wnickname)
+      console.log('昵称:', this.wnickName)
       console.log('家乡:', this.hometown)
       console.log('taste:', this.taste)
       console.log('商品:', this.productList)
@@ -128,24 +131,71 @@ export default {
       console.log(axios)
       const accId = guid.raw()
       const surveyId = window.navigator.userAgent
-      Indicator.open({ spinnerType: 'fading-circle' })
       // 验证
+      if (
+        this.name.trim() === '' ||
+        this.wnickName.trim() === '' ||
+        this.hometown.trim() === '' ||
+        this.sex.trim() === '' ||
+        this.age.trim() === '' ||
+        this.taste.trim() === ''
+      ) {
+        this.$toast('要填完所有信息哦~比心~')
+        return
+      }
+      if (this.productList.length === 0) {
+        this.$toast('要添加试吃商品哦~比心~')
+        return
+      }
+
+      let flag = false
+      this.productList.map((product, index) => {
+        if (flag) {
+          return
+        }
+        for (let key in product) {
+          if (key === 'pics') {
+            if (product[key].length < 3) {
+              this.$toast('图片不够3张呢~比心~')
+              flag = true
+              return
+            }
+          } else if (product[key].trim() === '') {
+            this.$toast('要填完所有信息哦~比心~')
+            flag = true
+            return
+          }
+        }
+      })
+      if (flag) {
+        return
+      }
+
+      Indicator.open({ spinnerType: 'fading-circle' })
       const subData = {
         surveyId,
         accId,
         name: this.name,
         sex: this.sex,
         age: this.age,
-        wnickName: this.wnickname,
+        wnickName: this.wnickName,
         hometown: this.hometown,
         taste: this.taste,
-        productList: this.productList
+        productList: this.productList,
+        password: 'olX3MXwEiz6N9ec'
       }
-      axios
-        .post(
-          'http://192.168.1.196:9000/user-service/notice/auth/addSurvey',
-          subData
-        )
+
+      var instance = axios.create({
+        headers: {
+          velo_admin: 'nRF9L8ZaOKlE2lew'
+        }
+      })
+
+      // axios
+      instance
+        // .post('http://192.168.1.44:9000/repair-service/h5/addSurvey', subData)
+        .post('https://velo.top/repair-service/h5/addSurvey', subData)
+        // .post('http://192.168.1.196:9000/user-service/h5/addSurvey', subData)
         .then(_ => {
           Indicator.close()
           this.$toast('提交完成!')
@@ -174,7 +224,7 @@ export default {
     padding-left: 20px;
     background-color: #353535;
     background-size: cover;
-    font-size: 32px;
+    font-size: 48px;
     color: #fff;
     .title {
       font-weight: 700;
@@ -185,7 +235,7 @@ export default {
     }
     .p1,
     .p2 {
-      font-size: 28px;
+      font-size: 26px;
     }
     .logo {
       position: absolute;
@@ -215,7 +265,24 @@ export default {
     border-top: 1px solid #eee;
     margin-bottom: 100px;
     .add-new-pro {
+      // background: yellow;
       margin-top: 20px;
+      border: 0;
+      position: relative;
+    }
+    .add-new-pro::after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 1px;
+      // content:'',
+      box-sizing: border-box;
+      border: 2px solid #000;
+      opacity: 1;
+      background: transparent;
+      border-radius: 6px;
+      overflow: hidden;
     }
   }
   .add-new-pro {
@@ -227,5 +294,67 @@ export default {
     height: 100px;
     background: #f9e77f;
   }
+  .mint-field-core {
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    padding: 0 10px;
+  }
+  // .mint-cell-value {
+  //   border: 1px solid #555;
+  // }
+  // .mint-cell:last-child {
+  //   background-image: none;
+  //   background-size: 0;
+  //   background-repeat: no-repeat;
+  //   background-position: bottom;
+  // }
+
+  .mint-cell-wrapper {
+    background-image: none;
+    background-size: 120% 1px;
+    background-repeat: no-repeat;
+    background-position: top left;
+    background-origin: content-box;
+  }
+  .hometown,
+  .same-better,
+  .w-nickname,
+  .name {
+    font-size: 32px;
+    padding: 20px 20px 0;
+    .mint-cell:last-child {
+      background-image: none;
+      background-size: 0;
+      background-repeat: no-repeat;
+      background-position: bottom;
+    }
+    textarea {
+      // border: 1px solid #ccc;
+      border: none !important;
+    }
+    .q {
+      color: #555;
+      font-weight: 700;
+    }
+  }
+  .pingjia textarea {
+    // border: none;
+    position: relative;
+    box-sizing: border-box;
+  }
+  // .pingjia textarea::after {
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   bottom: 0;
+  //   right: 1px;
+  //   // content:'',
+  //   box-sizing: border-box;
+  //   border: 1px solid #ccc;
+  //   opacity: 1;
+  //   background: transparent;
+  //   border-radius: 6px;
+  //   overflow: hidden;
+  // }
 }
 </style>

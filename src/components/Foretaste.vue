@@ -4,13 +4,15 @@
       <div class="left">
         试吃商品{{index+1}}
       </div>
-      <mt-button type="default" class="del-model" @click="delModel(index)">删除模块</mt-button>
+      <mt-button type="default" class="del-model" @click="delModel(index)">删除该商品信息</mt-button>
     </div>
     <div class="name">
-      <mt-field :label="nameTitle" placeholder="" v-model="fdata.pname"></mt-field>
+      <span class="q">{{nameTitle}}</span>
+      <mt-field  placeholder="" v-model="fdata.pname"></mt-field>
     </div>
     <div class="pingjia">
-      <mt-field label="2.从口味包装价格等方面对商品做出评价" placeholder="评价不少于100字" type="textarea" rows="4" v-model="fdata.pingjia"></mt-field>
+      <span class="q">2.从口味包装价格等方面对商品做出评价*</span>
+      <mt-field placeholder="评价不少于100字" type="textarea" rows="3" v-model="fdata.pingjia"></mt-field>
     </div>
     <div class="dafen">
       <mt-radio :title="dafenTitle" v-model="fdata.dafen" :options="['5分以下', '6', '7','8','9','10']">
@@ -21,20 +23,20 @@
       </mt-radio>
     </div>
     <div class="same-better">
-      <span class="q">5.同类商品,是否有您觉得比试吃更好的选择?有的话请填写品牌</span>
-      <input type="text" class="better-input" v-model="fdata.sameBetter">
+      <span class="q">5.同类商品,是否有您觉得比试吃更好的选择?有的话请填写品牌*</span>
+      <mt-field  placeholder="" v-model="fdata.sameBetter"></mt-field>
     </div>
 
-    <div class="add-title">6.请上传商品实拍图(至少3张)</div>
+    <div class="add-title">6.请上传商品实拍图(至少3张)*</div>
     <div class="food-pics flex-h ">
-      <input type="file" filetype="image/*" class="pic-file" :class="picFile" style="display:none" @change="handleFiles">      
+      <input type="file" filetype="image/*" class="pic-file" :class="picFile" style="display:none" @change="handleFiles">  
       <div v-for="(pic,picindex) in fdata.pics">
         <div class="item">
           <img :src="pic" class="preview" alt="">
           <div class="del" @click="delImgUrl(picindex,index)"></div>
         </div>
       </div>
-      <div class="add" @click="addPic"></div>
+      <div class="add" @click="addPic" v-if="fdata.pics.length<10"></div>
     </div>
   </div>
 </template>
@@ -66,9 +68,9 @@ export default {
       this.addDom = document.querySelector('.add')
       this.picDom = document.querySelector(`.pic-file-${this.index}`)
     })
-    this.goumaiyiyuanTitle = `4.是否有购买商品${this.index + 1}的意愿`
-    this.nameTitle = `1.商品${this.index + 1}的名称:`
-    this.dafenTitle = `3.给商品${this.index + 1}打分(满分10分)`
+    this.goumaiyiyuanTitle = `4.是否有购买商品${this.index + 1}的意愿*`
+    this.nameTitle = `1.商品${this.index + 1}的名称*`
+    this.dafenTitle = `3.给商品${this.index + 1}打分(满分10分)*`
   },
   methods: {
     delImgUrl(picIndex, index) {
@@ -103,7 +105,10 @@ export default {
         if (imgUrl.trim() === '') {
           MessageBox.alert('网络问题,图片上传失败,请重试!')
         }
-        this.$emit('pushPic', { imgUrl, index: this.index })
+        this.$emit('pushPic', {
+          imgUrl: imgUrl,
+          index: this.index
+        })
 
         console.log(file)
       } else {
@@ -117,7 +122,8 @@ export default {
           region: 'oss-cn-beijing',
           accessKeyId: 'LTAIqZNxHpwAnq9r',
           accessKeySecret: '88mdWv9IiQMecrwevspKWyyllIcd0f',
-          bucket: 'velo-bucket'
+          bucket: 'velo-bucket',
+          secure: true
         })
         const timestamp = +new Date()
         const storeAs = `wenjuan/${timestamp}.png`
@@ -161,6 +167,25 @@ export default {
       border: 1px solid #ef4f4f;
     }
   }
+  .pingjia,
+  .name {
+    font-size: 32px;
+    padding: 20px 20px 0;
+    .mint-cell:last-child {
+      background-image: none;
+      background-size: 0;
+      background-repeat: no-repeat;
+      background-position: bottom;
+    }
+    textarea {
+      // border: 1px solid #ccc;
+      border: none !important;
+    }
+    .q {
+      color: #555;
+      font-weight: 700;
+    }
+  }
   .same-better {
     font-size: 32px;
     padding: 20px;
@@ -174,7 +199,8 @@ export default {
       display: inline-block;
       border: none;
       font-size: 30px;
-      border-bottom: 1px solid #eee;
+      border: 1px solid #ccc;
+      // border-bottom: 1px solid #eee;
       margin-top: 10px;
     }
   }
