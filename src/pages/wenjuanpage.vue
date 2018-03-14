@@ -42,7 +42,7 @@
           <mt-button type="primary" class="add-new-pro"  @click="addNewPro">+添加试吃商品</mt-button>
         </div>
       </div>
-      <mt-button type="danger" class="submit-product" size="large" @click="submitProduct">提交</mt-button>
+      <mt-button type="danger" v-bind:class="['submit-product', disabled ? 'disabled' : '' ]"  size="large" @click="submitProduct">提交</mt-button>
     </div>
   </div>
 </template>
@@ -79,7 +79,8 @@ export default {
           pics: []
         }
       ],
-      logo: require('../assets/img/icon_oneway.png')
+      logo: require('../assets/img/icon_oneway.png'),
+      disabled: false
     }
   },
   created() {},
@@ -118,6 +119,9 @@ export default {
       console.log('====================================')
     },
     submitProduct() {
+      if (this.disabled) {
+        return
+      }
       console.log('==================商品详情==================')
       console.log('名称:', this.name)
       console.log('性别:', this.sex)
@@ -193,19 +197,18 @@ export default {
 
       // axios
       instance
-        // .post('http://192.168.1.44:9000/repair-service/h5/addSurvey', subData)
         .post('https://velo.top/repair-service/h5/addSurvey', subData)
-        // .post('http://192.168.1.196:9000/user-service/h5/addSurvey', subData)
         .then(_ => {
           Indicator.close()
-          this.$toast('提交完成!')
+          this.$toast('提交成功，感谢您的时间~')
+          this.disabled = true
           console.log('====================================')
           console.log(_)
           console.log('====================================')
         })
         .catch(e => {
           console.log('请求失败:', e)
-          this.$toast('提交完成')
+          this.$toast('网络异常,请重试~')
 
           Indicator.close()
         })
@@ -293,6 +296,9 @@ export default {
   .submit-product {
     height: 100px;
     background: #f9e77f;
+  }
+  .disabled {
+    background: #ccc;
   }
   .mint-field-core {
     border: 1px solid #ccc;
