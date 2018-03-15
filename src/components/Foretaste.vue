@@ -23,7 +23,7 @@
       </mt-radio>
     </div>
     <div class="same-better">
-      <span class="q">5.同类商品,是否有您觉得比试吃更好的选择?有的话请填写品牌*</span>
+      <span class="q">5.同类商品,是否有您觉得比试吃品更好的选择?有的话请填写品牌*</span>
       <mt-field  placeholder="" v-model="fdata.sameBetter"></mt-field>
     </div>
 
