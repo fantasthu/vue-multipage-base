@@ -98,7 +98,7 @@
     <div class="pc-input-container">
       <div class="to-input flex-h flex-cc">
         <form action="javascrpt:;">
-          <textarea type="text" class="text-input" ></textarea>
+          <textarea @keypress="enterHandler" type="text" class="text-input" ></textarea>
         </form>
         <div class="enter-hint">按下Enter发送</div>
       </div>
@@ -128,12 +128,24 @@ export default {
   created() {},
   mounted() {
     this.$nextTick(() => {
-      document.querySelector('form').addEventListener('submit', () => {
-        alert(1)
-      })
+      document
+        .querySelector('.input-container form')
+        .addEventListener('submit', () => {
+          // h5端提交信息
+          alert(1)
+        })
     })
   },
   methods: {
+    enterHandler(event) {
+      const keyCode = event.keyCode
+        ? event.keyCode
+        : event.which ? event.which : event.charCode
+      if (keyCode === 13) {
+        // pc 端提交消息
+        alert(2)
+      }
+    },
     chatBack() {
       this.$root.eventBus.$emit('toChat', { from: 'chat' })
     }
