@@ -21,9 +21,14 @@ export default {
     }
   },
   created() {
-    this.$root.eventBus.$on('toChat', index => {
-      this.showSession = false
-      this.showChat = true
+    this.$root.eventBus.$on('toChat', params => {
+      if (params.from === 'chat') {
+        this.showSession = true
+        this.showChat = false
+      } else {
+        this.showSession = false
+        this.showChat = true
+      }
     })
   },
   mounted() {

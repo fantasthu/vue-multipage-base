@@ -1,6 +1,6 @@
 <template>
   <div class="chat flex-1">
-    <service-header class="service-header" title='某某某的聊天'></service-header>
+    <service-header :back="true" @chatBack="chatBack" class="service-header" title='某某某的聊天'></service-header>
     <div class="pc-header">
       <div class="name">女神逗</div>
     </div>
@@ -135,8 +135,7 @@ export default {
   },
   methods: {
     chatBack() {
-      alert(1)
-      this.$emit('chatBack')
+      this.$root.eventBus.$emit('toChat', { from: 'chat' })
     }
   }
 }
@@ -148,7 +147,11 @@ export default {
   .chat {
     position: relative;
     width: 100%;
+    .pc-header {
+      display: none;
+    }
     .message {
+      width: 100%;
       margin-top: 118px;
       margin-bottom: 130px;
       .message-list {
