@@ -236,7 +236,7 @@ export default {
           border-radius: 100px;
           font-size: 30px;
           color: #353535;
-          padding-left: 48px;
+          padding: 0 48px;
         }
       }
     }
