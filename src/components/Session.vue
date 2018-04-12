@@ -2,281 +2,9 @@
   <div class="session">
     <service-header class="service-header" title="客服会话管理"></service-header>
     <div class="list" ref="session-list">
-      <div class="item flex-h" :class="{'active':itemActiveIndex==0}" @click="sessionItemClick(0)">
+      <div class="item flex-h" v-for="(item,index) in sessions" :class="{'active':itemActiveIndex==index}" @click="sessionItemClick(index)">
         <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h" :class="{'active':itemActiveIndex==1}" @click="sessionItemClick(1)">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
-          <div class="tag">
-          </div>
-        </div>
-        <div class="des flex-v">
-          <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
-          </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
-        </div>
-        <div class="line"></div>
-      </div>
-      <div class="item active flex-h">
-        <div class="avatar">
-          <img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt="">
+          <img src="" alt="">
           <div class="tag">
           </div>
         </div>
@@ -308,7 +36,58 @@ export default {
     return {
       back: require('../assets/img/icon_oneway.png'),
       items: null,
-      itemActiveIndex: 0
+      itemActiveIndex: 0,
+      sessions: [
+        {
+          imgUrl:
+            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
+          name: 'hwz',
+          time: '2302/22/23 23:23',
+          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
+        },
+        {
+          imgUrl:
+            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
+          name: 'hwz',
+          time: '2302/22/23 23:23',
+          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
+        },
+        {
+          imgUrl:
+            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
+          name: 'hwz',
+          time: '2302/22/23 23:23',
+          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
+        },
+        {
+          imgUrl:
+            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
+          name: 'hwz',
+          time: '2302/22/23 23:23',
+          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
+        },
+        {
+          imgUrl:
+            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
+          name: 'hwz',
+          time: '2302/22/23 23:23',
+          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
+        },
+        {
+          imgUrl:
+            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
+          name: 'hwz',
+          time: '2302/22/23 23:23',
+          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
+        },
+        {
+          imgUrl:
+            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
+          name: 'hwz',
+          time: '2302/22/23 23:23',
+          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
+        }
+      ]
     }
   },
   created() {},

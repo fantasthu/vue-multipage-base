@@ -98,7 +98,7 @@
     <div class="pc-input-container">
       <div class="to-input flex-h flex-cc">
         <form action="javascrpt:;">
-          <textarea @keypress="enterHandler" type="text" class="text-input" ></textarea>
+          <textarea @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
         </form>
         <div class="enter-hint">按下Enter发送</div>
       </div>
@@ -106,7 +106,7 @@
     <div class="input-container">
       <div class="to-input flex-h flex-cc">
         <form action="javascrpt:;">
-          <input type="text" class="text-input" >
+          <input type="text" class="text-input" v-model="inputData">
         </form>
       </div>
     </div>
@@ -122,6 +122,7 @@ export default {
   props: [''],
   data() {
     return {
+      inputData: '',
       back: require('../assets/img/icon_oneway.png')
     }
   },
@@ -132,7 +133,7 @@ export default {
         .querySelector('.input-container form')
         .addEventListener('submit', () => {
           // h5端提交信息
-          alert(1)
+          alert(this.inputData)
         })
     })
   },
@@ -143,7 +144,7 @@ export default {
         : event.which ? event.which : event.charCode
       if (keyCode === 13) {
         // pc 端提交消息
-        alert(2)
+        alert(this.inputData)
       }
     },
     chatBack() {
