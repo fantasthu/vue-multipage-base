@@ -78,7 +78,7 @@
     <div class="input-container">
       <div class="to-input">
         <form action="javascrpt:;">
-          <input type="text" class="text-input" v-model="inputData">
+          <input type="text" class="text-input" v-model="inputData" @focus="focus">
         </form>
       </div>
     </div>
@@ -116,7 +116,7 @@ export default {
         .querySelector('.input-container form')
         .addEventListener('submit', () => {
           // h5端提交信息
-          alert(this.inputData)
+          // alert(this.inputData)
         })
     })
   },
@@ -141,6 +141,11 @@ export default {
     },
     chatBack() {
       this.$root.eventBus.$emit('toChat', { from: 'chat' })
+    },
+    focus() {
+      this.tiemr = setTimeout(() => {
+        window.scrollTo(0, document.body.scrollHeight)
+      }, 500)
     }
   }
 }
