@@ -75,7 +75,7 @@ export default {
 html,
 body {
   width: 100%;
-  heigth: 100%;
+  height: 100%;
 }
 body {
   padding-top: constant(safe-area-inset-top);
@@ -84,5 +84,9 @@ body {
   padding-bottom: constant(safe-area-inset-bottom);
 }
 .customer-service {
+  height: 100%;
+  .s-container {
+    height: 100%;
+  }
 }
 </style>

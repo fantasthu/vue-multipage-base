@@ -164,9 +164,13 @@ export default {
       display: none;
     }
     .message {
-      width: 100%;
-      margin-top: 118px;
-      margin-bottom: 130px;
+      position: absolute;
+      top: 118px;
+      bottom: 120px;
+      left: 0;
+      right: 0;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
       .message-list {
         background: #fff;
         .item {
@@ -219,17 +223,29 @@ export default {
       display: none;
     }
     .input-container {
-      position: fixed;
+      position: absolute;
       left: 0;
       bottom: 0;
       right: 0;
       width: 100%;
+      height: 120px;
       box-shadow: 0 -1px 0 0 #dddddd;
       .to-input {
-        height: 120px;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        top: 0;
         background: #fff;
-
+        form {
+        }
         .text-input {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          top: 0;
+          margin: auto;
           height: 80px;
           width: 670px;
           background: #f7f7f7;
@@ -242,140 +258,140 @@ export default {
     }
   }
 }
-@media screen and (min-width: 768px) and (max-width: 1650px) {
-  .chat {
-    position: relative;
-    border-left: 2px solid #e5e5e5;
-    .service-header {
-      display: none;
-    }
-    .pc-header {
-      width: 100%;
-      height: 115px;
-      line-height: 115px;
-      border-bottom: 2px solid #e5e5ee;
-      .name {
-        font-family: PingFangSC-Medium;
-        font-size: 30px;
-        color: #353535;
-        letter-spacing: 0;
-        margin-left: 37px;
-      }
-    }
-    .message {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 285px;
-      top: 135px;
-      overflow-y: auto;
-      .message-list {
-        background: #fff;
-        max-height: 815px;
-        .item {
-          margin: 18px 0;
-          .avatar {
-            position: relative;
+// @media screen and (min-width: 768px) and (max-width: 1650px) {
+//   .chat {
+//     position: relative;
+//     border-left: 2px solid #e5e5e5;
+//     .service-header {
+//       display: none;
+//     }
+//     .pc-header {
+//       width: 100%;
+//       height: 115px;
+//       line-height: 115px;
+//       border-bottom: 2px solid #e5e5ee;
+//       .name {
+//         font-family: PingFangSC-Medium;
+//         font-size: 30px;
+//         color: #353535;
+//         letter-spacing: 0;
+//         margin-left: 37px;
+//       }
+//     }
+//     .message {
+//       position: absolute;
+//       left: 0;
+//       right: 0;
+//       bottom: 285px;
+//       top: 135px;
+//       overflow-y: auto;
+//       .message-list {
+//         background: #fff;
+//         max-height: 815px;
+//         .item {
+//           margin: 18px 0;
+//           .avatar {
+//             position: relative;
 
-            img {
-              width: 70px;
-              height: 70px;
-              border-radius: 12px;
-            }
-          }
-          .info {
-            position: relative;
-            background: #fff;
-            border-radius: 35px;
-            padding: 14px 24px;
+//             img {
+//               width: 70px;
+//               height: 70px;
+//               border-radius: 12px;
+//             }
+//           }
+//           .info {
+//             position: relative;
+//             background: #fff;
+//             border-radius: 35px;
+//             padding: 14px 24px;
 
-            .text {
-              font-family: PingFangSC-Regular;
-              font-size: 24px;
-              color: #353535;
-              letter-spacing: 2.57px;
-              text-align: left;
-              word-break: break-all;
-              line-height: 42px;
-            }
-          }
-        }
-        .item-left {
-          .avatar {
-            margin-left: 36px;
-          }
-          .info {
-            background: #f4f4f4;
-            margin-left: 24px;
-            margin-right: 124px;
-            .text {
-              color: #353535;
-            }
-          }
-        }
-        .item-right {
-          flex-direction: row-reverse;
-          text-align: right;
-          .avatar {
-            margin-right: 36px;
-          }
-          .info {
-            background: #f9e77f;
-            margin-right: 24px;
-            margin-left: 124px;
-            .text {
-              color: #000;
-            }
-          }
-        }
-      }
-    }
-    .pc-input-container {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      border-top: 2px solid #e5e5e5;
-      .to-input,
-      form {
-        .text-input {
-          width: 100%;
-          height: 100%;
-          border: none;
-          font-family: PingFangSC-Regular;
-          font-size: 24px;
-          color: #353535;
-          letter-spacing: 2.57px;
-          text-align: left;
-          line-height: 42px;
-        }
-      }
+//             .text {
+//               font-family: PingFangSC-Regular;
+//               font-size: 24px;
+//               color: #353535;
+//               letter-spacing: 2.57px;
+//               text-align: left;
+//               word-break: break-all;
+//               line-height: 42px;
+//             }
+//           }
+//         }
+//         .item-left {
+//           .avatar {
+//             margin-left: 36px;
+//           }
+//           .info {
+//             background: #f4f4f4;
+//             margin-left: 24px;
+//             margin-right: 124px;
+//             .text {
+//               color: #353535;
+//             }
+//           }
+//         }
+//         .item-right {
+//           flex-direction: row-reverse;
+//           text-align: right;
+//           .avatar {
+//             margin-right: 36px;
+//           }
+//           .info {
+//             background: #f9e77f;
+//             margin-right: 24px;
+//             margin-left: 124px;
+//             .text {
+//               color: #000;
+//             }
+//           }
+//         }
+//       }
+//     }
+//     .pc-input-container {
+//       position: absolute;
+//       left: 0;
+//       bottom: 0;
+//       right: 0;
+//       border-top: 2px solid #e5e5e5;
+//       .to-input,
+//       form {
+//         .text-input {
+//           width: 100%;
+//           height: 100%;
+//           border: none;
+//           font-family: PingFangSC-Regular;
+//           font-size: 24px;
+//           color: #353535;
+//           letter-spacing: 2.57px;
+//           text-align: left;
+//           line-height: 42px;
+//         }
+//       }
 
-      .to-input {
-        position: relative;
-        padding: 20px;
-        height: 243px;
+//       .to-input {
+//         position: relative;
+//         padding: 20px;
+//         height: 243px;
 
-        .enter-hint {
-          position: absolute;
-          right: 36px;
-          bottom: 36px;
-          font-family: PingFangSC-Regular;
-          font-size: 22px;
-          color: #b2b2b2;
-          letter-spacing: 2.36px;
-          text-align: right;
-          line-height: 42px;
-        }
-      }
-      form {
-        width: 100%;
-        height: 100%;
-      }
-    }
-    .input-container {
-      display: none;
-    }
-  }
-}
+//         .enter-hint {
+//           position: absolute;
+//           right: 36px;
+//           bottom: 36px;
+//           font-family: PingFangSC-Regular;
+//           font-size: 22px;
+//           color: #b2b2b2;
+//           letter-spacing: 2.36px;
+//           text-align: right;
+//           line-height: 42px;
+//         }
+//       }
+//       form {
+//         width: 100%;
+//         height: 100%;
+//       }
+//     }
+//     .input-container {
+//       display: none;
+//     }
+//   }
+// }
 </style>
