@@ -10,11 +10,19 @@ import { Header, Button } from 'mint-ui'
 export default {
   name: 'serviceheader',
   components: { Header, Button },
-  props: ['title', 'more', 'back'],
-  data() {
-    return {
-      back: require('../assets/img/icon_oneway.png')
+  props: {
+    title: {
+      default: ''
+    },
+    more: {
+      default: false
+    },
+    back: {
+      default: false
     }
+  },
+  data() {
+    return {}
   },
   created() {},
   mounted() {},
@@ -45,5 +53,6 @@ export default {
   }
 }
 .mint-header.is-fixed {
+  // position: absolute;
 }
 </style>
