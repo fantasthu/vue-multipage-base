@@ -1,8 +1,8 @@
 <template>
   <div class="customer-service">
     <div class="s-container flex-h">
-      <session v-show="showSession"></session>
-      <chat v-show="showChat"></chat>
+      <session v-show="showSession" :userList.sync="userList"></session>
+      <chat v-show="showChat" ></chat>
     </div>
   </div>
 </template>
@@ -11,13 +11,18 @@
 // import { Button, Cell, Field, Radio, MessageBox, Indicator } from 'mint-ui'
 import Chat from '../components/Chat.vue'
 import Session from '../components/Session.vue'
+import socketio from 'socket.io-client'
+import { formatTime } from '../service/tools'
+
 export default {
   name: 'about',
   components: { Chat, Session },
   data() {
     return {
       showSession: true,
-      showChat: true
+      showChat: true,
+      userList: [],
+      currentUserAllMsg: []
     }
   },
   created() {
@@ -29,6 +34,36 @@ export default {
         this.showSession = false
         this.showChat = true
       }
+      // 点击用户列表进入对话框, 改变当前接受消息对象
+      if (params.openId) {
+        console.log('on-tochart', params.openId)
+        socket.emit('receiveThisUserMsg', params.openId)
+      }
+    })
+    let socket = socketio.connect('http://velo.top/customerService/')
+    // let socket = socketio.connect('http://velo.top:6080')
+    // let socket = socketio.connect('http://kingov.cn:8088')
+    // let socket = socketio.connect('http://127.0.0.1:3030')
+
+    socket.on('init', (data) => {
+      console.log('链接状态-init', data)
+    })
+    socket.on('userList', (userList) => {
+      console.log('node推送userList', userList)
+      userList.forEach((item, index) => {
+        item.formatTime = formatTime(item.msgTime, 6)
+      })
+      this.userList = userList
+    })
+    socket.on('userMsg', (obj) => {
+      this.$root.eventBus.$emit('userMsg', obj)
+      console.log('接收用户发送的消息', obj)
+    })
+
+    socket.on('userAllMsg', (obj) => {
+      this.currentUserAllMsg = obj.userAllMsg
+      this.$root.eventBus.$emit('userAllMsg', obj)
+      console.log('接收当前用户的所有消息', obj)
     })
   },
   mounted() {

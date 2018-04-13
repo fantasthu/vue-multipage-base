@@ -9,31 +9,15 @@
         2013/12/12 12:12
       </div> -->
       <div class="message-list">
-        <div class="item item-left flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
+        <!-- 用户的消息 -->
+        <div class="item item-left flex-h"  v-for="(item,index) in currentUserAllMsg" :key="index">
+          <div class="avatar"><img :src="item.headImg" alt=""></div>
           <div class="info">
-            <div class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasd
-              fasdfasfdasdfadfasf
-              asdfasdfa
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </div>
+            <div class="text">{{item.msg}}</div>
           </div>
         </div>
-        <div class="item item-left flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <div class="text">
-              我发了一堆的消息在你这里
-            </div>
-          </div>
-        </div>
-        <div class="item item-right flex-h">
+        <!-- 客服的消息 -->
+        <!-- <div class="item item-right flex-h">
           <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
           <div class="info">
             <p class="text">
@@ -47,52 +31,7 @@
               asdfad
             </p>
           </div>
-        </div>
-        <div class="item item-right flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <p class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
-              asdfasdfaasdfasdfasdfasdfasdfasdf
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </p>
-          </div>
-        </div>
-        <div class="item item-right flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <p class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
-              asdfasdfaasdfasdfasdfasdfasdfasdf
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </p>
-          </div>
-        </div>
-        <div class="item item-right flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <p class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
-              asdfasdfaasdfasdfasdfasdfasdfasdf
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </p>
-          </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="pc-input-container">
@@ -119,21 +58,34 @@ import ServiceHeader from './ServiceHeader'
 export default {
   name: 'chat',
   components: { Header, Button, ServiceHeader },
-  props: [''],
+  props: {},
   data() {
     return {
       inputData: '',
-      back: require('../assets/img/icon_oneway.png')
+      back: require('../assets/img/icon_oneway.png'),
+      currentUserAllMsg: [],
+      currentUserOpenId: ''
     }
   },
-  created() {},
+  created() {
+    this.$root.eventBus.$on('userAllMsg', (obj) => {
+      this.currentUserAllMsg = obj.userAllMsg
+      this.currentUserOpenId = obj.openId
+      console.log('obj-----obj', obj)
+    })
+    this.$root.eventBus.$on('userMsg', (arr) => {
+      this.currentUserAllMsg.push(arr[0])
+      console.log('obj-----obj', arr)
+    })
+  },
   mounted() {
     this.$nextTick(() => {
       document
         .querySelector('.input-container form')
         .addEventListener('submit', () => {
           // h5端提交信息
-          alert(this.inputData)
+          // alert(this.inputData)
+          this.sendWaiterMsg(this.inputData)
         })
     })
   },
@@ -149,6 +101,11 @@ export default {
     },
     chatBack() {
       this.$root.eventBus.$emit('toChat', { from: 'chat' })
+    },
+    sendWaiterMsg(inputData) {
+      console.log('sendWaiterMsg', inputData)
+      this.currentUserAllMsg.push({msg: inputData, headImg: ''})
+      // this.$root.eventBus.$emit('sendWaiterMsgToUser', {msg: inputData})
     }
   }
 }

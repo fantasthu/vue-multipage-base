@@ -2,20 +2,17 @@
   <div class="session">
     <service-header class="service-header" title="客服会话管理"></service-header>
     <div class="list" ref="session-list">
-      <div class="item flex-h" v-for="(item,index) in sessions" :class="{'active':itemActiveIndex==index}" @click="sessionItemClick(index)">
+      <div class="item flex-h" v-for="(item,index) in userList" :key="index" :class="{'active':itemActiveIndex==index}" @click="sessionItemClick(index, item.openId)">
         <div class="avatar">
-          <img src="" alt="">
-          <div class="tag">
-          </div>
+          <img :src="item.headImg" alt="">
+          <div class="tag" :hidden="item.hasBeenRead == 1"></div>
         </div>
         <div class="des flex-v">
           <div class="title flex-h flex-bc">
-            <div class="name">蓝汛</div>
-            <div class="time">2012/12/12 23:23</div>
+            <div class="name">{{item.name}}</div>
+            <div class="time">{{item.formatTime}}</div>
           </div>
-          <div class="hint">
-            这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd
-          </div>
+          <div class="hint">{{item.msg}}</div>
         </div>
         <div class="line"></div>
       </div>
@@ -31,63 +28,17 @@ export default {
   components: {
     ServiceHeader
   },
-  props: [''],
+  props: {
+    userList: {
+      type: Array,
+      default: []
+    }
+  },
   data() {
     return {
       back: require('../assets/img/icon_oneway.png'),
       items: null,
-      itemActiveIndex: 0,
-      sessions: [
-        {
-          imgUrl:
-            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
-          name: 'hwz',
-          time: '2302/22/23 23:23',
-          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
-        },
-        {
-          imgUrl:
-            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
-          name: 'hwz',
-          time: '2302/22/23 23:23',
-          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
-        },
-        {
-          imgUrl:
-            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
-          name: 'hwz',
-          time: '2302/22/23 23:23',
-          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
-        },
-        {
-          imgUrl:
-            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
-          name: 'hwz',
-          time: '2302/22/23 23:23',
-          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
-        },
-        {
-          imgUrl:
-            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
-          name: 'hwz',
-          time: '2302/22/23 23:23',
-          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
-        },
-        {
-          imgUrl:
-            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
-          name: 'hwz',
-          time: '2302/22/23 23:23',
-          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
-        },
-        {
-          imgUrl:
-            'http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60',
-          name: 'hwz',
-          time: '2302/22/23 23:23',
-          hint: '这是一个夏天风雨那么餐面1sdasdasdfadsfasadfasd'
-        }
-      ]
+      itemActiveIndex: 0
     }
   },
   created() {},
@@ -97,11 +48,15 @@ export default {
     })
   },
   methods: {
-    sessionItemClick(index) {
+    sessionItemClick(index, openId) {
       if (this.$root.eventBus.showWidth < 768) {
-        this.$root.eventBus.$emit('toChat', index)
+        // 手机
+        this.$root.eventBus.$emit('toChat', {openId: openId})
+        console.log('index, openId', index, openId)
       } else {
+        // PC
         this.itemActiveIndex = index
+        console.log('index, openId', index, openId)
       }
     }
   }
