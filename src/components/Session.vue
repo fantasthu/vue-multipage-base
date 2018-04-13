@@ -98,7 +98,9 @@ export default {
   },
   methods: {
     sessionItemClick(index) {
+      alert(1)
       if (this.$root.eventBus.showWidth < 768) {
+        alert(1)
         this.$root.eventBus.$emit('toChat', index)
       } else {
         this.itemActiveIndex = index
@@ -174,9 +176,13 @@ export default {
 }
 @media screen and (min-width: 768px) and (max-width: 1650px) {
   .session {
-    position: relative;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
     width: 440px;
-    min-height: 1200px;
+    max-height: 1200px;
     .service-header {
       display: none;
     }

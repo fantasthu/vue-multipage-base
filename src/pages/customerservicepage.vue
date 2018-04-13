@@ -40,21 +40,23 @@ export default {
   methods: {
     getScreenWidth() {
       const that = this
-      that.$root.eventBus.showWidth =
-        window.document.documentElement.clientWidth
-      if (that.$root.eventBus.showWidth > 768) {
+      let width = window.document.documentElement.clientWidth
+      this.$root.eventBus.showWidth = width
+      if (width > 768) {
         that.showSession = true
         that.showChat = true
-      } else if (that.$root.eventBus.showWidth < 768) {
+      } else if (width < 768) {
         that.showSession = true
         that.showChat = false
       }
       window.onresize = function(e) {
-        const width = window.document.documentElement.clientWidth
+        width = window.document.documentElement.clientWidth
         that.$root.eventBus.showWidth = width
         if (width > 768) {
           that.showSession = true
           that.showChat = true
+          // 告知chat组件重新定义message滚动
+          that.$root.eventBus.$emit('pcChatHandler')
         } else if (width < 768) {
           if (that.showChat && !that.showSession) {
             that.showChat = true
