@@ -98,13 +98,18 @@ export default {
     return {
       timerId: null,
       inputData: '',
-<<<<<<< HEAD
       back: require('../assets/img/icon_oneway.png'),
       currentUserAllMsg: [],
       currentUserOpenId: ''
     }
   },
   created() {
+    // this.$root.eventBus.$on('toChat', () => {
+    //   this.reloadMessageScroll()
+    // })
+    // this.$root.eventBus.$on('pcChatHandler', () => {
+    //   this.reloadMessageScroll()
+    // })
     this.$root.eventBus.$on('userAllMsg', (obj) => {
       this.currentUserAllMsg = obj.userAllMsg
       this.currentUserOpenId = obj.openId
@@ -113,17 +118,6 @@ export default {
     this.$root.eventBus.$on('userMsg', (arr) => {
       this.currentUserAllMsg.push(arr[0])
       console.log('obj-----obj', arr)
-=======
-      timer: null
-    }
-  },
-  created() {
-    this.$root.eventBus.$on('toChat', () => {
-      this.reloadMessageScroll()
-    })
-    this.$root.eventBus.$on('pcChatHandler', () => {
-      this.reloadMessageScroll()
->>>>>>> 476fee4248504f7fa3f03e65a22644be663b466e
     })
   },
   mounted() {
@@ -134,10 +128,7 @@ export default {
         .addEventListener('submit', () => {
           // h5端提交信息
           // alert(this.inputData)
-<<<<<<< HEAD
           this.sendWaiterMsg(this.inputData)
-=======
->>>>>>> 476fee4248504f7fa3f03e65a22644be663b466e
         })
     })
   },
@@ -163,12 +154,11 @@ export default {
     chatBack() {
       this.$root.eventBus.$emit('toChat', { from: 'chat' })
     },
-<<<<<<< HEAD
     sendWaiterMsg(inputData) {
       console.log('sendWaiterMsg', inputData)
       this.currentUserAllMsg.push({msg: inputData, headImg: ''})
       // this.$root.eventBus.$emit('sendWaiterMsgToUser', {msg: inputData})
-=======
+    },
     focus() {
       var agent = navigator.userAgent.toLowerCase()
       var version
@@ -184,7 +174,6 @@ export default {
       this.tiemr = setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight)
       }, 500)
->>>>>>> 476fee4248504f7fa3f03e65a22644be663b466e
     }
   }
 }
