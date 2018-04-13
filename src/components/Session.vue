@@ -98,9 +98,7 @@ export default {
   },
   methods: {
     sessionItemClick(index) {
-      alert(1)
       if (this.$root.eventBus.showWidth < 768) {
-        alert(1)
         this.$root.eventBus.$emit('toChat', index)
       } else {
         this.itemActiveIndex = index
