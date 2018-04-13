@@ -143,6 +143,17 @@ export default {
       this.$root.eventBus.$emit('toChat', { from: 'chat' })
     },
     focus() {
+      var agent = navigator.userAgent.toLowerCase()
+      var version
+      if (agent.indexOf('like mac os x') > 0) {
+        // ios
+        var reg = /os [\d._]*/gi
+        var verinfo = agent.match(reg)
+        version = (verinfo + '').replace(/[^0-9|_.]/gi, '').replace(/_/gi, '.')
+        if (version.indexOf('11.2') > -1) {
+          return
+        }
+      }
       this.tiemr = setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight)
       }, 500)
