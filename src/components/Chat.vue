@@ -12,140 +12,57 @@
         <li class="item item-left flex-h">
           <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
           <div class="info">
-            <div class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasd
-              fasdfasfdasdfadfasf
-              asdfasdfa
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
+            <div class="time">2302/22/23 12:12</div>
+            <div class="content">
+              <div class="text">
+                我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasd
+                fasdfasfdasdfadfasf
+                asdfasdfa
+                afasdfasdf
+                asdfasdfas
+                dfasdfasdf
+                asdfasdfasdf
+                asdfasdfa
+                asdfad
+              </div>
             </div>
           </div>
         </li>
         <li class="item item-left flex-h">
           <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
           <div class="info">
-            <div class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasd
-              fasdfasfdasdfadfasf
-              asdfasdfa
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </div>
-          </div>
-        </li>
-        <li class="item item-left flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <div class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasd
-              fasdfasfdasdfadfasf
-              asdfasdfa
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </div>
-          </div>
-        </li>
-        <li class="item item-left flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <div class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasd
-              fasdfasfdasdfadfasf
-              asdfasdfa
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
+            <div class="time"></div>
+            <div class="content">
+              <div class="text">
+                我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasd
+                fasdfasfdasdfadfasf
+                asdfasdfa
+                afasdfasdf
+                asdfasdfas
+                dfasdfasdf
+                asdfasdfasdf
+                asdfasdfa
+                asdfad
+              </div>
             </div>
           </div>
         </li>
         <li class="item item-right flex-h">
           <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
           <div class="info">
-            <p class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
-              asdfasdfaasdfasdfasdfasdfasdfasdf
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </p>
-          </div>
-        </li>
-        <li class="item item-right flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <p class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
-              asdfasdfaasdfasdfasdfasdfasdfasdf
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </p>
-          </div>
-        </li>
-        <li class="item item-right flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <p class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
-              asdfasdfaasdfasdfasdfasdfasdfasdf
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </p>
-          </div>
-        </li>
-        <li class="item item-right flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <p class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
-              asdfasdfaasdfasdfasdfasdfasdfasdf
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </p>
-          </div>
-        </li>
-        <li class="item item-right flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <p class="text">
-              我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
-              asdfasdfaasdfasdfasdfasdfasdfasdf
-              afasdfasdf
-              asdfasdfas
-              dfasdfasdf
-              asdfasdfasdf
-              asdfasdfa
-              asdfad
-            </p>
+            <div class="time"></div>
+            <div class="content">
+              <p class="text">
+                我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
+                asdfasdfaasdfasdfasdfasdfasdfasdf
+                afasdfasdf
+                asdfasdfas
+                dfasdfasdf
+                asdfasdfasdf
+                asdfasdfa
+                asdfad
+              </p>
+            </div>
           </div>
         </li>
       </ul>
@@ -250,7 +167,7 @@ export default {
         background: #fff;
         overflow: auto;
         .item {
-          padding: 10px 20px;
+          padding: 67px 20px 30px 20px;
           .avatar {
             position: relative;
             img {
@@ -264,12 +181,22 @@ export default {
             background: #fff;
             border-radius: 40px;
             max-width: 472px;
-            .text {
-              font-size: 28px;
-              letter-spacing: 3px;
-              line-height: 42px;
-              padding: 19px 36px;
-              word-break: break-all;
+            .time {
+              position: absolute;
+              top: -37px;
+              font-family: PingFangSC-Regular;
+              font-size: 18px;
+              color: #bbbbbb;
+              letter-spacing: 0;
+            }
+            .content {
+              .text {
+                font-size: 28px;
+                letter-spacing: 3px;
+                line-height: 42px;
+                padding: 19px 36px;
+                word-break: break-all;
+              }
             }
           }
         }
@@ -277,8 +204,13 @@ export default {
           .info {
             background: #f4f4f4;
             margin-left: 24px;
-            .text {
-              color: #353535;
+            .time {
+              left: 36px;
+            }
+            .content {
+              .text {
+                color: #353535;
+              }
             }
           }
         }
@@ -288,8 +220,13 @@ export default {
           .info {
             background: #f9e77f;
             margin-right: 24px;
-            .text {
-              color: #000;
+            .time {
+              right: 36px;
+            }
+            .content {
+              .text {
+                color: #000;
+              }
             }
           }
         }
@@ -368,7 +305,7 @@ export default {
         background: #fff;
         overflow: auto;
         .item {
-          margin: 18px 0;
+          padding: 76px 0 36px 0;
           .avatar {
             position: relative;
 
@@ -383,15 +320,24 @@ export default {
             background: #fff;
             border-radius: 35px;
             padding: 14px 24px;
-
-            .text {
+            .time {
+              position: absolute;
+              top: -37px;
               font-family: PingFangSC-Regular;
-              font-size: 24px;
-              color: #353535;
-              letter-spacing: 2.57px;
-              text-align: left;
-              word-break: break-all;
-              line-height: 42px;
+              font-size: 18px;
+              color: #bbbbbb;
+              letter-spacing: 0;
+            }
+            .content {
+              .text {
+                font-family: PingFangSC-Regular;
+                font-size: 24px;
+                color: #353535;
+                letter-spacing: 2.57px;
+                text-align: left;
+                word-break: break-all;
+                line-height: 42px;
+              }
             }
           }
         }
@@ -403,8 +349,12 @@ export default {
             background: #f4f4f4;
             margin-left: 24px;
             margin-right: 124px;
-            .text {
-              color: #353535;
+            .time {
+            }
+            .content {
+              .text {
+                color: #353535;
+              }
             }
           }
         }
@@ -418,8 +368,12 @@ export default {
             background: #f9e77f;
             margin-right: 24px;
             margin-left: 124px;
-            .text {
-              color: #000;
+            .time {
+            }
+            .content {
+              .text {
+                color: #000;
+              }
             }
           }
         }
