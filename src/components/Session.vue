@@ -2,7 +2,7 @@
   <div class="session">
     <service-header class="service-header" title="客服会话管理"></service-header>
     <div class="list" ref="session-list">
-      <div class="item flex-h" v-for="(item,index) in userList" :key="index" :class="{'active':itemActiveIndex==index}" @click="sessionItemClick(index, item.openId)">
+      <div class="item flex-h" v-for="(item,index) in userList" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveIndex==index}" @click="sessionItemClick(index, item.openId)">
         <div class="avatar">
           <img :src="item.headImg" alt="">
           <div class="tag" :hidden="item.hasBeenRead == 1"></div>
@@ -38,10 +38,16 @@ export default {
     return {
       back: require('../assets/img/icon_oneway.png'),
       items: null,
-      itemActiveIndex: 0
+      itemActiveIndex: 0,
+      waiterInfo: {}
     }
   },
-  created() {},
+  created() {
+    this.$root.eventBus.$on('waiterInfo', (waiterInfo) => {
+      this.waiterInfo = waiterInfo
+      console.log('session-waiterInfo', this.waiterInfo)
+    })
+  },
   mounted() {
     this.$nextTick(() => {
       document.querySelector('.list .item')

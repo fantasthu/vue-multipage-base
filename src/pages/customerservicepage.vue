@@ -2,7 +2,7 @@
   <div class="customer-service">
     <div class="s-container flex-h">
       <session v-show="showSession" :userList.sync="userList"></session>
-      <chat v-show="showChat" ></chat>
+      <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
     </div>
   </div>
 </template>
@@ -19,13 +19,20 @@ export default {
   components: { Chat, Session },
   data() {
     return {
+      socket: {},
       showSession: true,
       showChat: true,
       userList: [],
-      currentUserAllMsg: []
+      currentUserAllMsg: [],
+      waiterOpenId: '',
+      waiterInfo: {}
     }
   },
   created() {
+    let wtoi = document.querySelector('.wtoi')
+    this.waiterOpenId = wtoi.innerHTML
+    this.socket = socketio.connect('cs.velo.top/')
+
     this.$root.eventBus.$on('toChat', params => {
       if (params.from === 'chat') {
         this.showSession = true
@@ -37,31 +44,38 @@ export default {
       // 点击用户列表进入对话框, 改变当前接受消息对象
       if (params.openId) {
         console.log('on-tochart', params.openId)
-        socket.emit('receiveThisUserMsg', params.openId)
+        this.socket.emit('receiveThisUserMsg', params.openId)
       }
     })
-    let socket = socketio.connect('http://velo.top/customerService/')
-    // let socket = socketio.connect('http://velo.top:6080')
-    // let socket = socketio.connect('http://kingov.cn:8088')
-    // let socket = socketio.connect('http://127.0.0.1:3030')
 
-    socket.on('init', (data) => {
+    this.socket.on('init', (data) => {
       console.log('链接状态-init', data)
+      this.socket.emit('getWaiterInfoByOpenId', this.waiterOpenId)
     })
-    socket.on('userList', (userList) => {
+    this.socket.on('sendWaiterInfo', (waiterInfo) => {
+      console.log('index---waiterInfo', waiterInfo)
+      this.waiterInfo = waiterInfo[0]
+      this.$root.eventBus.$emit('waiterInfo', waiterInfo[0])
+    })
+    this.socket.on('userList', (userList) => {
       console.log('node推送userList', userList)
       userList.forEach((item, index) => {
         item.formatTime = formatTime(item.msgTime, 6)
+        item.headImg = item.headImg ? item.headImg : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
       })
       this.userList = userList
     })
-    socket.on('userMsg', (obj) => {
+    this.socket.on('userMsg', (obj) => {
       this.$root.eventBus.$emit('userMsg', obj)
       console.log('接收用户发送的消息', obj)
     })
 
-    socket.on('userAllMsg', (obj) => {
+    this.socket.on('userAllMsg', (obj) => {
       this.currentUserAllMsg = obj.userAllMsg
+      obj.userAllMsg.forEach((item, index) => {
+        item.headImg = item.headImg ? item.headImg : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
+        item.formatTime = formatTime(item.msgTime, 6)
+      })
       this.$root.eventBus.$emit('userAllMsg', obj)
       console.log('接收当前用户的所有消息', obj)
     })
@@ -73,6 +87,10 @@ export default {
     })
   },
   methods: {
+    sendWaiterMsgToUser(waiterMsgObj) {
+      console.log('waiterMsgObj', waiterMsgObj)
+      this.socket.emit('sendWaiterMsgToUser', waiterMsgObj)
+    },
     getScreenWidth() {
       const that = this
       let width = window.document.documentElement.clientWidth

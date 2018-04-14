@@ -1,70 +1,54 @@
 <template>
   <div class="chat flex-1">
-    <service-header  @chatBack="chatBack" :back="true" class="service-header" title='某某某的聊天'></service-header>
+    <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='currentUserName'></service-header>
     <div class="pc-header">
       <div class="name">女神逗</div>
     </div>
     <div class="message" ref="wrapper">
-      <!-- <div class="message-latest-time">
-        2013/12/12 12:12
-      </div> -->
-
-
       <ul class="message-list">
-        
-        <li class="item item-left flex-h"  v-for="(item,index) in currentUserAllMsg" :key="index">
-          <div class="avatar"><img :src="item.headImg" alt=""></div>
-          <div class="info">
-            <div class="text">{{item.msg}}</div>
-          </div>
-        </li>
 
-        <li class="item item-left flex-h" v-for="(item,index) in currentUserAllMsg" :key="index">
+        <template v-for="(item,index) in currentUserAllMsg">
+          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'">
+            <div class="avatar"><img :src="item.headImg" alt=""></div>
+            <div class="info">
+              <div class="time">{{item.formatTime}}</div>
+              <div class="content">
+                <div class="text">{{item.msg}}</div>
+              </div>
+            </div>
+          </li>
+
+          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'">
+            <div class="avatar"><img :src="item.headImg" alt=""></div>
+            <div class="info">
+              <div class="time">{{item.formatTime}}</div>
+              <div class="content">
+                <p class="text">{{item.msg}}</p>
+              </div>
+            </div>
+          </li>
+        </template>
+        
+        <!-- <li class="item item-left flex-h" v-for="(item,index) in currentUserAllMsg" :key="index" v-if="item.isWaiter !== 'yes'">
           <div class="avatar"><img :src="item.headImg" alt=""></div>
           <div class="info">
-            <div class="time">2302/22/23 12:12</div>
+            <div class="time">{{item.formatTime}}</div>
             <div class="content">
               <div class="text">{{item.msg}}</div>
             </div>
           </div>
         </li>
-        <li class="item item-left flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
+
+        <li class="item item-right flex-h" v-for="(item,index) in currentUserAllMsg" :key="index" v-if="item.isWaiter == 'yes'">
+          <div class="avatar"><img :src="item.headImg" alt=""></div>
           <div class="info">
-            <div class="time"></div>
+            <div class="time">{{item.formatTime}}</div>
             <div class="content">
-              <div class="text">
-                我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasd
-                fasdfasfdasdfadfasf
-                asdfasdfa
-                afasdfasdf
-                asdfasdfas
-                dfasdfasdf
-                asdfasdfasdf
-                asdfasdfa
-                asdfad
-              </div>
+              <p class="text">{{item.msg}}</p>
             </div>
           </div>
-        </li>
-        <li class="item item-right flex-h">
-          <div class="avatar"><img src="http://velo-bucket.oss-cn-beijing.aliyuncs.com/applet/avatar_l.png?x-oss-process=image/resize,m_lfit,h_60,w_60" alt=""></div>
-          <div class="info">
-            <div class="time"></div>
-            <div class="content">
-              <p class="text">
-                我发了一堆的消息在你这里,你喜欢么adfasdfasdasdfasdfasdfasfdasdfadfasfasdfasdfa
-                asdfasdfaasdfasdfasdfasdfasdfasdf
-                afasdfasdf
-                asdfasdfas
-                dfasdfasdf
-                asdfasdfasdf
-                asdfasdfa
-                asdfad
-              </p>
-            </div>
-          </div>
-        </li>
+        </li> -->
+
       </ul>
     </div>
     <div class="pc-input-container">
@@ -89,6 +73,8 @@
 import { Header, Button } from 'mint-ui'
 import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
+import { formatTime } from '../service/tools'
+
 // import $ from 'jquery'
 export default {
   name: 'chat',
@@ -100,24 +86,32 @@ export default {
       inputData: '',
       back: require('../assets/img/icon_oneway.png'),
       currentUserAllMsg: [],
-      currentUserOpenId: ''
+      currentUserOpenId: '',
+      waiterInfo: {},
+      currentUserName: ''
     }
   },
   created() {
+    // console.log('caht-waiterInfo', this.waiterInfo)
     // this.$root.eventBus.$on('toChat', () => {
     //   this.reloadMessageScroll()
     // })
     // this.$root.eventBus.$on('pcChatHandler', () => {
     //   this.reloadMessageScroll()
     // })
+    this.$root.eventBus.$on('waiterInfo', (waiterInfo) => {
+      this.waiterInfo = waiterInfo
+      console.log('chat-waiterInfo', this.waiterInfo)
+    })
     this.$root.eventBus.$on('userAllMsg', (obj) => {
       this.currentUserAllMsg = obj.userAllMsg
+      this.currentUserName = obj.userAllMsg[0].name + '的聊天'
       this.currentUserOpenId = obj.openId
-      console.log('obj-----obj', obj)
     })
     this.$root.eventBus.$on('userMsg', (arr) => {
+      arr[0].formatTime = formatTime(arr[0].msgTime, 6)
+      arr[0].headImg = arr[0].headImg ? arr[0].headImg : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
       this.currentUserAllMsg.push(arr[0])
-      console.log('obj-----obj', arr)
     })
   },
   mounted() {
@@ -129,6 +123,7 @@ export default {
           // h5端提交信息
           // alert(this.inputData)
           this.sendWaiterMsg(this.inputData)
+          this.inputData = ''
         })
     })
   },
@@ -155,9 +150,22 @@ export default {
       this.$root.eventBus.$emit('toChat', { from: 'chat' })
     },
     sendWaiterMsg(inputData) {
-      console.log('sendWaiterMsg', inputData)
-      this.currentUserAllMsg.push({msg: inputData, headImg: ''})
-      // this.$root.eventBus.$emit('sendWaiterMsgToUser', {msg: inputData})
+      let obj = {
+        name: this.waiterInfo.name,
+        headImg: this.waiterInfo.headImg,
+        openId: this.currentUserAllMsg[0].openId,
+        msg: inputData,
+        msgType: 'text',
+        isWaiter: 'yes',
+        waiterOpenId: this.waiterInfo.openId,
+        whichProgramme: this.currentUserAllMsg[0].whichProgramme
+      }
+      // this.waiterInfo.formatTime = formatTime(parseInt(new Date().getTime() / 1000), 6)
+      // this.waiterInfo.msg = inputData
+      // this.currentUserAllMsg.push(this.waiterInfo)
+      console.log('------------------------this.waiterInfo-------------------------', this.waiterInfo)
+      // console.log('sendWaiterMsg', obj)
+      this.$emit('sendWaiterMsgToUser', obj)
     },
     focus() {
       var agent = navigator.userAgent.toLowerCase()
@@ -214,6 +222,7 @@ export default {
             background: #fff;
             border-radius: 40px;
             max-width: 472px;
+                               
             .time {
               position: absolute;
               top: -37px;
@@ -221,6 +230,7 @@ export default {
               font-size: 18px;
               color: #bbbbbb;
               letter-spacing: 0;
+              min-width: 350px;       
             }
             .content {
               .text {
