@@ -13,7 +13,8 @@
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
-                <div class="text">{{item.msg}}</div>
+                <div class="text" v-if="item.msgType == 'text'">{{item.msg}}</div>
+                <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt=""></div>
               </div>
             </div>
           </li>
@@ -23,7 +24,8 @@
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
-                <p class="text">{{item.msg}}</p>
+                <p class="text" v-if="item.msgType == 'text'">{{item.msg}}</p>
+                <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt=""></div>
               </div>
             </div>
           </li>
@@ -88,7 +90,8 @@ export default {
       currentUserAllMsg: [],
       currentUserOpenId: '',
       waiterInfo: {},
-      currentUserName: ''
+      currentUserName: '',
+      scroll: null
     }
   },
   created() {
@@ -107,11 +110,20 @@ export default {
       this.currentUserAllMsg = obj.userAllMsg
       this.currentUserName = obj.userAllMsg[0].name + '的聊天'
       this.currentUserOpenId = obj.openId
+      setTimeout(() => {
+        this.scroll.scrollTo(0, this.scroll.maxScrollY)
+      }, 100)
     })
     this.$root.eventBus.$on('userMsg', (arr) => {
       arr[0].formatTime = formatTime(arr[0].msgTime, 6)
       arr[0].headImg = arr[0].headImg ? arr[0].headImg : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
       this.currentUserAllMsg.push(arr[0])
+      // console.log('this.scroll', this.scroll.scrollerHeight)
+      // const last = document.querySelector('.message .item')
+      setTimeout(() => {
+        this.scroll.scrollTo(0, this.scroll.maxScrollY)
+      }, 100)
+      // this.scroll.scrollTo(0, -this.scroll.scrollerHeight)
     })
   },
   mounted() {
@@ -131,7 +143,7 @@ export default {
     reloadMessageScroll() {
       this.timer = null
       this.timer = setTimeout(() => {
-        const scroll = new Bscroll(this.$refs.wrapper, {
+        this.scroll = new Bscroll(this.$refs.wrapper, {
           mouseWheel: true
         })
         console.log('scroll', scroll)
@@ -147,7 +159,7 @@ export default {
       }
     },
     chatBack() {
-      this.$root.eventBus.$emit('toChat', { from: 'chat' })
+      this.$root.eventBus.$emit('toChat', {from: 'chat', currentUserOpenId: this.currentUserOpenId})
     },
     sendWaiterMsg(inputData) {
       let obj = {
@@ -239,6 +251,14 @@ export default {
                 line-height: 42px;
                 padding: 19px 36px;
                 word-break: break-all;
+                .image {
+                  width: 256px;
+                  height: 256px;
+                  > img {
+                    width: 100%;
+                    height: 100%;
+                  }
+                }
               }
             }
           }

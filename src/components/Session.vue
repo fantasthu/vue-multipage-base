@@ -7,7 +7,7 @@
           <img :src="item.headImg" alt="">
           <div class="tag" :hidden="item.hasBeenRead == 1"></div>
         </div>
-        <div class="des flex-v">
+        <div class="des flex-1 flex-v">
           <div class="title flex-h flex-bc">
             <div class="name">{{item.name}}</div>
             <div class="time">{{item.formatTime}}</div>
@@ -119,6 +119,7 @@ export default {
             text-overflow: ellipsis;
             white-space: nowrap;
             -webkit-line-clamp: 1;
+            margin-top: 4px;
           }
         }
         .line {
@@ -202,6 +203,7 @@ export default {
             text-overflow: ellipsis;
             white-space: nowrap;
             -webkit-line-clamp: 1;
+            margin-top: 4px;
           }
         }
         .line {
