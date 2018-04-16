@@ -9,14 +9,28 @@
         :closeOnClickModal="false"
         position="center">
         <div class="login">
-            <div class="title">登录</div>
+            <div class="title">登录客服问题</div>
             <div class="input-container">
-              <mt-field label="用户名" placeholder="请输入用户名" v-model="username"></mt-field>
-              <mt-field label="密码" placeholder="请输入密码" v-model="username"></mt-field>
-              <mt-button type="default" size="large">default</mt-button>
+              <div class="input-ctr username flex-v flex-cc">
+                <div class="name">用户名</div>
+                <div class="flex-h flex-cc input-text">
+                  <input type="text" class="text flex-1" v-model="username">
+                </div>
+              </div>
+              <div class="input-ctr password flex-v flex-cc">
+                <div class="name">密码</div>
+                <div class="flex-h flex-cc input-text">
+                  <input type="text" class="text" v-model="password">
+                </div>
+              </div>
+              <div class="submit-ctr">
+                <div class="tologin" @click="toLogin">
+                  登录
+                </div>
+              </div>
             </div>
         </div>
-</mt-popup>
+      </mt-popup>
     </div>
   </div>
 </template>
@@ -25,6 +39,7 @@
 import Chat from '../components/Chat.vue'
 import Session from '../components/Session.vue'
 import socketio from 'socket.io-client'
+import axios from 'axios'
 import { formatTime } from '../service/tools'
 import { Popup, Field } from 'mint-ui'
 
@@ -33,6 +48,8 @@ export default {
   components: { Chat, Session, Popup, Field },
   data() {
     return {
+      username: '',
+      password: '',
       socket: {},
       showSession: true,
       showChat: true,
@@ -53,13 +70,16 @@ export default {
       currentUserAllMsg: [],
       waiterOpenId: '',
       waiterInfo: {},
-      popupVisible: false
+      popupVisible: true
     }
   },
   created() {
+    // 判断是否需要登录
+    this.getLoginStatus()
+    this.getWaiterOpenId()
     let wtoi = document.querySelector('.wtoi')
     this.waiterOpenId = wtoi.innerHTML
-    this.socket = socketio.connect('cs.velo.top/')
+    this.socket = socketio.connect('cs.velo.top1/')
 
     this.$root.eventBus.$on('toChat', params => {
       if (params.from === 'chat') {
@@ -131,6 +151,48 @@ export default {
     })
   },
   methods: {
+    getWaiterOpenId() {
+      this.waiterOpenId = localStorage.getItem('waiterOpenId') || ''
+      console.log('this.waiterOpenId', this.waiterOpenId)
+      if (this.waiterOpenId.trim() === '') {
+        this.showSession = false
+        this.showChat = false
+        this.popupVisible = true
+      } else {
+        this.showSession = true
+        this.showChat = true
+        this.popupVisible = false
+      }
+      console.log(' this.showSession ', this.showSession)
+    },
+    toLogin() {
+      console.log('this.name', this.username, this.password)
+      axios
+        .post('http://cs.velo.top/customerService/commonAccount/pcLogin', {
+          userName: this.username,
+          passWord: this.password
+        })
+        .then(_ => {
+          this.waiterOpenId = _.data.obj.waiterOpenId
+          localStorage.setItem('waiterOpenId', this.waiterOpenId)
+          console.log('this.response', _.data.obj.waiterOpenId)
+          this.showSession = true
+          this.showChat = true
+          this.popupVisible = false
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
+    },
+    getLoginStatus() {
+      if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+        this.popupVisible = false
+      } else {
+        this.popupVisible = true
+        this.showSession = false
+        this.showChat = false
+      }
+    },
     sendWaiterMsgToUser(waiterMsgObj) {
       console.log('waiterMsgObj', waiterMsgObj)
       this.socket.emit('sendWaiterMsgToUser', waiterMsgObj)
@@ -186,6 +248,61 @@ body {
   height: 100%;
   .s-container {
     height: 100%;
+    .login {
+      width: 525px;
+      padding: 35px;
+      background: #ffffff;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+      border-radius: 5px;
+      .title {
+        margin-top: 1px;
+        margin-bottom: 36px;
+        font-family: PingFangSC-Semibold;
+        font-size: 36px;
+        color: rgba(0, 0, 0, 0.87);
+        letter-spacing: 2.77px;
+      }
+      .input-container {
+        .input-ctr {
+          margin-bottom: 18px;
+          .name {
+            width: 100%;
+            font-family: PingFang-SC-Regular;
+            font-size: 22px;
+            color: rgba(0, 0, 0, 0.87);
+            letter-spacing: 1.5px;
+          }
+          .input-text {
+            width: 100%;
+            .text {
+              background: #f1f1f1;
+              border-radius: 5px;
+              width: 100%;
+              height: 60px;
+              padding-left: 18px;
+              line-height: 60px;
+              margin-top: 12px;
+            }
+          }
+        }
+        .submit-ctr {
+          padding-top: 18px;
+          margin-bottom: 1px;
+          .tologin {
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            background: #f9e77f;
+            border-radius: 5px;
+            font-family: PingFang-SC-Regular;
+            font-size: 24px;
+            color: rgba(0, 0, 0, 0.87);
+            letter-spacing: 2px;
+          }
+        }
+      }
+    }
   }
 }
 </style>
