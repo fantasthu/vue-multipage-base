@@ -63,8 +63,9 @@
     </div>
     <div class="input-container">
       <div class="to-input">
-        <form action="javascrpt:;">
-          <input type="text" class="text-input" v-model="inputData" @focus="focus">
+        <form action="javascrpt:;" class="flex-h flex-cc">
+          <input type="text" class="text-input flex-1" v-model="inputData" @focus="focus">
+          <div class="h5-send" @click="mobileSendMsg">发送</div>
         </form>
       </div>
     </div>
@@ -87,7 +88,25 @@ export default {
       timerId: null,
       inputData: '',
       back: require('../assets/img/icon_oneway.png'),
-      currentUserAllMsg: [],
+      currentUserAllMsg: [
+        {
+          formatTime: '2018-04-13 17:19:59',
+          hasBeenRead: 0,
+          headImg:
+            'https://wx.qlogo.cn/mmopen/vi_32/K3vFfda4OibhdoOOPFnJcvl8TSt6YkUNQiaV6w3RQNCKKZk5WcxqrOscm3K1G0NKBbpAWqnZicic5JzmcueKqIvZAQ/0',
+          idx: '3',
+          isWaiter: 'no',
+          msg: 'asdfasdfasasdfasdf',
+          msgPicUrl: null,
+          msgType: 'text',
+          msgTime: '',
+          name: '政',
+          openId: '',
+          sessionId: '',
+          waiterOpenId: '',
+          whichProgramme: ''
+        }
+      ],
       currentUserOpenId: '',
       waiterInfo: {},
       currentUserName: '',
@@ -95,18 +114,17 @@ export default {
     }
   },
   created() {
-    // console.log('caht-waiterInfo', this.waiterInfo)
-    // this.$root.eventBus.$on('toChat', () => {
-    //   this.reloadMessageScroll()
-    // })
-    // this.$root.eventBus.$on('pcChatHandler', () => {
-    //   this.reloadMessageScroll()
-    // })
-    this.$root.eventBus.$on('waiterInfo', (waiterInfo) => {
+    this.$root.eventBus.$on('toChat', () => {
+      this.reloadMessageScroll()
+    })
+    this.$root.eventBus.$on('pcChatHandler', () => {
+      this.reloadMessageScroll()
+    })
+    this.$root.eventBus.$on('waiterInfo', waiterInfo => {
       this.waiterInfo = waiterInfo
       console.log('chat-waiterInfo', this.waiterInfo)
     })
-    this.$root.eventBus.$on('userAllMsg', (obj) => {
+    this.$root.eventBus.$on('userAllMsg', obj => {
       this.currentUserAllMsg = obj.userAllMsg
       this.currentUserName = obj.userAllMsg[0].name + '的聊天'
       this.currentUserOpenId = obj.openId
@@ -114,9 +132,11 @@ export default {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 100)
     })
-    this.$root.eventBus.$on('userMsg', (arr) => {
+    this.$root.eventBus.$on('userMsg', arr => {
       arr[0].formatTime = formatTime(arr[0].msgTime, 6)
-      arr[0].headImg = arr[0].headImg ? arr[0].headImg : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
+      arr[0].headImg = arr[0].headImg
+        ? arr[0].headImg
+        : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
       this.currentUserAllMsg.push(arr[0])
       // console.log('this.scroll', this.scroll.scrollerHeight)
       // const last = document.querySelector('.message .item')
@@ -129,14 +149,6 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.reloadMessageScroll()
-      document
-        .querySelector('.input-container form')
-        .addEventListener('submit', () => {
-          // h5端提交信息
-          // alert(this.inputData)
-          this.sendWaiterMsg(this.inputData)
-          this.inputData = ''
-        })
     })
   },
   methods: {
@@ -158,8 +170,15 @@ export default {
         alert(this.inputData)
       }
     },
+    mobileSendMsg() {
+      this.sendWaiterMsg(this.inputData)
+      this.inputData = ''
+    },
     chatBack() {
-      this.$root.eventBus.$emit('toChat', {from: 'chat', currentUserOpenId: this.currentUserOpenId})
+      this.$root.eventBus.$emit('toChat', {
+        from: 'chat',
+        currentUserOpenId: this.currentUserOpenId
+      })
     },
     sendWaiterMsg(inputData) {
       let obj = {
@@ -175,7 +194,10 @@ export default {
       // this.waiterInfo.formatTime = formatTime(parseInt(new Date().getTime() / 1000), 6)
       // this.waiterInfo.msg = inputData
       // this.currentUserAllMsg.push(this.waiterInfo)
-      console.log('------------------------this.waiterInfo-------------------------', this.waiterInfo)
+      console.log(
+        '------------------------this.waiterInfo-------------------------',
+        this.waiterInfo
+      )
       // console.log('sendWaiterMsg', obj)
       this.$emit('sendWaiterMsgToUser', obj)
     },
@@ -191,7 +213,7 @@ export default {
           return
         }
       }
-      this.tiemr = setTimeout(() => {
+      this.timer = setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight)
       }, 500)
     }
@@ -234,7 +256,7 @@ export default {
             background: #fff;
             border-radius: 40px;
             max-width: 472px;
-                               
+
             .time {
               position: absolute;
               top: -37px;
@@ -242,7 +264,7 @@ export default {
               font-size: 18px;
               color: #bbbbbb;
               letter-spacing: 0;
-              min-width: 350px;       
+              min-width: 350px;
             }
             .content {
               .text {
@@ -306,7 +328,7 @@ export default {
       right: 0;
       width: 100%;
       height: 120px;
-      box-shadow: 0 -1px 0 0 #dddddd;
+      border-top: 1px solid #dddddd;
       .to-input {
         position: absolute;
         left: 0;
@@ -317,21 +339,23 @@ export default {
         margin: auto;
         background: #fff;
         form {
-        }
-        .text-input {
-          position: absolute;
-          left: 0;
-          bottom: 0;
-          right: 0;
-          top: 0;
-          margin: auto;
-          width: 574px;
-          // width: calc(100%-48px);
-          padding: 0 48px;
-          background: #f7f7f7;
-          border-radius: 100px;
-          font-size: 30px;
-          color: #353535;
+          .text-input {
+            height: 80px;
+            line-height: 80px;
+            margin-left: 40px;
+            padding: 0 48px;
+            background: #f7f7f7;
+            border-radius: 100px;
+            font-size: 30px;
+            color: #353535;
+          }
+          .h5-send {
+            width: 150px;
+            font-size: 36px;
+            color: #353535;
+            letter-spacing: 3.38px;
+            text-align: center;
+          }
         }
       }
     }
@@ -341,7 +365,7 @@ export default {
   .chat {
     position: relative;
     border-left: 2px solid #e5e5e5;
-    margin-left: 440px;
+    margin-left: 460px;
     .service-header {
       display: none;
     }
@@ -391,6 +415,7 @@ export default {
               font-size: 18px;
               color: #bbbbbb;
               letter-spacing: 0;
+              min-width: 200px;
             }
             .content {
               .text {
@@ -449,6 +474,7 @@ export default {
       bottom: 0;
       right: 0;
       border-top: 2px solid #e5e5e5;
+      background: #fff;
       .to-input,
       form {
         .text-input {

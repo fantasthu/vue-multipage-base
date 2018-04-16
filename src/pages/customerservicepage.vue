@@ -4,24 +4,33 @@
       <session v-show="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
       <mt-popup
-        :visible.sync="popupVisible"
+        v-model="popupVisible"
+        popup-transition="popup-fade"
+        :closeOnClickModal="false"
         position="center">
-      </mt-popup>
+        <div class="login">
+            <div class="title">登录</div>
+            <div class="input-container">
+              <mt-field label="用户名" placeholder="请输入用户名" v-model="username"></mt-field>
+              <mt-field label="密码" placeholder="请输入密码" v-model="username"></mt-field>
+              <mt-button type="default" size="large">default</mt-button>
+            </div>
+        </div>
+</mt-popup>
     </div>
   </div>
 </template>
 
 <script>
-// import { Button, Cell, Field, Radio, MessageBox, Indicator } from 'mint-ui'
 import Chat from '../components/Chat.vue'
 import Session from '../components/Session.vue'
 import socketio from 'socket.io-client'
 import { formatTime } from '../service/tools'
-import { Popup } from 'mint-ui'
+import { Popup, Field } from 'mint-ui'
 
 export default {
   name: 'about',
-  components: { Chat, Session, Popup },
+  components: { Chat, Session, Popup, Field },
   data() {
     return {
       socket: {},
@@ -34,34 +43,17 @@ export default {
           idx: 5,
           isWaiter: 'no',
           msg: '1221',
-          msgTime: 1523677906,
+          formatTime: '2018-04-13 17:19:59',
           name: '政',
           openId: 'owGUi0lMm9Ki5UVJPIUFfIEg7XXY',
           sessionId: 'owGUi0lMm9Ki5UVJPIUFfIEg7XXY1523677906924',
           whichProgramme: 'vip'
         }
       ],
-      currentUserAllMsg: [
-        {
-          formatTime: '2018-04-13 17:19:59',
-          hasBeenRead: 0,
-          headImg:
-            'https://wx.qlogo.cn/mmopen/vi_32/K3vFfda4OibhdoOOPFnJcvl8TSt6YkUNQiaV6w3RQNCKKZk5WcxqrOscm3K1G0NKBbpAWqnZicic5JzmcueKqIvZAQ/0',
-          idx: '3',
-          isWaiter: 'no',
-          msg: 'asdfasdfasasdfasdf',
-          msgPicUrl: null,
-          msgTime: '',
-          name: '政',
-          openId: '',
-          sessionId: '',
-          waiterOpenId: '',
-          whichProgramme: ''
-        }
-      ],
+      currentUserAllMsg: [],
       waiterOpenId: '',
       waiterInfo: {},
-      popupVisible: true
+      popupVisible: false
     }
   },
   created() {

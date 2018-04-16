@@ -166,7 +166,7 @@ export default {
     right: 0;
     bottom: 0;
     top: 0;
-    width: 440px;
+    width: 460px;
     max-height: 1200px;
     .service-header {
       display: none;
@@ -181,7 +181,7 @@ export default {
       overflow-y: auto;
       .item {
         position: relative;
-        padding: 24px 24px;
+        padding: 24px;
         .avatar {
           position: relative;
           img {
@@ -208,25 +208,37 @@ export default {
           .title {
             .name {
               font-family: PingFangSC-Regular;
-              font-size: 24px;
               color: #353535;
               letter-spacing: 0;
-              max-width: 100px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              -webkit-line-clamp: 1;
+              .text {
+                font-size: 20px;
+                max-width: 110px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                -webkit-line-clamp: 1;
+              }
+              .whichProgramme {
+                margin-left: 10px;
+                font-family: CoreSansA65Bold;
+                font-size: 17px;
+                color: #353535;
+                letter-spacing: 0.94px;
+                text-align: center;
+                padding: 2px 4px;
+                background: #ffe654;
+              }
             }
             .time {
               font-family: PingFangSC-Regular;
-              font-size: 20px;
+              font-size: 12px;
               color: #b2b2b2;
               text-align: right;
             }
           }
           .hint {
             font-family: PingFangSC-Regular;
-            font-size: 24px;
+            font-size: 20px;
             color: #b2b2b2;
             letter-spacing: 2.77px;
             overflow: hidden;
