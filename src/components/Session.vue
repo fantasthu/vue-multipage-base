@@ -1,6 +1,6 @@
 <template>
   <div class="session">
-    <service-header class="service-header" title="客服会话管理"></service-header>
+    <!-- <service-header class="service-header" title="客服会话管理"></service-header> -->
     <div class="list" ref="session-list">
       <div class="item flex-h" v-for="(item,index) in userList" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveIndex==index}" @click="sessionItemClick(index, item.openId)">
         <div class="avatar">
@@ -78,7 +78,7 @@ export default {
   .session {
     width: 100%;
     .list {
-      margin-top: 88px;
+      // margin-top: 88px;
       .item {
         position: relative;
         padding: 30px 42px;

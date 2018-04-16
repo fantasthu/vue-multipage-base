@@ -130,7 +130,7 @@ export default {
       this.currentUserOpenId = obj.openId
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
-      }, 100)
+      }, 200)
     })
     this.$root.eventBus.$on('userMsg', arr => {
       arr[0].formatTime = formatTime(arr[0].msgTime, 6)
@@ -142,7 +142,7 @@ export default {
       // const last = document.querySelector('.message .item')
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
-      }, 100)
+      }, 200)
       // this.scroll.scrollTo(0, -this.scroll.scrollerHeight)
     })
   },
@@ -159,7 +159,7 @@ export default {
           mouseWheel: true
         })
         console.log('scroll', scroll)
-      }, 20)
+      }, 100)
     },
     enterHandler(event) {
       const keyCode = event.keyCode

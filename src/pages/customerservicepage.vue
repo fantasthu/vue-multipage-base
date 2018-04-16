@@ -11,8 +11,8 @@
         <div class="login">
             <div class="title">登录</div>
             <div class="input-container">
-              <mt-field label="用户名" placeholder="请输入用户名" v-model="username"></mt-field>
-              <mt-field label="密码" placeholder="请输入密码" v-model="username"></mt-field>
+              <!-- <mt-field label="用户名" placeholder="请输入用户名" v-model="username"></mt-field> -->
+              <!-- <mt-field label="密码" placeholder="请输入密码" v-model="username"></mt-field> -->
               <mt-button type="default" size="large">default</mt-button>
             </div>
         </div>
