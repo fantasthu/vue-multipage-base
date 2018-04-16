@@ -10,7 +10,7 @@
         <template v-for="(item,index) in currentUserAllMsg">
           <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'">
             <div class="avatar"><img :src="item.headImg" alt=""></div>
-            <div class="info" @click="testClick(item.msgPicUrl)">
+            <div class="info" @click="showMsgPic(item.msgPicUrl)">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'">{{item.msg}}</div>
@@ -21,7 +21,7 @@
 
           <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'">
             <div class="avatar"><img :src="item.headImg" alt=""></div>
-            <div class="info" @click="testClick(item.msgPicUrl)">
+            <div class="info" @click="showMsgPic(item.msgPicUrl)">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <p class="text" v-if="item.msgType == 'text'">{{item.msg}}</p>
@@ -152,7 +152,8 @@ export default {
     })
   },
   methods: {
-    testClick(msgPicUrl) {
+    showMsgPic(msgPicUrl) {
+      if (!msgPicUrl) return
       console.log('msgPicUrl', msgPicUrl)
     },
     reloadMessageScroll() {
