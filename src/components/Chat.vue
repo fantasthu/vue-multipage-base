@@ -251,13 +251,14 @@ export default {
                 line-height: 42px;
                 padding: 19px 36px;
                 word-break: break-all;
-                .image {
-                  width: 256px;
-                  height: 256px;
-                  > img {
-                    width: 100%;
-                    height: 100%;
-                  }
+              }
+              .image {
+                width: 256px;
+                height: 256px;
+                overflow: hidden;
+                > img {
+                  width: 100%;
+                  height: 100%;
                 }
               }
             }

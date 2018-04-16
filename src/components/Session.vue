@@ -9,7 +9,10 @@
         </div>
         <div class="des flex-1 flex-v">
           <div class="title flex-h flex-bc">
-            <div class="name">{{item.name}}</div>
+            <div class="name">
+              {{item.name}} 
+              <span class="whichProgramme">{{item.whichProgramme}}</span>
+            </div>
             <div class="time">{{item.formatTime}}</div>
           </div>
           <div class="hint">{{item.msg}}</div>
@@ -106,6 +109,14 @@ export default {
             .name {
               font-size: 36px;
               color: #353535;
+              .whichProgramme {
+                background: red;
+                color: white;
+                border-radius: 5px;
+                font-size: 14px;
+                display: inline-block;
+                padding: 1px 8px;
+              }
             }
             .time {
               color: #b2b2b2;
