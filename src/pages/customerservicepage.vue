@@ -76,7 +76,6 @@ export default {
   created() {
     // 判断是否需要登录
     this.getLoginStatus()
-    this.getWaiterOpenId()
     let wtoi = document.querySelector('.wtoi')
     this.waiterOpenId = wtoi.innerHTML
     this.socket = socketio.connect('cs.velo.top1/')
@@ -185,12 +184,21 @@ export default {
         })
     },
     getLoginStatus() {
+      this.waiterOpenId = localStorage.getItem('waiterOpenId') || ''
       if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
         this.popupVisible = false
+        this.showSession = true
+        this.showChat = true
       } else {
-        this.popupVisible = true
-        this.showSession = false
-        this.showChat = false
+        if (this.waiterOpenId.trim().length > 0) {
+          this.popupVisible = false
+          this.showSession = true
+          this.showChat = true
+        } else {
+          this.popupVisible = true
+          this.showSession = false
+          this.showChat = false
+        }
       }
     },
     sendWaiterMsgToUser(waiterMsgObj) {
