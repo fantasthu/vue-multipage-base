@@ -159,7 +159,7 @@ export default {
     }
   }
 }
-@media screen and (min-width: 768px) and (max-width: 1650px) {
+@media screen and (min-width: 768px) {
   .session {
     position: absolute;
     left: 0;

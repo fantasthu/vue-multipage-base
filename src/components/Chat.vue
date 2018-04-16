@@ -361,7 +361,7 @@ export default {
     }
   }
 }
-@media screen and (min-width: 768px) and (max-width: 1650px) {
+@media screen and (min-width: 768px) {
   .chat {
     position: relative;
     border-left: 2px solid #e5e5e5;
