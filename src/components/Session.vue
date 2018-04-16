@@ -50,6 +50,9 @@ export default {
       this.waiterInfo = waiterInfo
       console.log('session-waiterInfo', this.waiterInfo)
     })
+    // this.$root.eventBus.$on('pcSize', waiterInfo => {
+    //   sessionItemClick(0, )
+    // })
   },
   mounted() {
     this.$nextTick(() => {
@@ -60,12 +63,12 @@ export default {
     sessionItemClick(index, openId) {
       if (this.$root.eventBus.showWidth < 768) {
         // 手机
-        this.$root.eventBus.$emit('toChat', { openId: openId })
+        this.$root.eventBus.$emit('toChat', {openId: openId, from: 'm-session'})
         console.log('index, openId', index, openId)
       } else {
         // PC
         this.itemActiveIndex = index
-        this.$root.eventBus.$emit('toChat', { openId: openId })
+        this.$root.eventBus.$emit('toChat', {openId: openId, from: 'p-session'})
         console.log('index, openId', index, openId)
       }
     }
@@ -160,7 +163,7 @@ export default {
     }
   }
 }
-@media screen and (min-width: 768px) and (max-width: 1650px) {
+@media screen and (min-width: 768px) {
   .session {
     position: absolute;
     left: 0;

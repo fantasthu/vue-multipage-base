@@ -89,23 +89,23 @@ export default {
       inputData: '',
       back: require('../assets/img/icon_oneway.png'),
       currentUserAllMsg: [
-        {
-          formatTime: '2018-04-13 17:19:59',
-          hasBeenRead: 0,
-          headImg:
-            'https://wx.qlogo.cn/mmopen/vi_32/K3vFfda4OibhdoOOPFnJcvl8TSt6YkUNQiaV6w3RQNCKKZk5WcxqrOscm3K1G0NKBbpAWqnZicic5JzmcueKqIvZAQ/0',
-          idx: '3',
-          isWaiter: 'no',
-          msg: 'asdfasdfasasdfasdf',
-          msgPicUrl: null,
-          msgType: 'text',
-          msgTime: '',
-          name: '政',
-          openId: '',
-          sessionId: '',
-          waiterOpenId: '',
-          whichProgramme: ''
-        }
+        // {
+        //   formatTime: '2018-04-13 17:19:59',
+        //   hasBeenRead: 0,
+        //   headImg:
+        //     'https://wx.qlogo.cn/mmopen/vi_32/K3vFfda4OibhdoOOPFnJcvl8TSt6YkUNQiaV6w3RQNCKKZk5WcxqrOscm3K1G0NKBbpAWqnZicic5JzmcueKqIvZAQ/0',
+        //   idx: '3',
+        //   isWaiter: 'no',
+        //   msg: 'asdfasdfasasdfasdf',
+        //   msgPicUrl: null,
+        //   msgType: 'text',
+        //   msgTime: '',
+        //   name: '政',
+        //   openId: '',
+        //   sessionId: '',
+        //   waiterOpenId: '',
+        //   whichProgramme: ''
+        // }
       ],
       currentUserOpenId: '',
       waiterInfo: {},
@@ -153,8 +153,9 @@ export default {
   },
   methods: {
     showMsgPic(msgPicUrl) {
-      if (!msgPicUrl) return
-      console.log('msgPicUrl', msgPicUrl)
+      if (msgPicUrl) {
+        console.log('msgPicUrl', msgPicUrl)
+      }
     },
     reloadMessageScroll() {
       this.timer = null
@@ -183,7 +184,9 @@ export default {
           whichProgramme: this.currentUserAllMsg[0].whichProgramme
         }
         this.$emit('sendWaiterMsgToUser', obj)
-        this.inputData = ''
+        setTimeout(() => {
+          this.inputData = ''
+        }, 100)
       }
     },
     mobileSendMsg() {
@@ -210,10 +213,7 @@ export default {
       // this.waiterInfo.formatTime = formatTime(parseInt(new Date().getTime() / 1000), 6)
       // this.waiterInfo.msg = inputData
       // this.currentUserAllMsg.push(this.waiterInfo)
-      console.log(
-        '------------------------this.waiterInfo-------------------------',
-        this.waiterInfo
-      )
+      console.log('---------this.waiterInfo---------', this.waiterInfo)
       // console.log('sendWaiterMsg', obj)
       this.$emit('sendWaiterMsgToUser', obj)
     },
@@ -377,7 +377,7 @@ export default {
     }
   }
 }
-@media screen and (min-width: 768px) and (max-width: 1650px) {
+@media screen and (min-width: 768px) {
   .chat {
     position: relative;
     border-left: 2px solid #e5e5e5;
