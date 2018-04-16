@@ -21,7 +21,7 @@
 
           <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'">
             <div class="avatar"><img :src="item.headImg" alt=""></div>
-            <div class="info">
+            <div class="info" @click="testClick">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <p class="text" v-if="item.msgType == 'text'">{{item.msg}}</p>
@@ -152,6 +152,9 @@ export default {
     })
   },
   methods: {
+    testClick(msgPicUrl) {
+      console.log('msgPicUrl', msgPicUrl)
+    },
     reloadMessageScroll() {
       this.timer = null
       this.timer = setTimeout(() => {

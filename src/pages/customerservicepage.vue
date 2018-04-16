@@ -91,6 +91,9 @@ export default {
     this.socket.on('userList', userList => {
       console.log('node推送userList', userList)
       userList.forEach((item, index) => {
+        if (item.name.length > 3) {
+          item.name = item.name.substr(0, 3) + '...'
+        }
         item.formatTime = formatTime(item.msgTime, 6)
         item.headImg = item.headImg
           ? item.headImg
@@ -100,15 +103,15 @@ export default {
     })
     this.socket.on('userMsg', obj => {
       this.$root.eventBus.$emit('userMsg', obj)
-      this.userList.map((item, index) => {
-        if (item.openId === obj[0].openId) {
-          item.hasBeenRead = 0
-          item.msg = obj[0].msg
-          console.log('item------', item)
-          console.log('obj------', obj)
-        }
-        return item
-      })
+      // this.userList.map((item, index) => {
+      //   if (item.openId === obj[0].openId) {
+      //     item.hasBeenRead = 0
+      //     item.msg = obj[0].msg
+      //     console.log('item------', item)
+      //     console.log('obj------', obj)
+      //   }
+      //   return item
+      // })
       console.log('接收用户发送的消息', obj)
     })
 
