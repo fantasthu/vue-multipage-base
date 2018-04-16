@@ -3,6 +3,10 @@
     <div class="s-container flex-h">
       <session v-show="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
+      <mt-popup
+        :visible.sync="popupVisible"
+        position="center">
+      </mt-popup>
     </div>
   </div>
 </template>
@@ -13,19 +17,51 @@ import Chat from '../components/Chat.vue'
 import Session from '../components/Session.vue'
 import socketio from 'socket.io-client'
 import { formatTime } from '../service/tools'
+import { Popup } from 'mint-ui'
 
 export default {
   name: 'about',
-  components: { Chat, Session },
+  components: { Chat, Session, Popup },
   data() {
     return {
       socket: {},
       showSession: true,
       showChat: true,
-      userList: [],
-      currentUserAllMsg: [],
+      userList: [
+        {
+          headImg:
+            'http://thirdwx.qlogo.cn/mmopen/vi_32/dPP0YeN7pX4Q9IxNSx7KuK0NoL5icHiciclibspkbMUdyj1tFFUW8pKmTaDAhL2BY0rWmF9O5qRdOwtvtYe43Gq61g/132',
+          idx: 5,
+          isWaiter: 'no',
+          msg: '1221',
+          msgTime: 1523677906,
+          name: '政',
+          openId: 'owGUi0lMm9Ki5UVJPIUFfIEg7XXY',
+          sessionId: 'owGUi0lMm9Ki5UVJPIUFfIEg7XXY1523677906924',
+          whichProgramme: 'vip'
+        }
+      ],
+      currentUserAllMsg: [
+        {
+          formatTime: '2018-04-13 17:19:59',
+          hasBeenRead: 0,
+          headImg:
+            'https://wx.qlogo.cn/mmopen/vi_32/K3vFfda4OibhdoOOPFnJcvl8TSt6YkUNQiaV6w3RQNCKKZk5WcxqrOscm3K1G0NKBbpAWqnZicic5JzmcueKqIvZAQ/0',
+          idx: '3',
+          isWaiter: 'no',
+          msg: 'asdfasdfasasdfasdf',
+          msgPicUrl: null,
+          msgTime: '',
+          name: '政',
+          openId: '',
+          sessionId: '',
+          waiterOpenId: '',
+          whichProgramme: ''
+        }
+      ],
       waiterOpenId: '',
-      waiterInfo: {}
+      waiterInfo: {},
+      popupVisible: true
     }
   },
   created() {
@@ -37,7 +73,9 @@ export default {
       if (params.from === 'chat') {
         this.showSession = true
         this.showChat = false
-        this.socket.emit('backToUserListFreshUserList', {currentUserOpenId: params.currentUserOpenId})
+        this.socket.emit('backToUserListFreshUserList', {
+          currentUserOpenId: params.currentUserOpenId
+        })
       } else {
         this.showSession = false
         this.showChat = true
@@ -49,24 +87,26 @@ export default {
       }
     })
 
-    this.socket.on('init', (data) => {
+    this.socket.on('init', data => {
       console.log('链接状态-init', data)
       this.socket.emit('getWaiterInfoByOpenId', this.waiterOpenId)
     })
-    this.socket.on('sendWaiterInfo', (waiterInfo) => {
+    this.socket.on('sendWaiterInfo', waiterInfo => {
       console.log('index---waiterInfo', waiterInfo)
       this.waiterInfo = waiterInfo[0]
       this.$root.eventBus.$emit('waiterInfo', waiterInfo[0])
     })
-    this.socket.on('userList', (userList) => {
+    this.socket.on('userList', userList => {
       console.log('node推送userList', userList)
       userList.forEach((item, index) => {
         item.formatTime = formatTime(item.msgTime, 6)
-        item.headImg = item.headImg ? item.headImg : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
+        item.headImg = item.headImg
+          ? item.headImg
+          : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
       })
       this.userList = userList
     })
-    this.socket.on('userMsg', (obj) => {
+    this.socket.on('userMsg', obj => {
       this.$root.eventBus.$emit('userMsg', obj)
       this.userList.map((item, index) => {
         if (item.openId === obj[0].openId) {
@@ -80,10 +120,12 @@ export default {
       console.log('接收用户发送的消息', obj)
     })
 
-    this.socket.on('userAllMsg', (obj) => {
+    this.socket.on('userAllMsg', obj => {
       this.currentUserAllMsg = obj.userAllMsg
       obj.userAllMsg.forEach((item, index) => {
-        item.headImg = item.headImg ? item.headImg : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
+        item.headImg = item.headImg
+          ? item.headImg
+          : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
         item.formatTime = formatTime(item.msgTime, 6)
       })
       this.$root.eventBus.$emit('userAllMsg', obj)

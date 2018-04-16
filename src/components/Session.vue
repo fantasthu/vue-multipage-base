@@ -9,8 +9,8 @@
         </div>
         <div class="des flex-1 flex-v">
           <div class="title flex-h flex-bc">
-            <div class="name">
-              {{item.name}} 
+            <div class="name flex-h flex-cc">
+              <span class="text">{{item.name}}</span>
               <span class="whichProgramme">{{item.whichProgramme}}</span>
             </div>
             <div class="time">{{item.formatTime}}</div>
@@ -46,7 +46,7 @@ export default {
     }
   },
   created() {
-    this.$root.eventBus.$on('waiterInfo', (waiterInfo) => {
+    this.$root.eventBus.$on('waiterInfo', waiterInfo => {
       this.waiterInfo = waiterInfo
       console.log('session-waiterInfo', this.waiterInfo)
     })
@@ -60,7 +60,7 @@ export default {
     sessionItemClick(index, openId) {
       if (this.$root.eventBus.showWidth < 768) {
         // 手机
-        this.$root.eventBus.$emit('toChat', {openId: openId})
+        this.$root.eventBus.$emit('toChat', { openId: openId })
         console.log('index, openId', index, openId)
       } else {
         // PC
@@ -109,13 +109,27 @@ export default {
             .name {
               font-size: 36px;
               color: #353535;
+
+              .text {
+                display: block;
+                max-width: 220px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                -webkit-line-clamp: 1;
+              }
               .whichProgramme {
-                background: red;
-                color: white;
-                border-radius: 5px;
+                margin-left: 10px;
+                background: #ffe654;
+                color: #000;
+                border-radius: 6px;
                 font-size: 14px;
                 display: inline-block;
-                padding: 1px 8px;
+                padding: 2px 6px;
+                font-size: 22px;
+                color: #353535;
+                letter-spacing: 3px;
+                text-align: center;
               }
             }
             .time {
@@ -167,7 +181,7 @@ export default {
       overflow-y: auto;
       .item {
         position: relative;
-        padding: 18px 24px;
+        padding: 24px 24px;
         .avatar {
           position: relative;
           img {
@@ -197,6 +211,11 @@ export default {
               font-size: 24px;
               color: #353535;
               letter-spacing: 0;
+              max-width: 100px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              -webkit-line-clamp: 1;
             }
             .time {
               font-family: PingFangSC-Regular;
@@ -222,7 +241,8 @@ export default {
           left: 0;
           right: 0;
           bottom: 0;
-          height: 1px;
+          height: 2px;
+          transform: scaleY(0.5);
           background: #e5e5e5;
         }
       }
