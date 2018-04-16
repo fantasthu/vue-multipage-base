@@ -2,7 +2,7 @@
   <div class="chat flex-1">
     <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='currentUserName'></service-header>
     <div class="pc-header">
-      <div class="name">女神逗</div>
+      <div class="name">{{currentUserName}}</div>
     </div>
     <div class="message" ref="wrapper">
       <ul class="message-list">
@@ -10,7 +10,7 @@
         <template v-for="(item,index) in currentUserAllMsg">
           <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'">
             <div class="avatar"><img :src="item.headImg" alt=""></div>
-            <div class="info">
+            <div class="info" @click="testClick(item.msgPicUrl)">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'">{{item.msg}}</div>
@@ -21,7 +21,7 @@
 
           <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'">
             <div class="avatar"><img :src="item.headImg" alt=""></div>
-            <div class="info" @click="testClick">
+            <div class="info" @click="testClick(item.msgPicUrl)">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <p class="text" v-if="item.msgType == 'text'">{{item.msg}}</p>
@@ -170,7 +170,19 @@ export default {
         : event.which ? event.which : event.charCode
       if (keyCode === 13) {
         // pc 端提交消息
-        alert(this.inputData)
+        // alert(this.inputData)
+        let obj = {
+          name: this.waiterInfo.name,
+          headImg: this.waiterInfo.headImg,
+          openId: this.currentUserAllMsg[0].openId,
+          msg: this.inputData,
+          msgType: 'text',
+          isWaiter: 'yes',
+          waiterOpenId: this.waiterInfo.openId,
+          whichProgramme: this.currentUserAllMsg[0].whichProgramme
+        }
+        this.$emit('sendWaiterMsgToUser', obj)
+        this.inputData = ''
       }
     },
     mobileSendMsg() {
@@ -429,6 +441,15 @@ export default {
                 text-align: left;
                 word-break: break-all;
                 line-height: 42px;
+              }
+              .image {
+                width: 256px;
+                height: 256px;
+                overflow: hidden;
+                > img {
+                  width: 100%;
+                  height: 100%;
+                }
               }
             }
           }

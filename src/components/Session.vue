@@ -65,6 +65,7 @@ export default {
       } else {
         // PC
         this.itemActiveIndex = index
+        this.$root.eventBus.$emit('toChat', { openId: openId })
         console.log('index, openId', index, openId)
       }
     }

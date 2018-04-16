@@ -79,7 +79,7 @@ export default {
     this.getWaiterOpenId()
     let wtoi = document.querySelector('.wtoi')
     this.waiterOpenId = wtoi.innerHTML
-    this.socket = socketio.connect('cs.velo.top1/')
+    this.socket = socketio.connect('cs.velo.top')
 
     this.$root.eventBus.$on('toChat', params => {
       if (params.from === 'chat') {
