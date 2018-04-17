@@ -2,7 +2,7 @@
   <div class="session">
     <!-- <service-header class="service-header" title="客服会话管理"></service-header> -->
     <div class="list" ref="session-list">
-      <div class="item flex-h" v-for="(item,index) in userList" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveIndex==index}" @click="sessionItemClick(index, item.openId)">
+      <div class="item flex-h" v-for="(item,index) in userList" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId)">
         <div class="avatar">
           <img :src="item.headImg" alt="">
           <div class="tag" :hidden="item.hasBeenRead == 1"></div>
@@ -11,7 +11,7 @@
           <div class="title flex-h flex-bc">
             <div class="name flex-h flex-cc">
               <span class="text">{{item.name}}</span>
-              <span class="whichProgramme">{{item.whichProgramme}}</span>
+              <span class="whichProgramme" v-if="item.whichProgramme == 'vip'">{{item.whichProgramme}}</span>
             </div>
             <div class="time">{{item.formatTime}}</div>
           </div>
@@ -42,6 +42,7 @@ export default {
       back: require('../assets/img/icon_oneway.png'),
       items: null,
       itemActiveIndex: 0,
+      itemActiveOpenId: '',
       waiterInfo: {}
     }
   },
@@ -68,6 +69,7 @@ export default {
       } else {
         // PC
         this.itemActiveIndex = index
+        this.itemActiveOpenId = openId
         this.$root.eventBus.$emit('toChat', {openId: openId, from: 'p-session'})
         console.log('index, openId', index, openId)
       }

@@ -1,8 +1,9 @@
 <template>
   <div class="chat flex-1">
     <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='currentUserName'></service-header>
-    <div class="pc-header">
+    <div class="pc-header flex-h">
       <div class="name">{{currentUserName}}</div>
+      <div class="singOut" @click="singOut">退出</div>
     </div>
     <div class="message" ref="wrapper">
       <ul class="message-list">
@@ -152,9 +153,19 @@ export default {
     })
   },
   methods: {
+    singOut() {
+      console.log('退出登录')
+      this.delCookie('waiterOpenId')
+      location.reload()
+    },
+    delCookie(name) {
+      var date = new Date()
+      date.setTime(date.getTime() - 10000)
+      document.cookie = name + '=a; expires=' + date.toGMTString()
+    },
     showMsgPic(msgPicUrl) {
       if (msgPicUrl) {
-        console.log('msgPicUrl', msgPicUrl)
+        this.$root.eventBus.$emit('showCurrentImg', msgPicUrl)
       }
     },
     reloadMessageScroll() {
@@ -173,6 +184,7 @@ export default {
       if (keyCode === 13) {
         // pc 端提交消息
         // alert(this.inputData)
+        console.log('waiterInfo', this.waiterInfo)
         let obj = {
           name: this.waiterInfo.name,
           headImg: this.waiterInfo.headImg,
@@ -191,7 +203,9 @@ export default {
     },
     mobileSendMsg() {
       this.sendWaiterMsg(this.inputData)
-      this.inputData = ''
+      setTimeout(() => {
+        this.inputData = ''
+      }, 100)
     },
     chatBack() {
       this.$root.eventBus.$emit('toChat', {
@@ -390,12 +404,20 @@ export default {
       height: 115px;
       line-height: 115px;
       border-bottom: 2px solid #e5e5ee;
+      justify-content: space-between;
       .name {
         font-family: PingFangSC-Medium;
         font-size: 30px;
         color: #353535;
         letter-spacing: 0;
         margin-left: 37px;
+      }
+      .singOut {
+        font-size: 22px;
+        color:#000;
+        padding: 0 30px;
+        font-size: 28px;
+        cursor: pointer;
       }
     }
     .message {

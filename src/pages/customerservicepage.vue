@@ -1,5 +1,6 @@
 <template>
   <div class="customer-service">
+    <img :src="showFullImgUrl" alt="" style="width: 100%; position: absolute;top: 0;z-index: 9;" @click="closeFullImg">    
     <div class="s-container flex-h">
       <session v-show="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
@@ -9,7 +10,7 @@
         :closeOnClickModal="false"
         position="center">
         <div class="login">
-            <div class="title">登录客服问题</div>
+            <div class="title">客服登录</div>
             <div class="input-container">
               <div class="input-ctr username flex-v flex-cc">
                 <div class="name">用户名</div>
@@ -20,7 +21,7 @@
               <div class="input-ctr password flex-v flex-cc">
                 <div class="name">密码</div>
                 <div class="flex-h flex-cc input-text">
-                  <input type="text" class="text" v-model="password">
+                  <input type="password" class="text" v-model="password">
                 </div>
                 <div class="login-remind" style="position: absolute;bottom: 78px;left: 24px;color: red;">{{loginRemid}}</div>
               </div>
@@ -73,12 +74,16 @@ export default {
       waiterInfo: {},
       popupVisible: true,
       loginRemid: '',
-      platForm: ''
+      platForm: '',
+      showFullImgUrl: ''
     }
   },
   created() {
     // 判断是否需要登录
     this.getLoginStatus()
+    this.$root.eventBus.$on('showCurrentImg', msgPicUrl => {
+      this.showFullImgUrl = msgPicUrl
+    })
   },
   mounted() {
     this.$nextTick(() => {
@@ -87,9 +92,37 @@ export default {
     })
   },
   methods: {
+    addCookie(objName, objValue, objHours) {
+      var str = objName + '=' + escape(objValue)
+      // 为0时不设定过期时间，浏览器关闭时cookie自动消失
+      if (objHours > 0) {
+        var date = new Date()
+        var ms = objHours * 3600 * 1000
+        date.setTime(date.getTime() + ms)
+        str += '; expires=' + date.toGMTString()
+      }
+      document.cookie = str
+    },
+    // 获取指定名称的cookie的值  this.getCookie('waiterOpenId')
+    getCookie(objName) {
+      var arrStr = document.cookie.split('; ')
+      for (var i = 0; i < arrStr.length; i++) {
+        var temp = arrStr[i].split('=')
+        if (temp[0] === objName) {
+          return unescape(temp[1])
+        }
+      }
+    },
+    closeFullImg() {
+      this.showFullImgUrl = ''
+    },
     startSocket() {
       let wtoi = document.querySelector('.wtoi')
-      this.waiterOpenId = wtoi.innerHTML
+      if (wtoi.innerHTML) {
+        this.waiterOpenId = wtoi.innerHTML
+      } else {
+        this.waiterOpenId = this.getCookie('waiterOpenId') || ''
+      }
       this.socket = socketio.connect('cs.velo.top')
 
       this.$root.eventBus.$on('toChat', params => {
@@ -100,7 +133,6 @@ export default {
             currentUserOpenId: params.currentUserOpenId
           })
         } else if (params.from === 'm-session') {
-          console.log('9999')
           this.showSession = false
           this.showChat = true
         } else if (params.from === 'p-session') {
@@ -162,14 +194,16 @@ export default {
         console.log('接收当前用户的所有消息', obj)
       })
     },
+    // 调用函数, 选中用户列表第一个
     pcSetFirstItem() {
       let sessionItems = document.querySelector('.session .list .item')
       sessionItems.click()
       console.log('sessionItems', sessionItems)
     },
     getWaiterOpenId() {
-      this.waiterOpenId = localStorage.getItem('waiterOpenId') || ''
+      this.waiterOpenId = this.getCookie('waiterOpenId') || ''
       console.log('this.waiterOpenId', this.waiterOpenId)
+      if (!this.waiterOpenId) { return }
       if (this.waiterOpenId.trim() === '') {
         this.showSession = false
         this.showChat = false
@@ -181,6 +215,7 @@ export default {
       }
       console.log(' this.showSession ', this.showSession)
     },
+    // 登录
     toLogin() {
       console.log('this.name', this.username, this.password)
       axios
@@ -194,8 +229,9 @@ export default {
           if (this.waiterOpenId) {
             // 登录成功
             console.log('this.waiterOpenId', this.waiterOpenId, typeof this.waiterOpenId)
-            localStorage.setItem('waiterOpenId', this.waiterOpenId)
-            console.log('this.response', _.data.obj.waiterOpenId)
+            // localStorage.setItem('waiterOpenId', this.waiterOpenId)
+            this.addCookie('waiterOpenId', this.waiterOpenId)
+            console.log('localStorage.setItem-waiterOpenId', _.data.obj.waiterOpenId)
             this.showSession = true
             this.showChat = true
             this.popupVisible = false
@@ -214,7 +250,8 @@ export default {
         })
     },
     getLoginStatus() {
-      this.waiterOpenId = localStorage.getItem('waiterOpenId') || ''
+      // this.waiterOpenId = localStorage.getItem('waiterOpenId') || ''
+      this.waiterOpenId = this.getCookie('waiterOpenId')
       if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
         this.popupVisible = false
         this.showSession = true
@@ -239,10 +276,11 @@ export default {
       const that = this
       let width = window.document.documentElement.clientWidth
       this.$root.eventBus.showWidth = width
+      let wtoi = document.querySelector('.wtoi')
       if (width > 768) {
         this.platForm = 'pc'
         console.log('pc端')
-        if (localStorage.getItem('waiterOpenId')) {
+        if (this.getCookie('waiterOpenId')) {
           this.startSocket()
           setTimeout(() => {
             this.pcSetFirstItem()
@@ -253,6 +291,17 @@ export default {
         that.showSession = true
         that.showChat = true
       } else if (width < 768) {
+        // if (!this.getCookie('waiterOpenId')) {
+        //   return
+        // }
+        console.log('------1-----')
+        if (!wtoi.innerHTML) {
+          console.log('------2-----')
+          // 不在微信端
+          if (!this.getCookie('waiterOpenId')) {
+            return
+          }
+        }
         this.platForm = 'mobile'
         this.startSocket()
         console.log('移动端')
@@ -262,12 +311,20 @@ export default {
       window.onresize = function(e) {
         width = window.document.documentElement.clientWidth
         that.$root.eventBus.showWidth = width
+        // wtoi如果有值则在微信端
+        let wtoi = document.querySelector('.wtoi')
         if (width > 768) {
           that.showSession = true
           that.showChat = true
           // 告知chat组件重新定义message滚动
           that.$root.eventBus.$emit('pcChatHandler')
         } else if (width < 768) {
+          if (!wtoi.innerHTML) {
+            // 不在微信端
+            if (!this.getCookie('waiterOpenId')) {
+              return
+            }
+          }
           if (that.showChat && !that.showSession) {
             that.showChat = true
             that.showSession = false
