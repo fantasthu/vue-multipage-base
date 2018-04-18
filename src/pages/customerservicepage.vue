@@ -170,16 +170,11 @@ export default {
       })
       this.socket.on('userMsg', obj => {
         this.$root.eventBus.$emit('userMsg', obj)
-        // this.userList.map((item, index) => {
-        //   if (item.openId === obj[0].openId) {
-        //     item.hasBeenRead = 0
-        //     item.msg = obj[0].msg
-        //     console.log('item------', item)
-        //     console.log('obj------', obj)
-        //   }
-        //   return item
-        // })
         console.log('接收用户发送的消息', obj)
+      })
+
+      this.socket.on('waiterMsgIsOver', obj => {
+        this.$toast('消息超过5条, 请等待用户回复之后再发送.')
       })
 
       this.socket.on('userAllMsg', obj => {

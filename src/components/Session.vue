@@ -11,7 +11,7 @@
           <div class="title flex-h flex-bc">
             <div class="name flex-h flex-cc">
               <span class="text">{{item.name}}</span>
-              <span class="whichProgramme" v-if="item.whichProgramme == 'vip'">{{item.whichProgramme}}</span>
+              <span class="whichProgramme" v-if="item.whichProgramme == 'vip'">VIP</span>
             </div>
             <div class="time">{{item.formatTime}}</div>
           </div>

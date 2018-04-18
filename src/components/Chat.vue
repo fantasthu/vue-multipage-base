@@ -65,7 +65,7 @@
     <div class="input-container">
       <div class="to-input">
         <form action="javascrpt:;" class="flex-h flex-cc">
-          <input type="text" class="text-input flex-1" v-model="inputData" @focus="focus">
+          <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
           <div class="h5-send" @click="mobileSendMsg">发送</div>
         </form>
       </div>
@@ -111,7 +111,10 @@ export default {
       currentUserOpenId: '',
       waiterInfo: {},
       currentUserName: '',
-      scroll: null
+      scroll: null,
+      rows: 1,
+      lineHeight: '',
+      onTextScroll: true
     }
   },
   created() {
@@ -150,6 +153,14 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.reloadMessageScroll()
+      // 手机端滚动
+      const that = this
+      this.$refs.mobileTextArea.onscroll = function(e) {
+        if (that.onTextScroll) {
+          that.onTextScroll = false
+          that.mobileInputChange()
+        }
+      }
     })
   },
   methods: {
@@ -176,6 +187,16 @@ export default {
         })
         console.log('scroll', scroll)
       }, 100)
+    },
+    mobileInputChange() {
+      this.lineHeight = '1.6'
+      this.rows += 1
+      if (this.rows > 3) {
+        return false
+      }
+      setTimeout(() => {
+        this.onTextScroll = true
+      }, 500)
     },
     enterHandler(event) {
       const keyCode = event.keyCode
@@ -205,6 +226,8 @@ export default {
       this.sendWaiterMsg(this.inputData)
       setTimeout(() => {
         this.inputData = ''
+        this.rows = 1
+        this.lineHeight = ''
       }, 100)
     },
     chatBack() {
@@ -342,6 +365,7 @@ export default {
             .content {
               .text {
                 color: #000;
+                text-align: left;
               }
             }
           }
@@ -357,27 +381,23 @@ export default {
       bottom: 0;
       right: 0;
       width: 100%;
-      height: 120px;
+      padding: 20px 0;
       border-top: 1px solid #dddddd;
+      background: #ffffff;
       .to-input {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        top: 0;
-        height: 80px;
         margin: auto;
         background: #fff;
         form {
           .text-input {
-            height: 80px;
-            line-height: 80px;
+            line-height: 40px;
             margin-left: 40px;
-            padding: 0 48px;
+            padding: 20px 48px;
             background: #f7f7f7;
             border-radius: 100px;
             font-size: 30px;
             color: #353535;
+            outline: none;
+            border: none;
           }
           .h5-send {
             width: 150px;
