@@ -59,6 +59,9 @@
         <form action="javascrpt:;">
           <textarea @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
         </form>
+        <div class="uploadImg">
+          <input type="file" id="fle">
+        </div>
         <div class="enter-hint">按下Enter发送</div>
       </div>
     </div>
@@ -78,8 +81,8 @@ import { Header, Button } from 'mint-ui'
 import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
+import $ from 'jquery'
 
-// import $ from 'jquery'
 export default {
   name: 'chat',
   components: { Header, Button, ServiceHeader },
@@ -114,10 +117,18 @@ export default {
       scroll: null,
       rows: 1,
       lineHeight: '',
-      onTextScroll: true
+      onTextScroll: true,
+      client: null
     }
   },
   created() {
+    this.client = new OSS.Wrapper({
+      region: 'oss-cn-beijing',
+      accessKeyId: 'LTAIqZNxHpwAnq9r',
+      accessKeySecret: '88mdWv9IiQMecrwevspKWyyllIcd0f',
+      bucket: 'velo-bucket',
+      secure: true
+    })
     this.$root.eventBus.$on('toChat', () => {
       this.reloadMessageScroll()
     })
@@ -198,29 +209,103 @@ export default {
         this.onTextScroll = true
       }, 500)
     },
+    // pc 端提交消息
     enterHandler(event) {
       const keyCode = event.keyCode
         ? event.keyCode
         : event.which ? event.which : event.charCode
       if (keyCode === 13) {
-        // pc 端提交消息
-        // alert(this.inputData)
-        console.log('waiterInfo', this.waiterInfo)
-        let obj = {
-          name: this.waiterInfo.name,
-          headImg: this.waiterInfo.headImg,
-          openId: this.currentUserAllMsg[0].openId,
-          msg: this.inputData,
-          msgType: 'text',
-          isWaiter: 'yes',
-          waiterOpenId: this.waiterInfo.openId,
-          whichProgramme: this.currentUserAllMsg[0].whichProgramme
+        // console.log('waiterInfo', this.waiterInfo)
+        console.log('$', $)
+        var file = $('#fle')[0].files[0]
+        if (file) {
+          // 有图片消息, 优先发送图片, 不发文字
+          this.pcSendImg(file)
+          return
         }
-        this.$emit('sendWaiterMsgToUser', obj)
-        setTimeout(() => {
-          this.inputData = ''
-        }, 100)
+        this.pcSendMsg()
       }
+    },
+    // pc端发送文本消息
+    pcSendMsg() {
+      let obj = {
+        name: this.waiterInfo.name,
+        headImg: this.waiterInfo.headImg,
+        openId: this.currentUserAllMsg[0].openId,
+        msg: this.inputData,
+        msgType: 'text',
+        isWaiter: 'yes',
+        waiterOpenId: this.waiterInfo.openId,
+        whichProgramme: this.currentUserAllMsg[0].whichProgramme
+      }
+      this.$emit('sendWaiterMsgToUser', obj)
+      setTimeout(() => {
+        this.inputData = ''
+      }, 100)
+    },
+    // pc端发送图片消息
+    pcSendImg(file) {
+      var reader = new FileReader()
+      var AllowImgFileSize = 2100000
+      reader.readAsDataURL(file)
+      reader.onload = async e => {
+        let ossUrl = await this.uploadImgToOSS(file)
+        console.log('ossUrl', ossUrl)
+        if (AllowImgFileSize !== 0 && AllowImgFileSize < reader.result.length) {
+          return
+        }
+        this.uploadImgToUser(
+          reader.result,
+          this.currentUserAllMsg[0].openId,
+          ossUrl
+        )
+      }
+    },
+    uploadImgToUser(img, openId, ossUrl) {
+      // 执行上传操作
+      let waiterInfo = {
+        name: this.waiterInfo.name,
+        headImg: this.waiterInfo.headImg,
+        openId: this.currentUserAllMsg[0].openId,
+        msg: '',
+        msgType: 'image',
+        isWaiter: 'yes',
+        waiterOpenId: this.waiterInfo.openId,
+        whichProgramme: this.currentUserAllMsg[0].whichProgramme
+      }
+      let url = 'http://cs.velo.top/customerService/veloVip/sendImgToUser'
+      $.post(
+        url,
+        {
+          img64: img,
+          openId: openId,
+          waiterInfo: waiterInfo,
+          ossUrl: ossUrl
+        },
+        ok => {
+          console.log('图片上传到node成功', ok)
+        }
+      )
+    },
+    uploadImgToOSS(img) {
+      return new Promise((resolve, reject) => {
+        const timestamp = +new Date()
+        const storeAs = `customer-service/${timestamp}.png`
+        this.client
+          .multipartUpload(storeAs, img)
+          .then(function(result) {
+            let url = result.res.requestUrls[0]
+            if (url.indexOf('?') > 0) {
+              let noQueryUrl = url.substr(0, url.indexOf('?'))
+              resolve(noQueryUrl)
+            } else {
+              resolve(url)
+            }
+          })
+          .catch(function(err) {
+            resolve({ err })
+          })
+      })
     },
     mobileSendMsg() {
       this.sendWaiterMsg(this.inputData)
@@ -434,7 +519,7 @@ export default {
       }
       .singOut {
         font-size: 22px;
-        color:#000;
+        color: #000;
         padding: 0 30px;
         font-size: 28px;
         cursor: pointer;
@@ -561,7 +646,6 @@ export default {
         position: relative;
         padding: 20px;
         height: 243px;
-
         .enter-hint {
           position: absolute;
           right: 36px;
@@ -572,6 +656,13 @@ export default {
           letter-spacing: 2.36px;
           text-align: right;
           line-height: 42px;
+        }
+        .uploadImg {
+          position: absolute;
+          bottom: 43px;
+          right: 360px;
+          // color: transparent;
+          width: 100px;
         }
       }
       form {
