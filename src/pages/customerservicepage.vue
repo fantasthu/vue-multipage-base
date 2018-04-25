@@ -174,7 +174,7 @@ export default {
       })
 
       this.socket.on('waiterMsgIsOver', obj => {
-        this.$toast('消息超过5条, 请等待用户回复之后再发送.')
+        this.$toast('您发的消息超过5条, 请等待用户回复之后再发送 !')
       })
 
       this.socket.on('userAllMsg', obj => {

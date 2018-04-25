@@ -219,14 +219,19 @@ export default {
         : event.which ? event.which : event.charCode
       if (keyCode === 13) {
         // console.log('waiterInfo', this.waiterInfo)
-        console.log('$', $)
-        var file = $('#fle')[0].files[0]
-        if (file) {
-          // 有图片消息, 优先发送图片, 不发文字
-          this.pcSendImg(file)
-          return
+        if (this.inputData) {
+          this.pcSendMsg()
         }
-        this.pcSendMsg()
+        if (!this.inputData && $('#fle')[0]) {
+          var file = $('#fle')[0].files[0]
+          if (file) {
+            // 有图片消息, 优先发送图片, 不发文字
+            this.pcSendImg(file)
+          }
+        }
+        setTimeout(() => {
+          this.inputData = ''
+        }, 100)
       }
     },
     // pc端发送文本消息
@@ -242,9 +247,6 @@ export default {
         whichProgramme: this.currentUserAllMsg[0].whichProgramme
       }
       this.$emit('sendWaiterMsgToUser', obj)
-      setTimeout(() => {
-        this.inputData = ''
-      }, 100)
     },
     // pc端发送图片消息
     pcSendImg(file) {
@@ -252,11 +254,12 @@ export default {
       var AllowImgFileSize = 2100000
       reader.readAsDataURL(file)
       reader.onload = async e => {
-        let ossUrl = await this.uploadImgToOSS(file)
-        console.log('ossUrl', ossUrl)
         if (AllowImgFileSize !== 0 && AllowImgFileSize < reader.result.length) {
+          this.$toast('图片超过2M, 上传失败!')
           return
         }
+        let ossUrl = await this.uploadImgToOSS(file)
+        console.log('ossUrl', ossUrl)
         this.uploadImgToUser(
           reader.result,
           this.currentUserAllMsg[0].openId,
