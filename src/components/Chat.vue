@@ -225,7 +225,7 @@ export default {
         if (!this.inputData && $('#fle')[0]) {
           var file = $('#fle')[0].files[0]
           if (file) {
-            // 有图片消息, 优先发送图片, 不发文字
+            // 有图片消息, 优先发送图片, 不发文字 
             this.pcSendImg(file)
           }
         }
