@@ -340,14 +340,14 @@ html,
 body {
   width: 100%;
   height: 100%;
-  // user-select:value;
+  user-select: text;
 }
 body {
   padding-top: constant(safe-area-inset-top);
   padding-left: constant(safe-area-inset-left);
   padding-right: constant(safe-area-inset-right);
   padding-bottom: constant(safe-area-inset-bottom);
-  // user-select:value;
+  user-select: text;
 }
 .customer-service {
   height: 100%;

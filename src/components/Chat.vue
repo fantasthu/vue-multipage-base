@@ -3,30 +3,30 @@
     <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='currentUserName'></service-header>
     <div class="pc-header flex-h">
       <div class="name">{{currentUserName}}</div>
-      <div class="singOut" @click="singOut">退出</div>
+      <div class="singOut" @click.stop="singOut">退出</div>
     </div>
     <div class="message" ref="wrapper">
       <ul class="message-list">
 
         <template v-for="(item,index) in currentUserAllMsg">
-          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'">
+          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
-            <div class="info" @click="showMsgPic(item.msgPicUrl)">
+            <div class="info">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'">{{item.msg}}</div>
-                <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt=""></div>
+                <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)"></div>
               </div>
             </div>
           </li>
 
-          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'">
+          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
-            <div class="info" @click="showMsgPic(item.msgPicUrl)">
+            <div class="info">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <p class="text" v-if="item.msgType == 'text'">{{item.msg}}</p>
-                <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt=""></div>
+                <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)"></div>
               </div>
             </div>
           </li>
@@ -54,8 +54,17 @@
       <div class="to-input">
         <form action="javascrpt:;" class="flex-h flex-cc">
           <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
-          <div class="h5-send" @click="mobileSendMsg">发送</div>
+          <div class="more-tools" @click.stop="showToolBox"><img src="../assets/img/more-tools.png" alt=""></div>
+          <div class="h5-send" @click.stop="mobileSendMsg">发送</div>
         </form>
+      </div>
+      <div class="tools-box" v-if="isShowToolBox">
+        <div class="tools-photos">
+          <img src="../assets/img/tools-photos.png" alt="">
+          <div class="uploadImg-h5">
+            <input type="file" id="fleH5">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -103,7 +112,8 @@ export default {
       rows: 1,
       lineHeight: '',
       onTextScroll: true,
-      client: null
+      client: null,
+      isShowToolBox: false
     }
   },
   created() {
@@ -160,6 +170,13 @@ export default {
     })
   },
   methods: {
+    showToolBox() {
+      this.isShowToolBox = !this.isShowToolBox
+      console.log('this.isShowToolBox', this.isShowToolBox)
+    },
+    // messageListBox() {
+    //   this.isShowToolBox = false
+    // },
     singOut() {
       console.log('退出登录')
       this.delCookie('waiterOpenId')
@@ -171,6 +188,7 @@ export default {
       document.cookie = name + '=a; expires=' + date.toGMTString()
     },
     showMsgPic(msgPicUrl) {
+      console.log('msgPicUrl', msgPicUrl)
       if (msgPicUrl) {
         this.$root.eventBus.$emit('showCurrentImg', msgPicUrl)
       }
@@ -293,12 +311,23 @@ export default {
       })
     },
     mobileSendMsg() {
-      this.sendWaiterMsg(this.inputData)
-      setTimeout(() => {
-        this.inputData = ''
-        this.rows = 1
-        this.lineHeight = ''
-      }, 100)
+      console.log($('#fleH5')[0])
+      if (this.inputData) {
+        this.sendWaiterMsg(this.inputData)
+        setTimeout(() => {
+          this.inputData = ''
+          this.rows = 1
+          this.lineHeight = ''
+        }, 100)
+      } else if ($('#fleH5')[0]) {
+        var file = $('#fleH5')[0] ? $('#fleH5')[0].files[0] : ''
+        console.log('file', file)
+        if (file) {
+          // 有图片消息, 优先发送图片, 不发文字
+          this.pcSendImg(file)
+        }
+        this.isShowToolBox = false
+      }
     },
     chatBack() {
       this.$root.eventBus.$emit('toChat', {
@@ -470,11 +499,49 @@ export default {
             border: none;
           }
           .h5-send {
-            width: 150px;
+            width: 120px;
             font-size: 36px;
             color: #353535;
             letter-spacing: 3.38px;
             text-align: center;
+          }
+          .more-tools {
+            width: 70px;
+            height: 70px;
+            padding-left: 8px;
+            > img {
+              width: 100%;
+              height: 100%;
+            }
+          }
+        }
+      }
+      .tools-box {
+        width: 100%;
+        height: 448px;
+        .tools-photos {
+          width: 110px;
+          height: 110px;
+          padding: 28px;
+          position: relative;
+          > img {
+            width: 110px;
+            height: 110px;
+            position: absolute;
+          }
+          .uploadImg-h5 {
+            width: 110px;
+            height: 110px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: transparent;
+            opacity: 0;
+            z-index: 1;
+            > input {
+              width: 100%;
+              height: 100%;
+            }
           }
         }
       }
