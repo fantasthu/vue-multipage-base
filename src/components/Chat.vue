@@ -31,37 +31,22 @@
             </div>
           </li>
         </template>
-        
-        <!-- <li class="item item-left flex-h" v-for="(item,index) in currentUserAllMsg" :key="index" v-if="item.isWaiter !== 'yes'">
-          <div class="avatar"><img :src="item.headImg" alt=""></div>
-          <div class="info">
-            <div class="time">{{item.formatTime}}</div>
-            <div class="content">
-              <div class="text">{{item.msg}}</div>
-            </div>
-          </div>
-        </li>
-
-        <li class="item item-right flex-h" v-for="(item,index) in currentUserAllMsg" :key="index" v-if="item.isWaiter == 'yes'">
-          <div class="avatar"><img :src="item.headImg" alt=""></div>
-          <div class="info">
-            <div class="time">{{item.formatTime}}</div>
-            <div class="content">
-              <p class="text">{{item.msg}}</p>
-            </div>
-          </div>
-        </li> -->
 
       </ul>
     </div>
     <div class="pc-input-container">
       <div class="to-input flex-h flex-cc">
+        <div class="to-input-tools">
+          <div class="tools-img">
+            <img src="../assets/img/uploadImgIcon.png" alt="">
+            <div class="uploadImg">
+              <input type="file" id="fle">
+            </div>
+          </div>
+        </div>
         <form action="javascrpt:;">
           <textarea @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
         </form>
-        <div class="uploadImg">
-          <input type="file" id="fle">
-        </div>
         <div class="enter-hint">按下Enter发送</div>
       </div>
     </div>
@@ -645,7 +630,41 @@ export default {
       .to-input {
         position: relative;
         padding: 20px;
-        height: 243px;
+        height: 223px;
+        padding-top: 54px;
+        .to-input-tools {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 54px;
+          // border: 1px solid red;
+          .tools-img {
+            width: 40px;
+            height: 36px;
+            padding-top: 10px;
+            padding-left: 18px;
+            cursor: pointer;
+            > img {
+              width: 100%;
+              height: 100%;
+            }
+            .uploadImg {
+              position: absolute;
+              left: 10px;
+              top: 10px;
+              width: 40px;
+              height: 10px;
+              cursor: pointer;
+              > input {
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                color: transparent;
+              }
+            }
+          }
+        }
         .enter-hint {
           position: absolute;
           right: 36px;
@@ -656,13 +675,6 @@ export default {
           letter-spacing: 2.36px;
           text-align: right;
           line-height: 42px;
-        }
-        .uploadImg {
-          position: absolute;
-          bottom: 43px;
-          right: 360px;
-          // color: transparent;
-          width: 100px;
         }
       }
       form {
