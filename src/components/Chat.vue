@@ -40,7 +40,7 @@
           <div class="tools-img">
             <img src="../assets/img/uploadImgIcon.png" alt="">
             <div class="uploadImg">
-              <input type="file" id="fle">
+              <input type="file" id="fle" v-on:input="pcFileSelected">
             </div>
           </div>
         </div>
@@ -61,8 +61,8 @@
       <div class="tools-box" v-if="isShowToolBox">
         <div class="tools-photos">
           <img src="../assets/img/tools-photos.png" alt="">
-          <div class="uploadImg-h5">
-            <input type="file" id="fleH5">
+          <div class="uploadImg-h5" @click.stop="clickH5Ipt">
+            <input type="file" id="fleH5" v-on:input="mobileFileSelected">
           </div>
         </div>
       </div>
@@ -114,7 +114,8 @@ export default {
       onTextScroll: true,
       client: null,
       isShowToolBox: false,
-      platForm: ''
+      platForm: '',
+      noRepeat: false
     }
   },
   created() {
@@ -172,6 +173,30 @@ export default {
     })
   },
   methods: {
+    clickH5Ipt() {
+      // $('.message').css('bottom', 30)
+    },
+    pcFileSelected(e) {
+      if (!this.inputData && $('#fle')[0]) {
+        var file = $('#fle')[0].files[0]
+        if (file) {
+          // 有图片消息,优先发送图片,不发文字
+          this.pcSendImg(file)
+        }
+      }
+    },
+    mobileFileSelected() {
+      if ($('#fleH5')[0]) {
+        var file = $('#fleH5')[0] ? $('#fleH5')[0].files[0] : ''
+        console.log('file', file)
+        if (file) {
+          // 有图片消息, 优先发送图片, 不发文字
+          this.pcSendImg(file)
+          $('.message').css('bottom', 70)
+        }
+        this.isShowToolBox = false
+      }
+    },
     showToolBox() {
       this.isShowToolBox = !this.isShowToolBox
       // 重置message显示框的高度
@@ -208,9 +233,14 @@ export default {
       document.cookie = name + '=a; expires=' + date.toGMTString()
     },
     showMsgPic(msgPicUrl) {
-      console.log('msgPicUrl', msgPicUrl)
-      if (msgPicUrl) {
-        this.$root.eventBus.$emit('showCurrentImg', msgPicUrl)
+      if (!this.noRepeat) {
+        this.noRepeat = true
+        if (msgPicUrl) {
+          this.$root.eventBus.$emit('showCurrentImg', msgPicUrl)
+        }
+        setTimeout(() => {
+          this.noRepeat = false
+        }, 1000)
       }
     },
     reloadMessageScroll() {
@@ -246,13 +276,13 @@ export default {
         if (this.inputData) {
           this.pcSendMsg()
         }
-        if (!this.inputData && $('#fle')[0]) {
-          var file = $('#fle')[0].files[0]
-          if (file) {
-            // 有图片消息,优先发送图片,不发文字
-            this.pcSendImg(file)
-          }
-        }
+        // if (!this.inputData && $('#fle')[0]) {
+        //   var file = $('#fle')[0].files[0]
+        //   if (file) {
+        //     // 有图片消息,优先发送图片,不发文字
+        //     this.pcSendImg(file)
+        //   }
+        // }
         setTimeout(() => {
           this.inputData = ''
         }, 100)
@@ -289,6 +319,7 @@ export default {
           this.currentUserAllMsg[0].openId,
           ossUrl
         )
+        $('#fleH5').val('')
       }
     },
     uploadImgToUser(img, openId, ossUrl) {
@@ -339,7 +370,6 @@ export default {
       })
     },
     mobileSendMsg() {
-      console.log($('#fleH5')[0])
       if (this.inputData) {
         this.sendWaiterMsg(this.inputData)
         setTimeout(() => {
@@ -348,14 +378,17 @@ export default {
           this.lineHeight = ''
         }, 100)
       } else if ($('#fleH5')[0]) {
-        var file = $('#fleH5')[0] ? $('#fleH5')[0].files[0] : ''
-        console.log('file', file)
-        if (file) {
-          // 有图片消息, 优先发送图片, 不发文字
-          this.pcSendImg(file)
-        }
-        this.isShowToolBox = false
+        // var file = $('#fleH5')[0] ? $('#fleH5')[0].files[0] : ''
+        // console.log('file', file)
+        // if (file) {
+        //   // 有图片消息, 优先发送图片, 不发文字
+        //   this.pcSendImg(file)
+        //   $('.message').css('bottom', 70)
+        // }
+        // this.isShowToolBox = false
       }
+      // 重置message显示框的高度
+      this.resetMessageBox()
     },
     chatBack() {
       this.$root.eventBus.$emit('toChat', {

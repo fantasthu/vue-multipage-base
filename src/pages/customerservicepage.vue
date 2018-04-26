@@ -1,6 +1,6 @@
 <template>
   <div class="customer-service">
-    <div :class="{showFullImgBox: showFullImgUrl}" @click="closeFullImg">
+    <div :class="{showFullImgBox: showFullImgUrl}" @click.stop="closeFullImg">
       <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" >    
     </div>
     <div class="s-container flex-h">
@@ -83,6 +83,7 @@ export default {
     }
   },
   created() {
+    // this.$root.eventBus.$off('sho2wCurrentImg')
     window.onfocus = () => {
       this.currentPageIsActive = true
       this.stopNotice()
@@ -94,8 +95,15 @@ export default {
     this.initNoticeMsg()
     // 判断是否需要登录
     this.getLoginStatus()
+    let imgFlag = false
     this.$root.eventBus.$on('showCurrentImg', msgPicUrl => {
-      this.showFullImgUrl = msgPicUrl
+      if (!imgFlag) {
+        imgFlag = true
+        setTimeout(() => {
+          this.showFullImgUrl = msgPicUrl
+          imgFlag = false
+        }, 500)
+      }
     })
   },
   mounted() {
@@ -165,24 +173,20 @@ export default {
         }
         // 点击用户列表进入对话框, 改变当前接受消息对象
         if (params.openId) {
-          console.log('on-tochart', params.openId)
           this.socket.emit('receiveThisUserMsg', params.openId)
         }
       })
       // 初始化
       this.socket.on('init', data => {
-        console.log('链接状态-init', data)
         this.socket.emit('getWaiterInfoByOpenId', this.waiterOpenId)
       })
       // 发送客服消息
       this.socket.on('sendWaiterInfo', waiterInfo => {
-        console.log('index---waiterInfo', waiterInfo)
         this.waiterInfo = waiterInfo[0]
         this.$root.eventBus.$emit('waiterInfo', waiterInfo[0])
       })
       // 获取左侧的用户列表
       this.socket.on('userList', userList => {
-        console.log('node推送userList', userList)
         userList.forEach((item, index) => {
           if (item.name.length > 3) {
             item.name = item.name.substr(0, 3) + '...'
@@ -200,7 +204,6 @@ export default {
           this.startNotice()
         }
         this.$root.eventBus.$emit('userMsg', obj)
-        console.log('接收用户发送的消息', obj)
       })
       // 如果发送超过五条toast提示
       this.socket.on('waiterMsgIsOver', obj => {
@@ -216,7 +219,6 @@ export default {
           item.formatTime = formatTime(item.msgTime, 6)
         })
         this.$root.eventBus.$emit('userAllMsg', obj)
-        console.log('接收当前用户的所有消息', obj)
       })
     },
     /**
