@@ -105,6 +105,9 @@ export default {
     })
   },
   methods: {
+    /**
+     * 添加cookie
+     */
     addCookie(objName, objValue, objHours) {
       var str = objName + '=' + escape(objValue)
       // 为0时不设定过期时间，浏览器关闭时cookie自动消失
@@ -116,7 +119,9 @@ export default {
       }
       document.cookie = str
     },
-    // 获取指定名称的cookie的值  this.getCookie('waiterOpenId')
+    /**
+     * 获取指定名称的cookie的值  this.getCookie('waiterOpenId')
+     */
     getCookie(objName) {
       var arrStr = document.cookie.split('; ')
       for (var i = 0; i < arrStr.length; i++) {
@@ -126,9 +131,15 @@ export default {
         }
       }
     },
+    /**
+     * 关闭全屏预览图片
+     */
     closeFullImg() {
       this.showFullImgUrl = ''
     },
+    /**
+     * socket 连接
+     */
     startSocket() {
       let wtoi = document.querySelector('.wtoi')
       if (wtoi.innerHTML) {
@@ -137,7 +148,7 @@ export default {
         this.waiterOpenId = this.getCookie('waiterOpenId') || ''
       }
       this.socket = socketio.connect('cs.velo.top')
-
+      // 判断是显示pc端的chat还是mobile端的chat
       this.$root.eventBus.$on('toChat', params => {
         if (params.from === 'chat') {
           this.showSession = true
@@ -158,16 +169,18 @@ export default {
           this.socket.emit('receiveThisUserMsg', params.openId)
         }
       })
-
+      // 初始化
       this.socket.on('init', data => {
         console.log('链接状态-init', data)
         this.socket.emit('getWaiterInfoByOpenId', this.waiterOpenId)
       })
+      // 发送客服消息
       this.socket.on('sendWaiterInfo', waiterInfo => {
         console.log('index---waiterInfo', waiterInfo)
         this.waiterInfo = waiterInfo[0]
         this.$root.eventBus.$emit('waiterInfo', waiterInfo[0])
       })
+      // 获取左侧的用户列表
       this.socket.on('userList', userList => {
         console.log('node推送userList', userList)
         userList.forEach((item, index) => {
@@ -181,6 +194,7 @@ export default {
         })
         this.userList = userList
       })
+      // 接收发送的消息
       this.socket.on('userMsg', obj => {
         if (!this.currentPageIsActive) {
           this.startNotice()
@@ -188,11 +202,11 @@ export default {
         this.$root.eventBus.$emit('userMsg', obj)
         console.log('接收用户发送的消息', obj)
       })
-
+      // 如果发送超过五条toast提示
       this.socket.on('waiterMsgIsOver', obj => {
         this.$toast('您发的消息超过5条, 请等待用户回复之后再发送 !')
       })
-
+      // 接收到当前用户的所有msg
       this.socket.on('userAllMsg', obj => {
         this.currentUserAllMsg = obj.userAllMsg
         obj.userAllMsg.forEach((item, index) => {
@@ -205,12 +219,17 @@ export default {
         console.log('接收当前用户的所有消息', obj)
       })
     },
-    // 调用函数, 选中用户列表第一个
+    /**
+     * 调用函数, 选中用户列表第一个
+     */
     pcSetFirstItem() {
       let sessionItems = document.querySelector('.session .list .item')
       sessionItems.click()
       console.log('sessionItems', sessionItems)
     },
+    /**
+     *获取客服的openId
+     */
     getWaiterOpenId() {
       this.waiterOpenId = this.getCookie('waiterOpenId') || ''
       console.log('this.waiterOpenId', this.waiterOpenId)
@@ -228,7 +247,9 @@ export default {
       }
       console.log(' this.showSession ', this.showSession)
     },
-    // 登录
+    /**
+     * 登录逻辑优化
+     */
     toLogin() {
       console.log('this.name', this.username, this.password)
       axios
@@ -269,6 +290,9 @@ export default {
           console.log(error)
         })
     },
+    /**
+     * 获取登录状态
+     */
     getLoginStatus() {
       // this.waiterOpenId = localStorage.getItem('waiterOpenId') || ''
       this.waiterOpenId = this.getCookie('waiterOpenId')
@@ -277,7 +301,7 @@ export default {
         this.showSession = true
         this.showChat = true
       } else {
-        if (this.waiterOpenId.trim().length > 0) {
+        if (this.waiterOpenId ? this.waiterOpenId.trim().length > 0 : 0) {
           this.popupVisible = false
           this.showSession = true
           this.showChat = true
@@ -288,10 +312,16 @@ export default {
         }
       }
     },
+    /**
+     * 客服发送消息
+     */
     sendWaiterMsgToUser(waiterMsgObj) {
       console.log('waiterMsgObj', waiterMsgObj)
       this.socket.emit('sendWaiterMsgToUser', waiterMsgObj)
     },
+    /**
+     * 获取屏幕宽度
+     */
     getScreenWidth() {
       const that = this
       let width = window.document.documentElement.clientWidth
@@ -311,12 +341,7 @@ export default {
         that.showSession = true
         that.showChat = true
       } else if (width < 768) {
-        // if (!this.getCookie('waiterOpenId')) {
-        //   return
-        // }
-        console.log('------1-----')
         if (!wtoi.innerHTML) {
-          console.log('------2-----')
           // 不在微信端
           if (!this.getCookie('waiterOpenId')) {
             return
