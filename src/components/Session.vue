@@ -108,7 +108,11 @@ export default {
 @media (max-width: 768px) {
   .session {
     width: 100%;
-
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     .session-wrapper {
       position: absolute;
       top: 0;
