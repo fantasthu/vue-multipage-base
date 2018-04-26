@@ -174,7 +174,25 @@ export default {
   methods: {
     showToolBox() {
       this.isShowToolBox = !this.isShowToolBox
-      console.log('this.isShowToolBox', this.isShowToolBox)
+      // 重置message显示框的高度
+      this.resetMessageBox()
+    },
+    /**
+     * 重置message显示框的高度
+     */
+    resetMessageBox() {
+      this.$nextTick(() => {
+        const inputContianerHeight = document.querySelector('.input-container')
+          .offsetHeight
+        console.log('inputContianerHeight', inputContianerHeight)
+        document.querySelector(
+          '.message'
+        ).style.bottom = `${inputContianerHeight}px`
+        this.reloadMessageScroll()
+        setTimeout(() => {
+          this.scroll.scrollTo(0, this.scroll.maxScrollY)
+        }, 200)
+      })
     },
     // messageListBox() {
     //   this.isShowToolBox = false
@@ -202,8 +220,8 @@ export default {
           mouseWheel: true,
           click: true,
           tap: true,
-          preventDefault: false
-          // disableTouch: false,
+          preventDefault: false,
+          preventDefaultException: { className: /(^\s)text(\s$)/ }
         })
         console.log('scroll', scroll)
       }, 100)
