@@ -184,6 +184,7 @@ export default {
             : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
         })
         this.userList = userList
+        this.$root.eventBus.$emit('userList', userList)
       })
       // 接收发送的消息
       this.socket.on('userMsg', obj => {

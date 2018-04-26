@@ -55,9 +55,10 @@ export default {
       this.waiterInfo = waiterInfo
       console.log('session-waiterInfo', this.waiterInfo)
     })
-    // this.$root.eventBus.$on('pcSize', waiterInfo => {
-    //   sessionItemClick(0, )
-    // })
+    this.$root.eventBus.$on('userList', userList => {
+      this.sessionItemClick(0, userList[0].openId)
+      this.$root.eventBus.$off('userList')
+    })
   },
   mounted() {
     this.$nextTick(() => {
