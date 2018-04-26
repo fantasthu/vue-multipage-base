@@ -2,7 +2,7 @@
   <div class="session">
     <!-- <service-header class="service-header" title="客服会话管理"></service-header> -->
     <div class="list" ref="session-list">
-      <div class="item flex-h" v-for="(item,index) in userList" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId)">
+      <div class="item flex-h" v-for="(item,index) in userList" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click.stop="sessionItemClick(index, item.openId)">
         <div class="avatar">
           <img :src="item.headImg" alt="">
           <div class="tag" :hidden="item.hasBeenRead == 1"></div>
@@ -64,13 +64,19 @@ export default {
     sessionItemClick(index, openId) {
       if (this.$root.eventBus.showWidth < 768) {
         // 手机
-        this.$root.eventBus.$emit('toChat', {openId: openId, from: 'm-session'})
+        this.$root.eventBus.$emit('toChat', {
+          openId: openId,
+          from: 'm-session'
+        })
         console.log('index, openId', index, openId)
       } else {
         // PC
         this.itemActiveIndex = index
         this.itemActiveOpenId = openId
-        this.$root.eventBus.$emit('toChat', {openId: openId, from: 'p-session'})
+        this.$root.eventBus.$emit('toChat', {
+          openId: openId,
+          from: 'p-session'
+        })
         console.log('index, openId', index, openId)
       }
     }
@@ -88,6 +94,7 @@ export default {
       .item {
         position: relative;
         padding: 30px 42px;
+        // -webkit-overflow-scrolling: touch;
         .avatar {
           position: relative;
           img {

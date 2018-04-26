@@ -54,7 +54,7 @@
       <div class="to-input">
         <form action="javascrpt:;" class="flex-h flex-cc">
           <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
-          <div class="more-tools" @click.stop="showToolBox"><img src="../assets/img/more-tools.png" alt=""></div>
+          <div class="more-tools" @click.stop="showToolBox"><img src="../assets/img/add-icon.png" alt=""></div>
           <div class="h5-send" @click.stop="mobileSendMsg">发送</div>
         </form>
       </div>
@@ -113,10 +113,12 @@ export default {
       lineHeight: '',
       onTextScroll: true,
       client: null,
-      isShowToolBox: false
+      isShowToolBox: false,
+      platForm: ''
     }
   },
   created() {
+    // this.currentPlatform()
     this.client = new OSS.Wrapper({
       region: 'oss-cn-beijing',
       accessKeyId: 'LTAIqZNxHpwAnq9r',
@@ -200,8 +202,6 @@ export default {
           mouseWheel: true,
           click: true,
           tap: true
-          // disableTouch: true
-          // preventDefaultException: {tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT)$/}
         })
         console.log('scroll', scroll)
       }, 100)
@@ -296,6 +296,7 @@ export default {
           console.log('图片上传到node成功', ok)
         }
       )
+      $('#fle').val('')
     },
     uploadImgToOSS(img) {
       return new Promise((resolve, reject) => {
@@ -375,6 +376,16 @@ export default {
       this.timer = setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight)
       }, 500)
+    },
+    currentPlatform() {
+      let width = window.document.documentElement.clientWidth
+      if (width > 768) {
+        this.platForm = 'pc'
+        return 'pc'
+      } else if (width < 768) {
+        this.platForm = 'mobile'
+        return 'mobile'
+      }
     }
   }
 }
@@ -506,11 +517,16 @@ export default {
             border: none;
           }
           .h5-send {
-            width: 120px;
             font-size: 36px;
             color: #353535;
             letter-spacing: 3.38px;
             text-align: center;
+            background: #f9e77f;
+            border-radius: 6px;
+            width: 120px;
+            height: 80px;
+            line-height: 80px;
+            margin: 0 10px;
           }
           .more-tools {
             width: 70px;

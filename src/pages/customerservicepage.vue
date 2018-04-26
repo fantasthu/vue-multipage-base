@@ -1,6 +1,8 @@
 <template>
   <div class="customer-service">
-    <img :src="showFullImgUrl" alt="" style="width: 100%; position: absolute;top: 0;z-index: 9;" @click="closeFullImg">    
+    <div :class="{showFullImgBox: showFullImgUrl}" @click="closeFullImg">
+      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" >    
+    </div>
     <div class="s-container flex-h">
       <session v-show="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
@@ -198,7 +200,9 @@ export default {
     getWaiterOpenId() {
       this.waiterOpenId = this.getCookie('waiterOpenId') || ''
       console.log('this.waiterOpenId', this.waiterOpenId)
-      if (!this.waiterOpenId) { return }
+      if (!this.waiterOpenId) {
+        return
+      }
       if (this.waiterOpenId.trim() === '') {
         this.showSession = false
         this.showChat = false
@@ -223,10 +227,17 @@ export default {
 
           if (this.waiterOpenId) {
             // 登录成功
-            console.log('this.waiterOpenId', this.waiterOpenId, typeof this.waiterOpenId)
+            console.log(
+              'this.waiterOpenId',
+              this.waiterOpenId,
+              typeof this.waiterOpenId
+            )
             // localStorage.setItem('waiterOpenId', this.waiterOpenId)
             this.addCookie('waiterOpenId', this.waiterOpenId)
-            console.log('localStorage.setItem-waiterOpenId', _.data.obj.waiterOpenId)
+            console.log(
+              'localStorage.setItem-waiterOpenId',
+              _.data.obj.waiterOpenId
+            )
             this.showSession = true
             this.showChat = true
             this.popupVisible = false
@@ -350,6 +361,23 @@ body {
   user-select: text;
 }
 .customer-service {
+  .showFullImgBox {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 10;
+    .showFullImgUrl {
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9;
+    }
+  }
   height: 100%;
   .s-container {
     height: 100%;
