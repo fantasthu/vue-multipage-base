@@ -87,23 +87,23 @@ export default {
       inputData: '',
       back: require('../assets/img/icon_oneway.png'),
       currentUserAllMsg: [
-        // {
-        //   formatTime: '2018-04-13 17:19:59',
-        //   hasBeenRead: 0,
-        //   headImg:
-        //     'https://wx.qlogo.cn/mmopen/vi_32/K3vFfda4OibhdoOOPFnJcvl8TSt6YkUNQiaV6w3RQNCKKZk5WcxqrOscm3K1G0NKBbpAWqnZicic5JzmcueKqIvZAQ/0',
-        //   idx: '3',
-        //   isWaiter: 'no',
-        //   msg: 'asdfasdfasasdfasdf',
-        //   msgPicUrl: null,
-        //   msgType: 'text',
-        //   msgTime: '',
-        //   name: '政',
-        //   openId: '',
-        //   sessionId: '',
-        //   waiterOpenId: '',
-        //   whichProgramme: ''
-        // }
+        {
+          formatTime: '2018-04-13 17:19:59',
+          hasBeenRead: 0,
+          headImg:
+            'https://wx.qlogo.cn/mmopen/vi_32/K3vFfda4OibhdoOOPFnJcvl8TSt6YkUNQiaV6w3RQNCKKZk5WcxqrOscm3K1G0NKBbpAWqnZicic5JzmcueKqIvZAQ/0',
+          idx: '3',
+          isWaiter: 'no',
+          msg: 'asdfasdfasasdfasdf',
+          msgPicUrl: null,
+          msgType: 'text',
+          msgTime: '',
+          name: '政',
+          openId: '',
+          sessionId: '',
+          waiterOpenId: '',
+          whichProgramme: ''
+        }
       ],
       currentUserOpenId: '',
       waiterInfo: {},
@@ -199,9 +199,9 @@ export default {
         this.scroll = new Bscroll(this.$refs.wrapper, {
           mouseWheel: true,
           click: true,
-          tap: true
-          // disableTouch: true
-          // preventDefaultException: {tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT)$/}
+          tap: true,
+          preventDefault: false
+          // disableTouch: false,
         })
         console.log('scroll', scroll)
       }, 100)
