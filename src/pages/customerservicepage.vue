@@ -135,7 +135,7 @@ export default {
         this.waiterOpenId = this.getCookie('waiterOpenId') || ''
       }
       this.socket = socketio.connect('cs.velo.top')
-
+      // 判断是显示pc端的chat还是mobile端的chat
       this.$root.eventBus.$on('toChat', params => {
         if (params.from === 'chat') {
           this.showSession = true
@@ -156,16 +156,18 @@ export default {
           this.socket.emit('receiveThisUserMsg', params.openId)
         }
       })
-
+      // 初始化
       this.socket.on('init', data => {
         console.log('链接状态-init', data)
         this.socket.emit('getWaiterInfoByOpenId', this.waiterOpenId)
       })
+      // 发送客服消息
       this.socket.on('sendWaiterInfo', waiterInfo => {
         console.log('index---waiterInfo', waiterInfo)
         this.waiterInfo = waiterInfo[0]
         this.$root.eventBus.$emit('waiterInfo', waiterInfo[0])
       })
+      // 获取左侧的用户列表
       this.socket.on('userList', userList => {
         console.log('node推送userList', userList)
         userList.forEach((item, index) => {
@@ -179,15 +181,16 @@ export default {
         })
         this.userList = userList
       })
+      // 接收发送的消息
       this.socket.on('userMsg', obj => {
         this.$root.eventBus.$emit('userMsg', obj)
         console.log('接收用户发送的消息', obj)
       })
-
+      // 如果发送超过五条toast提示
       this.socket.on('waiterMsgIsOver', obj => {
         this.$toast('您发的消息超过5条, 请等待用户回复之后再发送 !')
       })
-
+      // 接收到当前用户的所有msg
       this.socket.on('userAllMsg', obj => {
         this.currentUserAllMsg = obj.userAllMsg
         obj.userAllMsg.forEach((item, index) => {
