@@ -77,10 +77,21 @@ export default {
       popupVisible: true,
       loginRemid: '',
       platForm: '',
-      showFullImgUrl: ''
+      showFullImgUrl: '',
+      iNotifyMsg: null,
+      currentPageIsActive: true
     }
   },
   created() {
+    window.onfocus = () => {
+      this.currentPageIsActive = true
+      this.stopNotice()
+    }
+    window.onblur = () => {
+      this.currentPageIsActive = false
+    }
+    // 初始化消息提醒, 播放声音
+    this.initNoticeMsg()
     // 判断是否需要登录
     this.getLoginStatus()
     this.$root.eventBus.$on('showCurrentImg', msgPicUrl => {
@@ -171,6 +182,9 @@ export default {
         this.userList = userList
       })
       this.socket.on('userMsg', obj => {
+        if (!this.currentPageIsActive) {
+          this.startNotice()
+        }
         this.$root.eventBus.$emit('userMsg', obj)
         console.log('接收用户发送的消息', obj)
       })
@@ -340,6 +354,32 @@ export default {
           }
         }
       }
+    },
+    initNoticeMsg() {
+      this.iNotifyMsg = new Notify()
+      this.iNotifyMsg.init({
+        effect: 'flash',
+        interval: 500,
+        message: '有消息拉！',
+        audio: {
+          file: [
+            'http://cs.velo.top/customerService/commonAccount/dialogue/QQ.mp3'
+          ]
+        },
+        notification: {
+          title: '',
+          body: ''
+        }
+      })
+    },
+    startNotice() {
+      this.iNotifyMsg.setFavicon('!').player()
+      this.iNotifyMsg.setTitle('有新消息！')
+    },
+    stopNotice() {
+      // this.iNotifyMsg.faviconClear()
+      this.iNotifyMsg.setFavicon('')
+      this.iNotifyMsg.setTitle('velo客服')
     }
   }
 }
