@@ -92,6 +92,9 @@ export default {
     })
   },
   methods: {
+    /**
+     * 添加cookie
+     */
     addCookie(objName, objValue, objHours) {
       var str = objName + '=' + escape(objValue)
       // 为0时不设定过期时间，浏览器关闭时cookie自动消失
@@ -103,7 +106,9 @@ export default {
       }
       document.cookie = str
     },
-    // 获取指定名称的cookie的值  this.getCookie('waiterOpenId')
+    /**
+     * 获取指定名称的cookie的值  this.getCookie('waiterOpenId')
+     */
     getCookie(objName) {
       var arrStr = document.cookie.split('; ')
       for (var i = 0; i < arrStr.length; i++) {
@@ -113,9 +118,15 @@ export default {
         }
       }
     },
+    /**
+     * 关闭全屏预览图片
+     */
     closeFullImg() {
       this.showFullImgUrl = ''
     },
+    /**
+     * socket 连接
+     */
     startSocket() {
       let wtoi = document.querySelector('.wtoi')
       if (wtoi.innerHTML) {
@@ -189,16 +200,23 @@ export default {
         console.log('接收当前用户的所有消息', obj)
       })
     },
-    // 调用函数, 选中用户列表第一个
+    /**
+     * 调用函数, 选中用户列表第一个
+     */
     pcSetFirstItem() {
       let sessionItems = document.querySelector('.session .list .item')
       sessionItems.click()
       console.log('sessionItems', sessionItems)
     },
+    /**
+     *获取客服的openId
+     */
     getWaiterOpenId() {
       this.waiterOpenId = this.getCookie('waiterOpenId') || ''
       console.log('this.waiterOpenId', this.waiterOpenId)
-      if (!this.waiterOpenId) { return }
+      if (!this.waiterOpenId) {
+        return
+      }
       if (this.waiterOpenId.trim() === '') {
         this.showSession = false
         this.showChat = false
@@ -210,7 +228,9 @@ export default {
       }
       console.log(' this.showSession ', this.showSession)
     },
-    // 登录
+    /**
+     * 登录逻辑优化
+     */
     toLogin() {
       console.log('this.name', this.username, this.password)
       axios
@@ -223,10 +243,17 @@ export default {
 
           if (this.waiterOpenId) {
             // 登录成功
-            console.log('this.waiterOpenId', this.waiterOpenId, typeof this.waiterOpenId)
+            console.log(
+              'this.waiterOpenId',
+              this.waiterOpenId,
+              typeof this.waiterOpenId
+            )
             // localStorage.setItem('waiterOpenId', this.waiterOpenId)
             this.addCookie('waiterOpenId', this.waiterOpenId)
-            console.log('localStorage.setItem-waiterOpenId', _.data.obj.waiterOpenId)
+            console.log(
+              'localStorage.setItem-waiterOpenId',
+              _.data.obj.waiterOpenId
+            )
             this.showSession = true
             this.showChat = true
             this.popupVisible = false
@@ -244,6 +271,9 @@ export default {
           console.log(error)
         })
     },
+    /**
+     * 获取登录状态
+     */
     getLoginStatus() {
       // this.waiterOpenId = localStorage.getItem('waiterOpenId') || ''
       this.waiterOpenId = this.getCookie('waiterOpenId')
@@ -252,7 +282,7 @@ export default {
         this.showSession = true
         this.showChat = true
       } else {
-        if (this.waiterOpenId.trim().length > 0) {
+        if (this.waiterOpenId ? this.waiterOpenId.trim().length > 0 : 0) {
           this.popupVisible = false
           this.showSession = true
           this.showChat = true
@@ -263,10 +293,16 @@ export default {
         }
       }
     },
+    /**
+     * 客服发送消息
+     */
     sendWaiterMsgToUser(waiterMsgObj) {
       console.log('waiterMsgObj', waiterMsgObj)
       this.socket.emit('sendWaiterMsgToUser', waiterMsgObj)
     },
+    /**
+     * 获取屏幕宽度
+     */
     getScreenWidth() {
       const that = this
       let width = window.document.documentElement.clientWidth
@@ -286,12 +322,7 @@ export default {
         that.showSession = true
         that.showChat = true
       } else if (width < 768) {
-        // if (!this.getCookie('waiterOpenId')) {
-        //   return
-        // }
-        console.log('------1-----')
         if (!wtoi.innerHTML) {
-          console.log('------2-----')
           // 不在微信端
           if (!this.getCookie('waiterOpenId')) {
             return
