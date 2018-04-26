@@ -382,6 +382,7 @@ export default {
       this.$emit('sendWaiterMsgToUser', obj)
     },
     focus() {
+      this.isShowToolBox = false
       var agent = navigator.userAgent.toLowerCase()
       var version
       if (agent.indexOf('like mac os x') > 0) {
