@@ -61,8 +61,8 @@
       <div class="tools-box" v-if="isShowToolBox">
         <div class="tools-photos">
           <img src="../assets/img/tools-photos.png" alt="">
-          <div class="uploadImg-h5" @click.stop="clickH5Ipt">
-            <input type="file" id="fleH5" v-on:input="mobileFileSelected">
+          <div class="uploadImg-h5">
+            <input type="file" id="fleH5" v-on:change="mobileFileSelected">
           </div>
         </div>
       </div>
@@ -173,9 +173,6 @@ export default {
     })
   },
   methods: {
-    clickH5Ipt() {
-      // $('.message').css('bottom', 30)
-    },
     pcFileSelected(e) {
       if (!this.inputData && $('#fle')[0]) {
         var file = $('#fle')[0].files[0]
@@ -188,7 +185,6 @@ export default {
     mobileFileSelected() {
       if ($('#fleH5')[0]) {
         var file = $('#fleH5')[0] ? $('#fleH5')[0].files[0] : ''
-        console.log('file', file)
         if (file) {
           // 有图片消息, 优先发送图片, 不发文字
           this.pcSendImg(file)
