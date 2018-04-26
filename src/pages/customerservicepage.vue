@@ -57,20 +57,7 @@ export default {
       socket: {},
       showSession: true,
       showChat: true,
-      userList: [
-        // {
-        //   headImg:
-        //     'http://thirdwx.qlogo.cn/mmopen/vi_32/dPP0YeN7pX4Q9IxNSx7KuK0NoL5icHiciclibspkbMUdyj1tFFUW8pKmTaDAhL2BY0rWmF9O5qRdOwtvtYe43Gq61g/132',
-        //   idx: 5,
-        //   isWaiter: 'no',
-        //   msg: '1221',
-        //   formatTime: '2018-04-13 17:19:59',
-        //   name: '政',
-        //   openId: 'owGUi0lMm9Ki5UVJPIUFfIEg7XXY',
-        //   sessionId: 'owGUi0lMm9Ki5UVJPIUFfIEg7XXY1523677906924',
-        //   whichProgramme: 'vip'
-        // }
-      ],
+      userList: [],
       currentUserAllMsg: [],
       waiterOpenId: '',
       waiterInfo: {},
