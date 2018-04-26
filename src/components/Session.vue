@@ -1,5 +1,5 @@
 <template>
-  <div class="session">
+  <div class="session" ref="wrapper">
     <!-- <service-header class="service-header" title="客服会话管理"></service-header> -->
     <div class="list" ref="session-list">
       <div class="item flex-h" v-for="(item,index) in userList" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId)">
@@ -26,6 +26,8 @@
 <script>
 // import { Field, Radio, Button, MessageBox, Indicator } from 'mint-ui'
 import ServiceHeader from './ServiceHeader'
+import Bscroll from 'better-scroll'
+
 export default {
   name: 'session',
   components: {
@@ -58,19 +60,40 @@ export default {
   mounted() {
     this.$nextTick(() => {
       document.querySelector('.list .item')
+      // .session 绑定滚动
+      this.loadScroll()
     })
   },
   methods: {
+    /**
+     * session列表载入scroll
+     */
+    loadScroll() {
+      this.scroll = new Bscroll(this.$refs.wrapper, {
+        mouseWheel: true,
+        click: true,
+        tap: true
+      })
+    },
+    /**
+     * 列表中item点击
+     */
     sessionItemClick(index, openId) {
       if (this.$root.eventBus.showWidth < 768) {
         // 手机
-        this.$root.eventBus.$emit('toChat', {openId: openId, from: 'm-session'})
+        this.$root.eventBus.$emit('toChat', {
+          openId: openId,
+          from: 'm-session'
+        })
         console.log('index, openId', index, openId)
       } else {
         // PC
         this.itemActiveIndex = index
         this.itemActiveOpenId = openId
-        this.$root.eventBus.$emit('toChat', {openId: openId, from: 'p-session'})
+        this.$root.eventBus.$emit('toChat', {
+          openId: openId,
+          from: 'p-session'
+        })
         console.log('index, openId', index, openId)
       }
     }
