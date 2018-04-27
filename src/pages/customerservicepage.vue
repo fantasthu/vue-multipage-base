@@ -1,10 +1,10 @@
 <template>
   <div class="customer-service">
-    <div :class="{showFullImgBox: showFullImgUrl}" @click.stop="closeFullImg">
+    <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl" @click.stop="closeFullImg">
       <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" >    
     </div>
     <div class="s-container flex-h">
-      <session v-show="showSession" :userList.sync="userList"></session>
+      <session v-if="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
       <mt-popup
         v-model="popupVisible"
@@ -145,13 +145,7 @@ export default {
       this.socket = socketio.connect('cs.velo.top')
       // 判断是显示pc端的chat还是mobile端的chat
       this.$root.eventBus.$on('toChat', params => {
-        if (params.from === 'chat') {
-          this.showSession = true
-          this.showChat = false
-          this.socket.emit('backToUserListFreshUserList', {
-            currentUserOpenId: params.currentUserOpenId
-          })
-        } else if (params.from === 'm-session') {
+        if (params.from === 'm-session') {
           this.showSession = false
           this.showChat = true
         } else if (params.from === 'p-session') {
@@ -161,6 +155,15 @@ export default {
         // 点击用户列表进入对话框, 改变当前接受消息对象
         if (params.openId) {
           this.socket.emit('receiveThisUserMsg', params.openId)
+        }
+      })
+      this.$root.eventBus.$on('toSession', params => {
+        if (params.from === 'chat') {
+          this.showSession = true
+          this.showChat = false
+          this.socket.emit('backToUserListFreshUserList', {
+            currentUserOpenId: params.currentUserOpenId
+          })
         }
       })
       // 初始化
@@ -417,19 +420,24 @@ body {
 }
 .customer-service {
   .showFullImgBox {
-    position: absolute;
+    // display: none;
+    position: fixed;
     top: 0px;
     left: 0;
     bottom: 0;
     right: 0;
+    height: 0;
+    height: 100%;
+    overflow: scroll;
     background: rgba(0, 0, 0, 0.75);
     z-index: 10;
     .showFullImgUrl {
-      width: 100%;
       position: absolute;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      left: 0;
+      right: 0;
+      margin: auto;
+      transform: translateY(-50%);
       z-index: 9;
     }
   }

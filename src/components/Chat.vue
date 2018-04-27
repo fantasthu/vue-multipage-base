@@ -402,7 +402,7 @@ export default {
       this.resetMessageBox()
     },
     chatBack() {
-      this.$root.eventBus.$emit('toChat', {
+      this.$root.eventBus.$emit('toSession', {
         from: 'chat',
         currentUserOpenId: this.currentUserOpenId
       })
@@ -731,6 +731,7 @@ export default {
             margin-left: 24px;
             margin-right: 124px;
             .time {
+              left: 24px;
             }
             .content {
               .text {
@@ -750,6 +751,7 @@ export default {
             margin-right: 24px;
             margin-left: 124px;
             .time {
+              right: 24px;
             }
             .content {
               .text {
