@@ -426,8 +426,7 @@ body {
     left: 0;
     bottom: 0;
     right: 0;
-    height: 0;
-    height: 100%;
+    width: 100%;
     overflow: scroll;
     background: rgba(0, 0, 0, 0.75);
     z-index: 10;
@@ -437,6 +436,7 @@ body {
       left: 0;
       right: 0;
       margin: auto;
+      width: 100%;
       transform: translateY(-50%);
       z-index: 9;
     }

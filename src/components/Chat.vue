@@ -40,7 +40,7 @@
           <div class="tools-img">
             <img src="../assets/img/uploadImgIcon.png" alt="">
             <div class="uploadImg">
-              <input type="file" id="fle" v-on:input="pcFileSelected">
+              <input type="file" id="fle" v-on:change="pcFileSelected">
             </div>
           </div>
           <div class="weixin-public flex-h flex-cc" @click.stop="setWaiterIsOnLine"><span :class="{'public-on': !isWaiterOnLine, 'public-off': isWaiterOnLine}">{{isWaiterOnLine?'公众号消息提醒已关闭':'公众号消息提醒已开启'}}</span></div>
@@ -196,6 +196,7 @@ export default {
           this.pcSendImg(file)
         }
       }
+      console.log('pcFileSelected')
     },
     mobileFileSelected() {
       if ($('#fleH5')[0]) {
@@ -441,6 +442,8 @@ export default {
       this.timer = setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight)
       }, 500)
+      // 重置message显示框的高度
+      this.resetMessageBox()
     },
     currentPlatform() {
       let width = window.document.documentElement.clientWidth
