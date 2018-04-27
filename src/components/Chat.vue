@@ -36,13 +36,14 @@
     </div>
     <div class="pc-input-container">
       <div class="to-input flex-h flex-cc">
-        <div class="to-input-tools">
+        <div class="to-input-tools flex-h">
           <div class="tools-img">
             <img src="../assets/img/uploadImgIcon.png" alt="">
             <div class="uploadImg">
               <input type="file" id="fle" v-on:input="pcFileSelected">
             </div>
           </div>
+          <div class="weixin-public flex-h flex-cc"><span>公众号消息提醒已关闭</span></div>
         </div>
         <form action="javascrpt:;">
           <textarea @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
@@ -805,6 +806,21 @@ export default {
                 opacity: 0;
                 color: transparent;
               }
+            }
+          }
+          .weixin-public {
+            height: 100%;
+            .public-on　{
+              border: 1px solid red;
+              display: inline-block;
+              padding: 5px 12px;
+              margin-left: 10px;
+              border-radius: 5px;
+              color: red;
+            }
+            .public-off　{
+              border: 1px solid green;
+              color: green;
             }
           }
         }
