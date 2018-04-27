@@ -511,6 +511,10 @@ export default {
                 line-height: 42px;
                 padding: 19px 36px;
                 word-break: break-all;
+                word-break: break-all;
+                word-wrap: break-word;
+                white-space: pre-wrap;
+                overflow: hidden;
               }
               .image {
                 width: 256px;
