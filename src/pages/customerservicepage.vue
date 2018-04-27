@@ -432,12 +432,12 @@ body {
     z-index: 10;
     .showFullImgUrl {
       position: absolute;
-      top: 50%;
+      top: 0;
       left: 0;
       right: 0;
       margin: auto;
       width: 100%;
-      transform: translateY(-50%);
+      // transform: translateY(-50%);
       z-index: 9;
     }
   }
