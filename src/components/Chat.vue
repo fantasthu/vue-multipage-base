@@ -720,6 +720,7 @@ export default {
             margin-left: 24px;
             margin-right: 124px;
             .time {
+              left: 24px;
             }
             .content {
               .text {
@@ -739,6 +740,7 @@ export default {
             margin-right: 24px;
             margin-left: 124px;
             .time {
+              right: 24px;
             }
             .content {
               .text {
