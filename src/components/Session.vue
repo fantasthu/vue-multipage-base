@@ -46,25 +46,23 @@ export default {
       back: require('../assets/img/icon_oneway.png'),
       items: null,
       itemActiveIndex: 0,
-      itemActiveOpenId: '',
-      waiterInfo: {}
+      itemActiveOpenId: ''
     }
   },
   created() {
-    this.$root.eventBus.$on('waiterInfo', waiterInfo => {
-      this.waiterInfo = waiterInfo
-      console.log('session-waiterInfo', this.waiterInfo)
-    })
+    // 获取会话列表
     this.$root.eventBus.$on('userList', userList => {
+      // pc 端默认选中第一个用户
       if (this.$root.eventBus.showWidth > 768) {
         this.sessionItemClick(0, userList[0].openId)
       }
+      // 注销事件
       this.$root.eventBus.$off('userList')
     })
   },
   mounted() {
     this.$nextTick(() => {
-      // .session 绑定滚动
+      // 初始化会话绑定滚动
       this.loadScroll()
     })
   },
@@ -111,7 +109,7 @@ export default {
 @media (max-width: 768px) {
   .session {
     width: 100%;
-    position: absolute;
+    position: relative;
     top: 0;
     left: 0;
     bottom: 0;
@@ -221,7 +219,7 @@ export default {
       left: 0;
       bottom: 0;
       right: 0;
-      overflow-y: hidden;
+      overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
       .list {
         overflow: auto;

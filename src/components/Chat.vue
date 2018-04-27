@@ -391,7 +391,7 @@ export default {
       this.resetMessageBox()
     },
     chatBack() {
-      this.$root.eventBus.$emit('toChat', {
+      this.$root.eventBus.$emit('toSession', {
         from: 'chat',
         currentUserOpenId: this.currentUserOpenId
       })
@@ -810,7 +810,7 @@ export default {
           }
           .weixin-public {
             height: 100%;
-            .public-on　{
+            .public-on　 {
               border: 1px solid red;
               display: inline-block;
               padding: 5px 12px;
@@ -818,7 +818,7 @@ export default {
               border-radius: 5px;
               color: red;
             }
-            .public-off　{
+            .public-off　 {
               border: 1px solid green;
               color: green;
             }
