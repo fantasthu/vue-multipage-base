@@ -833,12 +833,12 @@ export default {
             cursor: pointer;
             margin-left: 15px;
             .public-off　 {
-              border: 1px solid red;
+              border: 1px solid gray;
               display: inline-block;
               padding: 5px 16px;
               margin-left: 10px;
               border-radius: 5px;
-              color: red;
+              color: gray;
             }
             .public-on　 {
               border: 1px solid green;
