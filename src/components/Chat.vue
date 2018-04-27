@@ -824,10 +824,11 @@ export default {
           .weixin-public {
             height: 100%;
             cursor: pointer;
+            margin-left: 15px;
             .public-off　 {
               border: 1px solid red;
               display: inline-block;
-              padding: 5px 12px;
+              padding: 5px 16px;
               margin-left: 10px;
               border-radius: 5px;
               color: red;
@@ -836,7 +837,7 @@ export default {
               border: 1px solid green;
               color: green;
               display: inline-block;
-              padding: 5px 12px;
+              padding: 5px 16px;
               margin-left: 10px;
               border-radius: 5px;
             }
