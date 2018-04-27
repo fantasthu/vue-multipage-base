@@ -43,7 +43,7 @@
               <input type="file" id="fle" v-on:input="pcFileSelected">
             </div>
           </div>
-          <div class="weixin-public flex-h flex-cc"><span>公众号消息提醒已关闭</span></div>
+          <div class="weixin-public flex-h flex-cc" @click.stop="setWaiterIsOnLine"><span :class="{'public-on': !isWaiterOnLine, 'public-off': isWaiterOnLine}">{{isWaiterOnLine?'公众号消息提醒已关闭':'公众号消息提醒已开启'}}</span></div>
         </div>
         <form action="javascrpt:;">
           <textarea @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
@@ -76,6 +76,7 @@ import { Header, Button } from 'mint-ui'
 import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
+import api from '../service/api'
 import $ from 'jquery'
 
 export default {
@@ -116,14 +117,13 @@ export default {
       client: null,
       isShowToolBox: false,
       platForm: '',
-      noRepeat: false
+      noRepeat: false,
+      isWaiterOnLine: false
     }
   },
-  created() {
-    // setTimeout(() => {
-    //   console.log('this.currentUserAllMsg', this.currentUserAllMsg)
-    // }, 2000)
-    // this.currentPlatform()
+  async created() {
+    let isWaiterOnLine = await api.checkWaiterIsOnLine({})
+    this.isWaiterOnLine = isWaiterOnLine.isWaiterOnLine
     this.client = new OSS.Wrapper({
       region: 'oss-cn-beijing',
       accessKeyId: 'LTAIqZNxHpwAnq9r',
@@ -177,6 +177,17 @@ export default {
     })
   },
   methods: {
+    async setWaiterIsOnLine() {
+      if (this.isWaiterOnLine === 0) {
+        this.isWaiterOnLine = 1
+      } else if (this.isWaiterOnLine === 1) {
+        this.isWaiterOnLine = 0
+      }
+      await api.setWeiXinPublicNotice({
+        isWaiterOnLine: this.isWaiterOnLine
+      })
+      console.log('setWeiXinPublicNotice-----', this.isWaiterOnLine)
+    },
     pcFileSelected(e) {
       if (!this.inputData && $('#fle')[0]) {
         var file = $('#fle')[0].files[0]
@@ -810,7 +821,8 @@ export default {
           }
           .weixin-public {
             height: 100%;
-            .public-on　{
+            cursor: pointer;
+            .public-off　 {
               border: 1px solid red;
               display: inline-block;
               padding: 5px 12px;
@@ -818,9 +830,13 @@ export default {
               border-radius: 5px;
               color: red;
             }
-            .public-off　{
+            .public-on　 {
               border: 1px solid green;
               color: green;
+              display: inline-block;
+              padding: 5px 12px;
+              margin-left: 10px;
+              border-radius: 5px;
             }
           }
         }
