@@ -75,7 +75,7 @@
     <div class="input-container">
       <div class="to-input">
         <form action="javascrpt:;" class="flex-h flex-cc">
-          <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" @input="inputData = $event.target.innerText" @focus="focus"></div>
+          <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" v-model="inputData" @input="inputData = $event.target.innerText" @focus="focus"></div>
           <div class="emoji-handle" @click.stop="emojiMobileHandleClick">
             <img src="../assets/img/emoji-handle.png" class="item" v-show="!mobileEmojiHandled" alt="">
             <img src="../assets/img/emoji-handle-active.png" class="item active" v-show="mobileEmojiHandled" alt="">
@@ -266,7 +266,6 @@ export default {
      * 触发手机端input框focus
      */
     focusMobileInput() {
-      console.log('this.refs.mobileTextArea', this.$refs)
       this.$refs.mobileTextArea.focus()
     },
     /**
@@ -564,6 +563,7 @@ export default {
           this.rows = 1
           this.lineHeight = ''
 
+          this.$refs.mobileTextArea.innerHTML = ''
           // 重置message显示框的高度
           this.resetMessageBox()
         }, 100)
@@ -589,11 +589,7 @@ export default {
         waiterOpenId: this.waiterInfo.openId,
         whichProgramme: this.currentUserAllMsg[0].whichProgramme
       }
-      // this.waiterInfo.formatTime = formatTime(parseInt(new Date().getTime() / 1000), 6)
-      // this.waiterInfo.msg = inputData
-      // this.currentUserAllMsg.push(this.waiterInfo)
       console.log('---------this.waiterInfo---------', this.waiterInfo)
-      // console.log('sendWaiterMsg', obj)
       this.$emit('sendWaiterMsgToUser', obj)
     },
     focus(e) {
