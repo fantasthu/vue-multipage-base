@@ -122,6 +122,7 @@ export default {
     }
   },
   async created() {
+    this.pasteImg()
     let isWaiterOnLine = await api.checkWaiterIsOnLine({})
     this.isWaiterOnLine = isWaiterOnLine.isWaiterOnLine
     this.client = new OSS.Wrapper({
@@ -177,18 +178,55 @@ export default {
     })
   },
   methods: {
+    pasteImg() {
+      document.addEventListener('paste', event => {
+        console.log('粘贴图片', event)
+        // var isChrome = false
+        if (event.clipboardData || event.originalEvent) {
+          var clipboardData =
+            event.clipboardData || event.originalEvent.clipboardData
+          if (clipboardData.items) {
+            var items = clipboardData.items
+            var len = items.length
+            var blob = null
+            // isChrome = true
+            event.preventDefault()
+            // 在items里找粘贴的image,据上面分析,需要循环
+            for (var i = 0; i < len; i++) {
+              if (items[i].type.indexOf('image') !== -1) {
+                // getAsFile() 此方法只是living standard firefox ie11 并不支持
+                blob = items[i].getAsFile()
+              }
+            }
+            if (blob !== null) {
+              var reader = new FileReader()
+              reader.onload = event => {
+                // event.target.result 即为图片的Base64编码字符串
+                var base64Str = event.target.result
+                this.pcSendImgPaste(base64Str, blob)
+              }
+              reader.readAsDataURL(blob)
+            }
+          }
+        }
+      })
+    },
     setKeyboardDown() {
-      if (!this.noRepeat) {
-        this.noRepeat = true
-        this.resetMessageBox()
-        console.log('setKeyboardDown')
-        this.isShowToolBox = false
-        this.reloadMessageScroll()
-        setTimeout(() => {
+      let width = window.document.documentElement.clientWidth
+      console.log('setKeyboardDown', width)
+      if (width < 768) {
+        if (!this.noRepeat) {
+          this.noRepeat = true
           this.resetMessageBox()
+          console.log('setKeyboardDown')
+          this.isShowToolBox = false
           this.reloadMessageScroll()
-          this.noRepeat = false
-        }, 1500)
+          setTimeout(() => {
+            this.resetMessageBox()
+            this.reloadMessageScroll()
+            this.noRepeat = false
+          }, 1500)
+        }
       }
     },
     setLastMsgInView() {
@@ -224,6 +262,10 @@ export default {
           // $('.message').css('bottom', 70)
           // this.resetMessageBox()
         }
+        setTimeout(() => {
+          this.resetMessageBox()
+          this.reloadMessageScroll()
+        }, 1500)
         this.isShowToolBox = false
       }
     },
@@ -346,6 +388,26 @@ export default {
           this.currentUserAllMsg[0].openId,
           ossUrl
         )
+        this.$toast('图片正在上传中...')
+        $('#fleH5').val('')
+      }
+    },
+    async pcSendImgPaste(base64Img, blob) {
+      var reader = new FileReader()
+      var AllowImgFileSize = 2100000
+      reader.readAsDataURL(blob)
+      reader.onload = async e => {
+        if (AllowImgFileSize !== 0 && AllowImgFileSize < reader.result.length) {
+          this.$toast('图片超过2M, 上传失败!')
+          return
+        }
+        let ossUrl = await this.uploadImgToOSS(blob)
+        this.uploadImgToUser(
+          base64Img,
+          this.currentUserAllMsg[0].openId,
+          ossUrl
+        )
+        this.$toast('图片正在上传中...')
         $('#fleH5').val('')
       }
     },
