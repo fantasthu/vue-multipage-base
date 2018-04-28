@@ -43,7 +43,7 @@
           <div class="tools-img">
             <img class="upload-img-tag" src="../assets/img/uploadImgIcon.png" alt="">
             <div class="uploadImg">
-              <input type="file" id="fle" v-on:input="pcFileSelected">
+              <input type="file" id="fle" v-on:change="pcFileSelected">
             </div>
           </div>
            <div class="face">
@@ -54,7 +54,7 @@
               </div>
              </div>
             </div>
-          <div class="weixin-public flex-h flex-cc"><span>公众号消息提醒已关闭</span></div>
+          <div class="weixin-public flex-h flex-cc" @click.stop="setWaiterIsOnLine"><span :class="{'public-on': !isWaiterOnLine, 'public-off': isWaiterOnLine}">{{isWaiterOnLine?'公众号消息提醒已关闭':'公众号消息提醒已开启'}}</span></div>
         </div>
         <form action="javascrpt:;">
           <textarea contenteditable="true" id="editor" @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
@@ -90,6 +90,9 @@ import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
 import EmojiObj from '../assets/js/mapEmoji.js'
+import api from '../service/api'
+import $ from 'jquery'
+
 export default {
   name: 'chat',
   components: { Header, Button, ServiceHeader },
@@ -133,12 +136,9 @@ export default {
       showEmoji: false
     }
   },
-  created() {
-    console.log('EmojiObj', EmojiObj)
-    // setTimeout(() => {
-    //   console.log('this.currentUserAllMsg', this.currentUserAllMsg)
-    // }, 2000)
-    // this.currentPlatform()
+  async created() {
+    let isWaiterOnLine = await api.checkWaiterIsOnLine({})
+    this.isWaiterOnLine = isWaiterOnLine.isWaiterOnLine
     this.client = new OSS.Wrapper({
       region: 'oss-cn-beijing',
       accessKeyId: 'LTAIqZNxHpwAnq9r',
@@ -275,6 +275,17 @@ export default {
         }
       }
     },
+    async setWaiterIsOnLine() {
+      if (this.isWaiterOnLine === 0) {
+        this.isWaiterOnLine = 1
+      } else if (this.isWaiterOnLine === 1) {
+        this.isWaiterOnLine = 0
+      }
+      await api.setWeiXinPublicNotice({
+        isWaiterOnLine: this.isWaiterOnLine
+      })
+      console.log('setWeiXinPublicNotice-----', this.isWaiterOnLine)
+    },
     pcFileSelected(e) {
       if (!this.inputData && $('#fle')[0]) {
         var file = $('#fle')[0].files[0]
@@ -283,6 +294,7 @@ export default {
           this.pcSendImg(file)
         }
       }
+      console.log('pcFileSelected')
     },
     mobileFileSelected() {
       if ($('#fleH5')[0]) {
@@ -317,9 +329,6 @@ export default {
         }, 200)
       })
     },
-    // messageListBox() {
-    //   this.isShowToolBox = false
-    // },
     singOut() {
       console.log('退出登录')
       this.delCookie('waiterOpenId')
@@ -528,6 +537,8 @@ export default {
       this.timer = setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight)
       }, 500)
+      // 重置message显示框的高度
+      this.resetMessageBox()
     },
     currentPlatform() {
       let width = window.document.documentElement.clientWidth
@@ -595,6 +606,10 @@ export default {
                 line-height: 42px;
                 padding: 19px 36px;
                 word-break: break-all;
+                word-break: break-all;
+                word-wrap: break-word;
+                white-space: pre-wrap;
+                overflow: hidden;
               }
               .image {
                 width: 256px;
@@ -942,17 +957,23 @@ export default {
           }
           .weixin-public {
             height: 100%;
-            .public-on　 {
-              border: 1px solid red;
+            cursor: pointer;
+            margin-left: 15px;
+            .public-off　 {
+              border: 1px solid gray;
               display: inline-block;
-              padding: 5px 12px;
+              padding: 5px 16px;
               margin-left: 10px;
               border-radius: 5px;
-              color: red;
+              color: gray;
             }
-            .public-off　 {
+            .public-on　 {
               border: 1px solid green;
               color: green;
+              display: inline-block;
+              padding: 5px 16px;
+              margin-left: 10px;
+              border-radius: 5px;
             }
           }
         }

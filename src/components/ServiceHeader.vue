@@ -37,11 +37,12 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .mint-header {
-  height: 88px;
+  height: 92px;
   background: #fff;
   .mint-header-title {
     font-size: 36px;
     color: #000;
+    padding-top: 5px;
   }
   .mintui-back {
     font-size: 32 px;

@@ -438,18 +438,18 @@ body {
     left: 0;
     bottom: 0;
     right: 0;
-    height: 0;
-    height: 100%;
+    width: 100%;
     overflow: scroll;
     background: rgba(0, 0, 0, 0.75);
     z-index: 10;
     .showFullImgUrl {
       position: absolute;
-      top: 50%;
+      top: 0;
       left: 0;
       right: 0;
       margin: auto;
-      transform: translateY(-50%);
+      width: 100%;
+      // transform: translateY(-50%);
       z-index: 9;
     }
   }
