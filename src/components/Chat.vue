@@ -9,23 +9,25 @@
       <ul class="message-list">
 
         <template v-for="(item,index) in currentUserAllMsg">
+          <!-- 左侧消息 -->
           <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
-                <div class="text" v-if="item.msgType == 'text'">{{item.msg}}</div>
+                <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
                 <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)"></div>
               </div>
             </div>
           </li>
 
+          <!-- 右侧消息 -->
           <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
-                <p class="text" v-if="item.msgType == 'text'">{{item.msg}}</p>
+                <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
                 <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)"></div>
               </div>
             </div>
@@ -34,23 +36,34 @@
 
       </ul>
     </div>
+    <!-- pc端input -->
     <div class="pc-input-container">
       <div class="to-input flex-h flex-cc">
         <div class="to-input-tools flex-h">
           <div class="tools-img">
-            <img src="../assets/img/uploadImgIcon.png" alt="">
+            <img class="upload-img-tag" src="../assets/img/uploadImgIcon.png" alt="">
             <div class="uploadImg">
               <input type="file" id="fle" v-on:input="pcFileSelected">
             </div>
           </div>
+           <div class="face">
+             <img src="../assets/img/btn_fail.png" alt="" class="face-handle" @click="emojiHandleClick">
+             <div class="face-container flex-h" v-show="showEmoji">
+              <div class="item" v-for="(item,index) in emojis" :key="index" @click="emojiItemClick(index)">
+                 <img :src="item" alt="">
+              </div>
+             </div>
+            </div>
           <div class="weixin-public flex-h flex-cc"><span>公众号消息提醒已关闭</span></div>
         </div>
         <form action="javascrpt:;">
-          <textarea @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
+          <textarea contenteditable="true" id="editor" @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
         </form>
         <div class="enter-hint">按下Enter发送</div>
       </div>
     </div>
+
+    <!-- 手机端input -->
     <div class="input-container">
       <div class="to-input">
         <form action="javascrpt:;" class="flex-h flex-cc">
@@ -76,8 +89,7 @@ import { Header, Button } from 'mint-ui'
 import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
-import $ from 'jquery'
-
+import EmojiObj from '../assets/js/mapEmoji.js'
 export default {
   name: 'chat',
   components: { Header, Button, ServiceHeader },
@@ -116,10 +128,13 @@ export default {
       client: null,
       isShowToolBox: false,
       platForm: '',
-      noRepeat: false
+      noRepeat: false,
+      emojis: [],
+      showEmoji: false
     }
   },
   created() {
+    console.log('EmojiObj', EmojiObj)
     // setTimeout(() => {
     //   console.log('this.currentUserAllMsg', this.currentUserAllMsg)
     // }, 2000)
@@ -141,32 +156,117 @@ export default {
       this.waiterInfo = waiterInfo
       console.log('chat-waiterInfo', this.waiterInfo)
     })
+    // 获取用户所以消息
     this.$root.eventBus.$on('userAllMsg', obj => {
-      this.currentUserAllMsg = obj.userAllMsg
+      this.currentUserAllMsg = obj.userAllMsg.map(item => {
+        console.log('item', item)
+        if (item.msg) {
+          item.msg = this.filterMsg(item.msg)
+        }
+        return item
+      })
+      console.log('obj.userAllMsg', obj.userAllMsg)
       this.currentUserName = obj.userAllMsg[0].name + '的聊天'
       this.currentUserOpenId = obj.openId
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 200)
     })
+
+    // 获取用户每条发送的消息
     this.$root.eventBus.$on('userMsg', arr => {
+      console.log('arr', arr)
       arr[0].formatTime = formatTime(arr[0].msgTime, 6)
       arr[0].headImg = arr[0].headImg
         ? arr[0].headImg
         : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
+
+      // 过滤信息,也许带有表情
+      arr[0].msg = this.filterMsg(arr[0].msg)
       this.currentUserAllMsg.push(arr[0])
-      // console.log('this.scroll', this.scroll.scrollerHeight)
-      // const last = document.querySelector('.message .item')
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 200)
-      // this.scroll.scrollTo(0, -this.scroll.scrollerHeight)
     })
   },
   mounted() {
     this.$nextTick(() => {
       this.reloadMessageScroll()
+
       // 手机端滚动
+      this.bindMobileInputNewLine()
+
+      // 添加表情
+      this.loadEmojis()
+    })
+  },
+  methods: {
+    /**
+     * 过滤消息中的表情
+     */
+    filterMsg(msg = '') {
+      let newMsg = ''
+      const reg = new RegExp(
+        "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>/",
+        'g'
+      )
+      reg.compile(reg)
+      newMsg = msg.replace(reg, (p1, p2, matches) => {
+        console.log('p1', p1)
+        console.log('p2', p2)
+        console.log('matches', matches)
+        // 过滤相应的图片
+        return this.filterCodeToImg(p1)
+      })
+      return newMsg
+    },
+    /**
+     * 把表情代码过滤成表情图片
+     */
+    filterCodeToImg(code) {
+      console.log('code', code)
+      let emoji = ''
+      this.emojiAlias.forEach((item, index) => {
+        if (item === code) {
+          console.log('this.emojiAlias', item)
+          emoji = this.emojis[index]
+        }
+      })
+      return `<img class="text-img" src='${emoji}'/>`
+    },
+    /**
+     * 每个表情的点击事件
+     */
+    emojiItemClick(index) {
+      // append数据到textarea中
+      const indexAlias = this.emojiAlias.filter((item, i) => {
+        return i === index
+      })
+      this.inputData = `${this.inputData} ${indexAlias}`
+    },
+    loadEmojis() {
+      this.emojis = EmojiObj.imgs
+      this.emojiAlias = EmojiObj.alias
+    },
+    emojiHandleClick() {
+      // this.filterMsg('阿斯顿撒旦法/::)/::~121我萨达')
+      this.showEmoji = !this.showEmoji
+
+      // 定位emoji的位置
+      this.locationEmoji()
+    },
+    /**
+     * 定位emoji的位置
+     */
+    locationEmoji() {
+      this.$nextTick(() => {
+        const faceContainer = document.querySelector('.face-container')
+        const height = faceContainer.offsetHeight
+        console.log('height', height)
+        faceContainer.style.top = `-${height}px`
+      })
+    },
+    bindMobileInputNewLine() {
       const that = this
       this.$refs.mobileTextArea.onscroll = function(e) {
         if (that.onTextScroll) {
@@ -174,9 +274,7 @@ export default {
           that.mobileInputChange()
         }
       }
-    })
-  },
-  methods: {
+    },
     pcFileSelected(e) {
       if (!this.inputData && $('#fle')[0]) {
         var file = $('#fle')[0].files[0]
@@ -250,8 +348,8 @@ export default {
           mouseWheel: true,
           click: true,
           tap: true,
-          preventDefault: false,
-          preventDefaultException: { className: /(^\s)text(\s$)/ }
+          preventDefault: true,
+          preventDefaultException: { className: /(^|\s)text(\s|$)/ }
         })
         console.log('scroll', scroll)
       }, 100)
@@ -625,6 +723,8 @@ export default {
     }
   }
 }
+
+// pc 端
 @media screen and (min-width: 768px) {
   .chat {
     position: relative;
@@ -698,6 +798,10 @@ export default {
                 text-align: left;
                 word-break: break-all;
                 line-height: 42px;
+                .text-img {
+                  width: 40px;
+                  height: 40px;
+                }
               }
               .image {
                 width: 256px;
@@ -791,7 +895,7 @@ export default {
             padding-top: 10px;
             padding-left: 18px;
             cursor: pointer;
-            > img {
+            .upload-img-tag {
               width: 100%;
               height: 100%;
             }
@@ -807,6 +911,32 @@ export default {
                 height: 100%;
                 opacity: 0;
                 color: transparent;
+              }
+            }
+          }
+          .face {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            margin-left: 100px;
+            background: red;
+            .face-handle {
+              width: 100%;
+              height: 100%;
+            }
+            .face-container {
+              position: absolute;
+              top: -40px;
+              width: 480px;
+              background: rgba(0, 0, 0, 0.7);
+              border-radius: 6px 4px;
+              flex-wrap: wrap;
+              .item {
+                padding: 4px;
+                img {
+                  width: 40px;
+                  height: 40px;
+                }
               }
             }
           }

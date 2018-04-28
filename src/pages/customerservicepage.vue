@@ -1,9 +1,12 @@
 <template>
   <div class="customer-service">
+    <!-- 此处是图片lightBox -->
     <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl" @click.stop="closeFullImg">
       <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" >    
     </div>
+    <!-- 此处是聊天界面 -->
     <div class="s-container flex-h">
+      <left-menu v-show="showLeftMenu"></left-menu>
       <session v-if="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
       <mt-popup
@@ -42,6 +45,7 @@
 <script>
 import Chat from '../components/Chat.vue'
 import Session from '../components/Session.vue'
+import LeftMenu from '../components/LeftMenu.vue'
 import socketio from 'socket.io-client'
 import axios from 'axios'
 import { formatTime } from '../service/tools'
@@ -49,7 +53,7 @@ import { Popup, Field } from 'mint-ui'
 
 export default {
   name: 'about',
-  components: { Chat, Session, Popup, Field },
+  components: { Chat, Session, Popup, Field, LeftMenu },
   data() {
     return {
       username: '',
@@ -57,6 +61,7 @@ export default {
       socket: {},
       showSession: true,
       showChat: true,
+      showLeftMenu: true,
       userList: [],
       currentUserAllMsg: [],
       waiterOpenId: '',
@@ -320,6 +325,7 @@ export default {
       let width = window.document.documentElement.clientWidth
       this.$root.eventBus.showWidth = width
       let wtoi = document.querySelector('.wtoi')
+      // pc端
       if (width > 768) {
         this.platForm = 'pc'
         console.log('pc端')
@@ -333,6 +339,7 @@ export default {
         // pc端初次进入默认选中第一个item
         that.showSession = true
         that.showChat = true
+        that.showLeftMenu = true
       } else if (width < 768) {
         if (!wtoi.innerHTML) {
           // 不在微信端
@@ -345,15 +352,18 @@ export default {
         console.log('移动端')
         that.showSession = true
         that.showChat = false
+        that.showLeftMenu = false
       }
       window.onresize = function(e) {
         width = window.document.documentElement.clientWidth
         that.$root.eventBus.showWidth = width
         // wtoi如果有值则在微信端
         let wtoi = document.querySelector('.wtoi')
+        // pc端
         if (width > 768) {
           that.showSession = true
           that.showChat = true
+          that.showLeftMenu = true
           // 告知chat组件重新定义message滚动
           that.$root.eventBus.$emit('pcChatHandler')
         } else if (width < 768) {
@@ -366,9 +376,11 @@ export default {
           if (that.showChat && !that.showSession) {
             that.showChat = true
             that.showSession = false
+            that.showLeftMenu = false
           } else {
             that.showSession = true
             that.showChat = false
+            that.showLeftMenu = false
           }
         }
       }
