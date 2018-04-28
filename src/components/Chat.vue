@@ -133,7 +133,8 @@ export default {
       platForm: '',
       noRepeat: false,
       emojis: [],
-      showEmoji: false
+      showEmoji: false,
+      isWaiterOnLine: ''
     }
   },
   async created() {
