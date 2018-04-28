@@ -5,7 +5,7 @@
       <div class="name">{{currentUserName}}</div>
       <div class="singOut" @click.stop="singOut">退出</div>
     </div>
-    <div class="message" ref="wrapper">
+    <div class="message" ref="wrapper" @click.stop="messageContainerClick">
       <ul class="message-list">
 
         <template v-for="(item,index) in currentUserAllMsg">
@@ -39,21 +39,29 @@
     <!-- pc端input -->
     <div class="pc-input-container">
       <div class="to-input flex-h flex-cc">
+        <!-- 输入框的工具条 -->
         <div class="to-input-tools flex-h">
+
+           <!-- 表情 -->
+          <div class="face">
+            <img src="../assets/img/smile.png" alt="" class="face-handle" v-show="!showEmoji" @click="emojiHandleClick">
+            <img src="../assets/img/smile-active.png" alt="" class="face-handle-active" v-show="showEmoji" @click="emojiHandleClick">
+            <div class="face-container flex-h" v-show="showEmoji">
+              <div class="item" v-for="(item,index) in emojis" :key="index" @click="emojiItemClick(index)">
+                <img :src="item" alt="">
+              </div>
+            </div>
+          </div>
+
+          <!-- 图片 -->
           <div class="tools-img">
             <img class="upload-img-tag" src="../assets/img/uploadImgIcon.png" alt="">
             <div class="uploadImg">
               <input type="file" id="fle" v-on:change="pcFileSelected">
             </div>
           </div>
-           <div class="face">
-             <img src="../assets/img/btn_fail.png" alt="" class="face-handle" @click="emojiHandleClick">
-             <div class="face-container flex-h" v-show="showEmoji">
-              <div class="item" v-for="(item,index) in emojis" :key="index" @click="emojiItemClick(index)">
-                 <img :src="item" alt="">
-              </div>
-             </div>
-            </div>
+
+         <!-- 是否公众号消息提醒 -->
           <div class="weixin-public flex-h flex-cc" @click.stop="setWaiterIsOnLine"><span :class="{'public-on': !isWaiterOnLine, 'public-off': isWaiterOnLine}">{{isWaiterOnLine?'公众号消息提醒已关闭':'公众号消息提醒已开启'}}</span></div>
         </div>
         <form action="javascrpt:;">
@@ -67,7 +75,7 @@
     <div class="input-container">
       <div class="to-input">
         <form action="javascrpt:;" class="flex-h flex-cc">
-          <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
+          <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" v-model="inputData" @input="inputData = $event.target.innerText" @focus="focus"></div>
           <div class="emoji-handle" @click.stop="emojiMobileHandleClick">
             <img src="../assets/img/emoji-handle.png" class="item" v-show="!mobileEmojiHandled" alt="">
             <img src="../assets/img/emoji-handle-active.png" class="item active" v-show="mobileEmojiHandled" alt="">
@@ -81,7 +89,7 @@
         <div class="emoji-box" v-show="toolIndex===1">
            <mt-swipe :auto="0">
             <mt-swipe-item>
-              <img v-for ="item in emojis" class="emoji-item" :src="item" alt="">
+              <img v-for ="(item,index) in emojis" @click="mobileEmojiItemClick(index)" class="emoji-item" :src="item" alt="">
               <span class="delete" @click="emojiBackDel">回删</span>
             </mt-swipe-item>
             <mt-swipe-item>2</mt-swipe-item>
@@ -224,13 +232,19 @@ export default {
     })
   },
   methods: {
+    messageContainerClick() {
+      this.isShowToolBox = false
+
+      // 重置消息框
+      this.reloadMessageScroll()
+    },
     /**
      * mobile 表情字符回删键
      */
     emojiBackDel() {
       if (this.inputData) {
-        ;[...this.inputData].pop()
-        console.log('tis.posp', this.inputData)
+        this.inputData = this.inputData.substr(0, this.inputData.length - 1)
+        this.$refs.mobileTextArea.innerText = this.inputData
       }
     },
     /**
@@ -240,6 +254,19 @@ export default {
       this.mobileEmojiHandled = !this.mobileEmojiHandled
       this.isShowToolBox = true
       this.toolIndex = 1
+      // 重置消息盒子
+      this.resetMessageBox()
+
+      // 如果mobileEmojiHandled 为false,触发input的focus时间
+      if (!this.mobileEmojiHandled) {
+        this.focusMobileInput()
+      }
+    },
+    /**
+     * 触发手机端input框focus
+     */
+    focusMobileInput() {
+      this.$refs.mobileTextArea.focus()
     },
     /**
      * 过滤消息中的表情
@@ -284,6 +311,17 @@ export default {
       })
       this.inputData = `${this.inputData} ${indexAlias}`
     },
+    /**
+     * 手机端每个表情的点击事件
+     */
+    mobileEmojiItemClick(index) {
+      // append数据到textarea中
+      const indexAlias = this.emojiAlias.filter((item, i) => {
+        return i === index
+      })
+      this.inputData = `${this.inputData} ${indexAlias}`
+      this.$refs.mobileTextArea.innerText = this.inputData
+    },
     loadEmojis() {
       this.emojis = EmojiObj.imgs
       this.emojiAlias = EmojiObj.alias
@@ -303,7 +341,7 @@ export default {
         const faceContainer = document.querySelector('.face-container')
         const height = faceContainer.offsetHeight
         console.log('height', height)
-        faceContainer.style.top = `-${height}px`
+        faceContainer.style.top = `-${height + 5}px`
       })
     },
     bindMobileInputNewLine() {
@@ -348,7 +386,7 @@ export default {
       }
     },
     showToolBox() {
-      this.isShowToolBox = !this.isShowToolBox
+      this.isShowToolBox = true
       this.toolIndex = 2
       // 重置message显示框的高度
       this.resetMessageBox()
@@ -392,7 +430,8 @@ export default {
       }
     },
     reloadMessageScroll() {
-      this.timer = null
+      // this.timer = null
+      clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.scroll = new Bscroll(this.$refs.wrapper, {
           mouseWheel: true,
@@ -401,6 +440,7 @@ export default {
           preventDefault: true,
           preventDefaultException: { className: /(^|\s)text(\s|$)/ }
         })
+        clearTimeout(this.timer)
         console.log('scroll', scroll)
       }, 100)
     },
@@ -524,19 +564,15 @@ export default {
           this.inputData = ''
           this.rows = 1
           this.lineHeight = ''
+
+          this.$refs.mobileTextArea.innerHTML = ''
+          // 重置message显示框的高度
+          this.resetMessageBox()
         }, 100)
-      } else if ($('#fleH5')[0]) {
-        // var file = $('#fleH5')[0] ? $('#fleH5')[0].files[0] : ''
-        // console.log('file', file)
-        // if (file) {
-        //   // 有图片消息, 优先发送图片, 不发文字
-        //   this.pcSendImg(file)
-        //   $('.message').css('bottom', 70)
-        // }
-        // this.isShowToolBox = false
+
+        // 发送之后键盘不弹下去
+        this.$refs.mobileTextArea.focus()
       }
-      // 重置message显示框的高度
-      this.resetMessageBox()
     },
     chatBack() {
       this.$root.eventBus.$emit('toSession', {
@@ -555,16 +591,20 @@ export default {
         waiterOpenId: this.waiterInfo.openId,
         whichProgramme: this.currentUserAllMsg[0].whichProgramme
       }
-      // this.waiterInfo.formatTime = formatTime(parseInt(new Date().getTime() / 1000), 6)
-      // this.waiterInfo.msg = inputData
-      // this.currentUserAllMsg.push(this.waiterInfo)
       console.log('---------this.waiterInfo---------', this.waiterInfo)
-      // console.log('sendWaiterMsg', obj)
       this.$emit('sendWaiterMsgToUser', obj)
     },
-    focus() {
+    focus(e) {
       this.isShowToolBox = false
+      this.mobileEmojiHandled = false
       var agent = navigator.userAgent.toLowerCase()
+      var textbox = document.getElementById('mobileInputDiv')
+      var sel = window.getSelection()
+      var range = document.createRange()
+      range.selectNodeContents(textbox)
+      range.collapse(false)
+      sel.removeAllRanges()
+      sel.addRange(range)
       var version
       if (agent.indexOf('like mac os x') > 0) {
         // ios
@@ -589,6 +629,17 @@ export default {
       } else if (width < 768) {
         this.platForm = 'mobile'
         return 'mobile'
+      }
+    }
+  },
+  watch: {
+    inputData: function(val, oldVal) {
+      // this.$refs.mobileTextArea.innerText = val
+      console.log('val', val)
+      if (val && val.trim().length > 0) {
+        this.mobileSendShow = true
+      } else if (val.trim().length === 0) {
+        this.mobileSendShow = false
       }
     }
   }
@@ -717,6 +768,11 @@ export default {
         margin: auto;
         background: #fff;
         form {
+          .mobile-input {
+            max-height: 200px;
+            word-break: break-all;
+            overflow: scroll;
+          }
           .text-input {
             line-height: 40px;
             margin-left: 40px;
@@ -970,12 +1026,13 @@ export default {
           left: 0;
           width: 100%;
           height: 54px;
+          align-items: center;
           // border: 1px solid red;
           .tools-img {
+            position: relative;
             width: 40px;
             height: 36px;
-            padding-top: 10px;
-            padding-left: 18px;
+            margin-left: 24px;
             cursor: pointer;
             .upload-img-tag {
               width: 100%;
@@ -983,12 +1040,13 @@ export default {
             }
             .uploadImg {
               position: absolute;
-              left: 10px;
-              top: 10px;
-              width: 40px;
-              height: 10px;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
               cursor: pointer;
               > input {
+                display: block;
                 width: 100%;
                 height: 100%;
                 opacity: 0;
@@ -998,11 +1056,11 @@ export default {
           }
           .face {
             position: relative;
-            width: 50px;
-            height: 50px;
-            margin-left: 100px;
-            background: red;
-            .face-handle {
+            width: 40px;
+            height: 40px;
+            margin-left: 24px;
+            .face-handle,
+            .face-handle-active {
               width: 100%;
               height: 100%;
             }
