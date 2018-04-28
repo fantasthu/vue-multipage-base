@@ -1,7 +1,7 @@
 <template>
   <div class="customer-service">
     <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl" @click.stop="closeFullImg">
-      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" >    
+      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;">    
     </div>
     <div class="s-container flex-h">
       <session v-if="showSession" :userList.sync="userList"></session>

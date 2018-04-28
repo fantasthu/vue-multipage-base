@@ -178,6 +178,7 @@ export default {
     })
   },
   methods: {
+    // 无法粘贴文字, 粘贴动作的时候如果是文字就将内容赋值给inputData
     pasteImg() {
       document.addEventListener('paste', event => {
         if (this.$root.eventBus.showWidth < 768) return
