@@ -81,7 +81,7 @@
         <div class="emoji-box" v-show="toolIndex===1">
            <mt-swipe :auto="0">
             <mt-swipe-item>
-              <img v-for ="item in emojis" class="emoji-item" :src="item" alt="">
+              <img v-for ="(item,index) in emojis" @click="mobileEmojiItemClick(index)" class="emoji-item" :src="item" alt="">
               <span class="delete" @click="emojiBackDel">回删</span>
             </mt-swipe-item>
             <mt-swipe-item>2</mt-swipe-item>
@@ -229,8 +229,7 @@ export default {
      */
     emojiBackDel() {
       if (this.inputData) {
-        ;[...this.inputData].pop()
-        console.log('tis.posp', this.inputData)
+        this.inputData = this.inputData.substr(0, this.inputData.length - 1)
       }
     },
     /**
@@ -240,6 +239,21 @@ export default {
       this.mobileEmojiHandled = !this.mobileEmojiHandled
       this.isShowToolBox = true
       this.toolIndex = 1
+
+      // 重置消息盒子
+      this.resetMessageBox()
+
+      // 如果mobileEmojiHandled 为false,触发input的focus时间
+      if (!this.mobileEmojiHandled) {
+        this.focusMobileInput()
+      }
+    },
+    /**
+     * 触发手机端input框focus
+     */
+    focusMobileInput() {
+      console.log('this.refs.mobileTextArea', this.$refs)
+      this.$refs.mobileTextArea.focus()
     },
     /**
      * 过滤消息中的表情
@@ -278,6 +292,16 @@ export default {
      * 每个表情的点击事件
      */
     emojiItemClick(index) {
+      // append数据到textarea中
+      const indexAlias = this.emojiAlias.filter((item, i) => {
+        return i === index
+      })
+      this.inputData = `${this.inputData} ${indexAlias}`
+    },
+    /**
+     * 手机端每个表情的点击事件
+     */
+    mobileEmojiItemClick(index) {
       // append数据到textarea中
       const indexAlias = this.emojiAlias.filter((item, i) => {
         return i === index
@@ -348,7 +372,7 @@ export default {
       }
     },
     showToolBox() {
-      this.isShowToolBox = !this.isShowToolBox
+      this.isShowToolBox = true
       this.toolIndex = 2
       // 重置message显示框的高度
       this.resetMessageBox()
@@ -589,6 +613,16 @@ export default {
       } else if (width < 768) {
         this.platForm = 'mobile'
         return 'mobile'
+      }
+    }
+  },
+  watch: {
+    inputData: function(val, oldVal) {
+      console.log('val', val)
+      if (val && val.trim().length > 0) {
+        this.mobileSendShow = true
+      } else if (val.trim().length === 0) {
+        this.mobileSendShow = false
       }
     }
   }

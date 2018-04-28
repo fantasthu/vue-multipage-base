@@ -9,7 +9,7 @@
       <left-menu v-show="showLeftMenu"></left-menu>
       <session v-if="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
-      <right-menu></right-menu>
+      <right-menu v-show="false"></right-menu>
       <mt-popup
         v-model="popupVisible"
         popup-transition="popup-fade"
