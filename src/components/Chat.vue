@@ -9,7 +9,7 @@
       <ul class="message-list">
 
         <template v-for="(item,index) in currentUserAllMsg">
-          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" >
+          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" @click.stop="setKeyboardDown">
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -20,7 +20,7 @@
             </div>
           </li>
 
-          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" >
+          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" @click.stop="setKeyboardDown">
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -53,7 +53,7 @@
     </div>
     <div class="input-container">
       <div class="to-input">
-        <form action="javascrpt:;" class="flex-h flex-cc">
+        <form action="javascrpt:;" class="flex-h flex-cc" @click.stop="setLastMsgInView">
           <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
           <div class="more-tools" @click.stop="showToolBox"><img src="../assets/img/add-icon.png" alt=""></div>
           <div class="h5-send" @click.stop="mobileSendMsg">发送</div>
@@ -177,6 +177,23 @@ export default {
     })
   },
   methods: {
+    setKeyboardDown() {
+      if (!this.noRepeat) {
+        this.noRepeat = true
+        this.resetMessageBox()
+        console.log('setKeyboardDown')
+        this.isShowToolBox = false
+        this.reloadMessageScroll()
+        setTimeout(() => {
+          this.resetMessageBox()
+          this.reloadMessageScroll()
+          this.noRepeat = false
+        }, 1500)
+      }
+    },
+    setLastMsgInView() {
+      this.scroll.scrollTo(0, this.scroll.maxScrollY - 350)
+    },
     async setWaiterIsOnLine() {
       if (this.isWaiterOnLine === 0) {
         this.isWaiterOnLine = 1
@@ -204,7 +221,8 @@ export default {
         if (file) {
           // 有图片消息, 优先发送图片, 不发文字
           this.pcSendImg(file)
-          $('.message').css('bottom', 70)
+          // $('.message').css('bottom', 70)
+          // this.resetMessageBox()
         }
         this.isShowToolBox = false
       }
@@ -231,9 +249,6 @@ export default {
         }, 200)
       })
     },
-    // messageListBox() {
-    //   this.isShowToolBox = false
-    // },
     singOut() {
       console.log('退出登录')
       this.delCookie('waiterOpenId')
@@ -389,15 +404,6 @@ export default {
           this.rows = 1
           this.lineHeight = ''
         }, 100)
-      } else if ($('#fleH5')[0]) {
-        // var file = $('#fleH5')[0] ? $('#fleH5')[0].files[0] : ''
-        // console.log('file', file)
-        // if (file) {
-        //   // 有图片消息, 优先发送图片, 不发文字
-        //   this.pcSendImg(file)
-        //   $('.message').css('bottom', 70)
-        // }
-        // this.isShowToolBox = false
       }
       // 重置message显示框的高度
       this.resetMessageBox()
@@ -419,11 +425,7 @@ export default {
         waiterOpenId: this.waiterInfo.openId,
         whichProgramme: this.currentUserAllMsg[0].whichProgramme
       }
-      // this.waiterInfo.formatTime = formatTime(parseInt(new Date().getTime() / 1000), 6)
-      // this.waiterInfo.msg = inputData
-      // this.currentUserAllMsg.push(this.waiterInfo)
       console.log('---------this.waiterInfo---------', this.waiterInfo)
-      // console.log('sendWaiterMsg', obj)
       this.$emit('sendWaiterMsgToUser', obj)
     },
     focus() {
@@ -443,7 +445,12 @@ export default {
         window.scrollTo(0, document.body.scrollHeight)
       }, 500)
       // 重置message显示框的高度
+      // this.resetMessageBox()
+      // this.scroll.scrollTo(0, -90)
       this.resetMessageBox()
+      console.log('setKeyboardDown')
+      this.isShowToolBox = false
+      this.reloadMessageScroll()
     },
     currentPlatform() {
       let width = window.document.documentElement.clientWidth
