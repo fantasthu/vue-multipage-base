@@ -180,8 +180,7 @@ export default {
   methods: {
     pasteImg() {
       document.addEventListener('paste', event => {
-        console.log('粘贴图片', event)
-        // var isChrome = false
+        if (this.$root.eventBus.showWidth < 768) return
         if (event.clipboardData || event.originalEvent) {
           var clipboardData =
             event.clipboardData || event.originalEvent.clipboardData
@@ -189,12 +188,9 @@ export default {
             var items = clipboardData.items
             var len = items.length
             var blob = null
-            // isChrome = true
             event.preventDefault()
-            // 在items里找粘贴的image,据上面分析,需要循环
             for (var i = 0; i < len; i++) {
               if (items[i].type.indexOf('image') !== -1) {
-                // getAsFile() 此方法只是living standard firefox ie11 并不支持
                 blob = items[i].getAsFile()
               }
             }
