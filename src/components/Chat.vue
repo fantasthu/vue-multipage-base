@@ -5,7 +5,7 @@
       <div class="name">{{currentUserName}}</div>
       <div class="singOut" @click.stop="singOut">退出</div>
     </div>
-    <div class="message" ref="wrapper">
+    <div class="message" ref="wrapper" @click.stop="messageContainerClick">
       <ul class="message-list">
 
         <template v-for="(item,index) in currentUserAllMsg">
@@ -39,21 +39,29 @@
     <!-- pc端input -->
     <div class="pc-input-container">
       <div class="to-input flex-h flex-cc">
+        <!-- 输入框的工具条 -->
         <div class="to-input-tools flex-h">
+
+           <!-- 表情 -->
+          <div class="face">
+            <img src="../assets/img/smile.png" alt="" class="face-handle" v-show="!showEmoji" @click="emojiHandleClick">
+            <img src="../assets/img/smile-active.png" alt="" class="face-handle-active" v-show="showEmoji" @click="emojiHandleClick">
+            <div class="face-container flex-h" v-show="showEmoji">
+              <div class="item" v-for="(item,index) in emojis" :key="index" @click="emojiItemClick(index)">
+                <img :src="item" alt="">
+              </div>
+            </div>
+          </div>
+
+          <!-- 图片 -->
           <div class="tools-img">
             <img class="upload-img-tag" src="../assets/img/uploadImgIcon.png" alt="">
             <div class="uploadImg">
               <input type="file" id="fle" v-on:change="pcFileSelected">
             </div>
           </div>
-           <div class="face">
-             <img src="../assets/img/btn_fail.png" alt="" class="face-handle" @click="emojiHandleClick">
-             <div class="face-container flex-h" v-show="showEmoji">
-              <div class="item" v-for="(item,index) in emojis" :key="index" @click="emojiItemClick(index)">
-                 <img :src="item" alt="">
-              </div>
-             </div>
-            </div>
+
+         <!-- 是否公众号消息提醒 -->
           <div class="weixin-public flex-h flex-cc" @click.stop="setWaiterIsOnLine"><span :class="{'public-on': !isWaiterOnLine, 'public-off': isWaiterOnLine}">{{isWaiterOnLine?'公众号消息提醒已关闭':'公众号消息提醒已开启'}}</span></div>
         </div>
         <form action="javascrpt:;">
@@ -224,6 +232,12 @@ export default {
     })
   },
   methods: {
+    messageContainerClick() {
+      this.isShowToolBox = false
+
+      // 重置消息框
+      this.reloadMessageScroll()
+    },
     /**
      * mobile 表情字符回删键
      */
@@ -327,7 +341,7 @@ export default {
         const faceContainer = document.querySelector('.face-container')
         const height = faceContainer.offsetHeight
         console.log('height', height)
-        faceContainer.style.top = `-${height}px`
+        faceContainer.style.top = `-${height + 5}px`
       })
     },
     bindMobileInputNewLine() {
@@ -548,19 +562,14 @@ export default {
           this.inputData = ''
           this.rows = 1
           this.lineHeight = ''
+
+          // 重置message显示框的高度
+          this.resetMessageBox()
         }, 100)
-      } else if ($('#fleH5')[0]) {
-        // var file = $('#fleH5')[0] ? $('#fleH5')[0].files[0] : ''
-        // console.log('file', file)
-        // if (file) {
-        //   // 有图片消息, 优先发送图片, 不发文字
-        //   this.pcSendImg(file)
-        //   $('.message').css('bottom', 70)
-        // }
-        // this.isShowToolBox = false
+
+        // 发送之后键盘不弹下去
+        this.$refs.mobileTextArea.focus()
       }
-      // 重置message显示框的高度
-      this.resetMessageBox()
     },
     chatBack() {
       this.$root.eventBus.$emit('toSession', {
@@ -1003,12 +1012,13 @@ export default {
           left: 0;
           width: 100%;
           height: 54px;
+          align-items: center;
           // border: 1px solid red;
           .tools-img {
+            position: relative;
             width: 40px;
             height: 36px;
-            padding-top: 10px;
-            padding-left: 18px;
+            margin-left: 24px;
             cursor: pointer;
             .upload-img-tag {
               width: 100%;
@@ -1016,12 +1026,13 @@ export default {
             }
             .uploadImg {
               position: absolute;
-              left: 10px;
-              top: 10px;
-              width: 40px;
-              height: 10px;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
               cursor: pointer;
               > input {
+                display: block;
                 width: 100%;
                 height: 100%;
                 opacity: 0;
@@ -1031,11 +1042,11 @@ export default {
           }
           .face {
             position: relative;
-            width: 50px;
-            height: 50px;
-            margin-left: 100px;
-            background: red;
-            .face-handle {
+            width: 40px;
+            height: 40px;
+            margin-left: 24px;
+            .face-handle,
+            .face-handle-active {
               width: 100%;
               height: 100%;
             }
