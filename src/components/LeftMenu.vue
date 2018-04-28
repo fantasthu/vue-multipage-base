@@ -1,14 +1,11 @@
 <template>
   <div class="left-menu flex-v">
     <div class="logo">
-      <img src="../assets/img/guize-1.png" alt="">
+      <img src="../assets/img/icon_oneway.png" alt="">
     </div>
     <div class="list">
       <div class="item">
-        <img src="../assets/img/kaquan-bg.png" alt="">
-      </div>
-      <div class="item">
-        <img src="../assets/img/kaquan-bg.png" alt="">
+        <img src="../assets/img/chat.png" alt="">
       </div>
     </div>
   </div>
@@ -51,6 +48,13 @@ export default {
       }
     }
     .list {
+      .item {
+        img {
+          width: 50px;
+          height: 45px;
+          margin-top: 60px;
+        }
+      }
     }
   }
 }

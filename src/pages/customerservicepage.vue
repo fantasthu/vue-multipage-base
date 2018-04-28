@@ -9,6 +9,7 @@
       <left-menu v-show="showLeftMenu"></left-menu>
       <session v-if="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
+      <right-menu v-show="showLeftMenu"></right-menu>
       <mt-popup
         v-model="popupVisible"
         popup-transition="popup-fade"
@@ -46,6 +47,7 @@
 import Chat from '../components/Chat.vue'
 import Session from '../components/Session.vue'
 import LeftMenu from '../components/LeftMenu.vue'
+import RightMenu from '../components/RightMenu.vue'
 import socketio from 'socket.io-client'
 import axios from 'axios'
 import { formatTime } from '../service/tools'
@@ -53,7 +55,7 @@ import { Popup, Field } from 'mint-ui'
 
 export default {
   name: 'about',
-  components: { Chat, Session, Popup, Field, LeftMenu },
+  components: { Chat, Session, Popup, Field, LeftMenu, RightMenu },
   data() {
     return {
       username: '',

@@ -210,11 +210,7 @@ export default {
 // pc端
 @media screen and (min-width: 768px) {
   .session {
-    position: absolute;
-    left: 118px;
-    right: 0;
-    bottom: 0;
-    top: 0;
+    position: relative;
     width: 460px;
     .session-wrapper {
       position: absolute;

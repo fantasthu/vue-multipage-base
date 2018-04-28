@@ -68,15 +68,33 @@
       <div class="to-input">
         <form action="javascrpt:;" class="flex-h flex-cc">
           <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
-          <div class="more-tools" @click.stop="showToolBox"><img src="../assets/img/add-icon.png" alt=""></div>
-          <div class="h5-send" @click.stop="mobileSendMsg">发送</div>
+          <div class="emoji-handle" @click.stop="emojiMobileHandleClick">
+            <img src="../assets/img/emoji-handle.png" class="item" v-show="!mobileEmojiHandled" alt="">
+            <img src="../assets/img/emoji-handle-active.png" class="item active" v-show="mobileEmojiHandled" alt="">
+          </div>
+          <div class="more-tools" @click.stop="showToolBox" v-show="!mobileSendShow"><img src="../assets/img/add-icon.png" alt=""></div>
+          <div class="h5-send" @click.stop="mobileSendMsg" v-show="mobileSendShow">发送</div>
         </form>
       </div>
       <div class="tools-box" v-if="isShowToolBox">
-        <div class="tools-photos">
-          <img src="../assets/img/tools-photos.png" alt="">
-          <div class="uploadImg-h5">
-            <input type="file" id="fleH5" v-on:change="mobileFileSelected">
+        <!-- 表情内容 -->
+        <div class="emoji-box" v-show="toolIndex===1">
+           <mt-swipe :auto="0">
+            <mt-swipe-item>
+              <img v-for ="item in emojis" class="emoji-item" :src="item" alt="">
+              <span class="delete" @click="emojiBackDel">回删</span>
+            </mt-swipe-item>
+            <mt-swipe-item>2</mt-swipe-item>
+            <mt-swipe-item>3</mt-swipe-item>
+          </mt-swipe>
+        </div>
+        <!-- 其他工具 -->
+        <div class="tools" v-show="toolIndex===2">
+          <div class="tools-photos">
+            <img src="../assets/img/tools-photos.png" alt="">
+            <div class="uploadImg-h5">
+              <input type="file" id="fleH5" v-on:change="mobileFileSelected">
+            </div>
           </div>
         </div>
       </div>
@@ -85,7 +103,7 @@
 </template>
 
 <script>
-import { Header, Button } from 'mint-ui'
+import { Header, Button, Swipe, SwipeItem } from 'mint-ui'
 import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
@@ -95,7 +113,7 @@ import $ from 'jquery'
 
 export default {
   name: 'chat',
-  components: { Header, Button, ServiceHeader },
+  components: { Header, Button, ServiceHeader, Swipe, SwipeItem },
   props: {},
   data() {
     return {
@@ -134,6 +152,10 @@ export default {
       noRepeat: false,
       emojis: [],
       showEmoji: false,
+      mobileEmojiHandled: false,
+      // 手机端发送按钮是否显示
+      mobileSendShow: false,
+      toolIndex: 0,
       isWaiterOnLine: ''
     }
   },
@@ -203,12 +225,29 @@ export default {
   },
   methods: {
     /**
+     * mobile 表情字符回删键
+     */
+    emojiBackDel() {
+      if (this.inputData) {
+        ;[...this.inputData].pop()
+        console.log('tis.posp', this.inputData)
+      }
+    },
+    /**
+     * h5点击表情工具
+     */
+    emojiMobileHandleClick() {
+      this.mobileEmojiHandled = !this.mobileEmojiHandled
+      this.isShowToolBox = true
+      this.toolIndex = 1
+    },
+    /**
      * 过滤消息中的表情
      */
     filterMsg(msg = '') {
       let newMsg = ''
       const reg = new RegExp(
-        "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>/",
+        "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>/|/::\\$|/:\\–b|\\[囧\\]|/::’\\||/::’\\(",
         'g'
       )
       reg.compile(reg)
@@ -310,6 +349,7 @@ export default {
     },
     showToolBox() {
       this.isShowToolBox = !this.isShowToolBox
+      this.toolIndex = 2
       // 重置message显示框的高度
       this.resetMessageBox()
     },
@@ -611,6 +651,10 @@ export default {
                 word-wrap: break-word;
                 white-space: pre-wrap;
                 overflow: hidden;
+                .text-img {
+                  width: 40px;
+                  height: 40px;
+                }
               }
               .image {
                 width: 256px;
@@ -694,15 +738,23 @@ export default {
             width: 120px;
             height: 80px;
             line-height: 80px;
-            margin: 0 10px;
+            margin-right: 16px;
           }
           .more-tools {
             width: 70px;
             height: 70px;
             padding-left: 8px;
+            margin-right: 16px;
             > img {
               width: 100%;
               height: 100%;
+            }
+          }
+          .emoji-handle {
+            .item {
+              width: 70px;
+              height: 70px;
+              margin: 0 16px;
             }
           }
         }
@@ -710,28 +762,41 @@ export default {
       .tools-box {
         width: 100%;
         height: 448px;
-        .tools-photos {
-          width: 110px;
-          height: 110px;
-          padding: 28px;
-          position: relative;
-          > img {
-            width: 110px;
-            height: 110px;
-            position: absolute;
+        // 表情内容
+        .emoji-box {
+          width: 100%;
+          height: 100%;
+          .emoji-item {
+            width: 80px;
+            height: 80px;
+            padding: 5px;
           }
-          .uploadImg-h5 {
+        }
+        .tools {
+          // 打开相册
+          .tools-photos {
             width: 110px;
             height: 110px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            color: transparent;
-            opacity: 0;
-            z-index: 1;
-            > input {
-              width: 100%;
-              height: 100%;
+            padding: 28px;
+            position: relative;
+            > img {
+              width: 110px;
+              height: 110px;
+              position: absolute;
+            }
+            .uploadImg-h5 {
+              width: 110px;
+              height: 110px;
+              position: absolute;
+              top: 0;
+              left: 0;
+              color: transparent;
+              opacity: 0;
+              z-index: 1;
+              > input {
+                width: 100%;
+                height: 100%;
+              }
             }
           }
         }
@@ -744,8 +809,9 @@ export default {
 @media screen and (min-width: 768px) {
   .chat {
     position: relative;
+    min-width: 500px;
     border-left: 2px solid #e5e5e5;
-    margin-left: 460px;
+    // margin-left: 460px;
     .service-header {
       display: none;
     }
