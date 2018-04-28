@@ -75,7 +75,7 @@
     <div class="input-container">
       <div class="to-input">
         <form action="javascrpt:;" class="flex-h flex-cc">
-          <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
+          <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" @input="inputData = $event.target.innerText" @focus="focus"></div>
           <div class="emoji-handle" @click.stop="emojiMobileHandleClick">
             <img src="../assets/img/emoji-handle.png" class="item" v-show="!mobileEmojiHandled" alt="">
             <img src="../assets/img/emoji-handle-active.png" class="item active" v-show="mobileEmojiHandled" alt="">
@@ -244,6 +244,7 @@ export default {
     emojiBackDel() {
       if (this.inputData) {
         this.inputData = this.inputData.substr(0, this.inputData.length - 1)
+        this.$refs.mobileTextArea.innerText = this.inputData
       }
     },
     /**
@@ -253,7 +254,6 @@ export default {
       this.mobileEmojiHandled = !this.mobileEmojiHandled
       this.isShowToolBox = true
       this.toolIndex = 1
-
       // 重置消息盒子
       this.resetMessageBox()
 
@@ -321,6 +321,7 @@ export default {
         return i === index
       })
       this.inputData = `${this.inputData} ${indexAlias}`
+      this.$refs.mobileTextArea.innerText = this.inputData
     },
     loadEmojis() {
       this.emojis = EmojiObj.imgs
@@ -595,9 +596,17 @@ export default {
       // console.log('sendWaiterMsg', obj)
       this.$emit('sendWaiterMsgToUser', obj)
     },
-    focus() {
+    focus(e) {
       this.isShowToolBox = false
+      this.mobileEmojiHandled = false
       var agent = navigator.userAgent.toLowerCase()
+      var textbox = document.getElementById('mobileInputDiv')
+      var sel = window.getSelection()
+      var range = document.createRange()
+      range.selectNodeContents(textbox)
+      range.collapse(false)
+      sel.removeAllRanges()
+      sel.addRange(range)
       var version
       if (agent.indexOf('like mac os x') > 0) {
         // ios
@@ -627,6 +636,7 @@ export default {
   },
   watch: {
     inputData: function(val, oldVal) {
+      // this.$refs.mobileTextArea.innerText = val
       console.log('val', val)
       if (val && val.trim().length > 0) {
         this.mobileSendShow = true
@@ -760,6 +770,11 @@ export default {
         margin: auto;
         background: #fff;
         form {
+          .mobile-input {
+            max-height: 200px;
+            word-break: break-all;
+            overflow: scroll;
+          }
           .text-input {
             line-height: 40px;
             margin-left: 40px;
