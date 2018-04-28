@@ -430,7 +430,8 @@ export default {
       }
     },
     reloadMessageScroll() {
-      this.timer = null
+      // this.timer = null
+      clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.scroll = new Bscroll(this.$refs.wrapper, {
           mouseWheel: true,
@@ -439,6 +440,7 @@ export default {
           preventDefault: true,
           preventDefaultException: { className: /(^|\s)text(\s|$)/ }
         })
+        clearTimeout(this.timer)
         console.log('scroll', scroll)
       }, 100)
     },
