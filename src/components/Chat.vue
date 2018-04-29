@@ -185,12 +185,19 @@ export default {
         if (event.clipboardData || event.originalEvent) {
           var clipboardData =
             event.clipboardData || event.originalEvent.clipboardData
+          if (clipboardData.getData('text/plain')) {
+            this.inputData = clipboardData.getData('text/plain')
+            return
+          }
           if (clipboardData.items) {
             var items = clipboardData.items
             var len = items.length
             var blob = null
+            console.log('len', len)
+            console.log('items', items)
             event.preventDefault()
             for (var i = 0; i < len; i++) {
+              console.log(items[i])
               if (items[i].type.indexOf('image') !== -1) {
                 blob = items[i].getAsFile()
               }
