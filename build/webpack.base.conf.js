@@ -26,7 +26,8 @@ module.exports = {
     }
   },
   externals: {
-    wx: 'wx'
+    wx: 'wx',
+    $: 'jQuery'
   },
   module: {
     rules: [

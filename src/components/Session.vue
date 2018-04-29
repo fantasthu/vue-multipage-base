@@ -106,6 +106,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+// 手机端
 @media (max-width: 768px) {
   .session {
     width: 100%;
@@ -205,13 +206,11 @@ export default {
     }
   }
 }
+
+// pc端
 @media screen and (min-width: 768px) {
   .session {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
+    position: relative;
     width: 460px;
     .session-wrapper {
       position: absolute;

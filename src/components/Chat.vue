@@ -5,7 +5,7 @@
       <div class="name">{{currentUserName}}</div>
       <div class="singOut" @click.stop="singOut">退出</div>
     </div>
-    <div class="message" ref="wrapper">
+    <div class="message" ref="wrapper" @click.stop="messageContainerClick">
       <ul class="message-list">
 
         <template v-for="(item,index) in currentUserAllMsg">
@@ -14,7 +14,7 @@
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
-                <div class="text" v-if="item.msgType == 'text'">{{item.msg}}</div>
+                <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
                 <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)"></div>
               </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
-                <p class="text" v-if="item.msgType == 'text'">{{item.msg}}</p>
+                <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
                 <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)"></div>
               </div>
             </div>
@@ -34,36 +34,79 @@
 
       </ul>
     </div>
+    <!-- pc端input -->
     <div class="pc-input-container">
       <div class="to-input flex-h flex-cc">
+        <!-- 输入框的工具条 -->
         <div class="to-input-tools flex-h">
+
+           <!-- 表情 -->
+          <div class="face">
+            <img src="../assets/img/smile.png" alt="" class="face-handle" v-show="!showEmoji" @click="emojiHandleClick">
+            <img src="../assets/img/smile-active.png" alt="" class="face-handle-active" v-show="showEmoji" @click="emojiHandleClick">
+            <div class="face-container flex-h" v-show="showEmoji">
+              <div class="item" v-for="(item,index) in emojis" :key="index" @click="emojiItemClick(index)">
+                <img :src="item" alt="">
+              </div>
+            </div>
+          </div>
+
+          <!-- 图片 -->
           <div class="tools-img">
-            <img src="../assets/img/uploadImgIcon.png" alt="">
+            <img class="upload-img-tag" src="../assets/img/uploadImgIcon.png" alt="">
             <div class="uploadImg">
               <input type="file" id="fle" v-on:change="pcFileSelected">
             </div>
           </div>
+
+         <!-- 是否公众号消息提醒 -->
           <div class="weixin-public flex-h flex-cc" @click.stop="setWaiterIsOnLine"><span :class="{'public-on': !isWaiterOnLine, 'public-off': isWaiterOnLine}">{{isWaiterOnLine?'公众号消息提醒已关闭':'公众号消息提醒已开启'}}</span></div>
         </div>
         <form action="javascrpt:;">
-          <textarea @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
+          <textarea contenteditable="true" id="editor" @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
         </form>
         <div class="enter-hint">按下Enter发送</div>
       </div>
     </div>
+
+    <!-- 手机端input -->
     <div class="input-container">
       <div class="to-input">
-        <form action="javascrpt:;" class="flex-h flex-cc" @click.stop="setLastMsgInView">
+        <!-- <form action="javascrpt:;" class="flex-h flex-cc" @click.stop="setLastMsgInView">
           <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
           <div class="more-tools" @click.stop="showToolBox"><img src="../assets/img/add-icon.png" alt=""></div>
-          <div class="h5-send" @click.stop="mobileSendMsg">发送</div>
+          <div class="h5-send" @click.stop="mobileSendMsg">发送</div> -->
+
+        <form action="javascrpt:;" class="flex-h flex-cc" @click.stop="setLastMsgInView">
+          <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
+          <!-- <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" v-model="inputData" @input="inputData = $event.target.innerText" @focus="focus"></div> -->
+          <div class="emoji-handle" @click.stop="emojiMobileHandleClick">
+            <img src="../assets/img/emoji-handle.png" class="item" v-show="!mobileEmojiHandled" alt="">
+            <img src="../assets/img/emoji-handle-active.png" class="item active" v-show="mobileEmojiHandled" alt="">
+          </div>
+          <div class="more-tools" @click.stop="showToolBox" v-show="!mobileSendShow"><img src="../assets/img/add-icon.png" alt=""></div>
+          <div class="h5-send" @click.stop="mobileSendMsg" v-show="mobileSendShow">发送</div>
         </form>
       </div>
       <div class="tools-box" v-if="isShowToolBox">
-        <div class="tools-photos">
-          <img src="../assets/img/tools-photos.png" alt="">
-          <div class="uploadImg-h5">
-            <input type="file" id="fleH5" v-on:change="mobileFileSelected">
+        <!-- 表情内容 -->
+        <div class="emoji-box" v-show="toolIndex===1">
+           <mt-swipe :auto="0">
+            <mt-swipe-item>
+              <img v-for ="(item,index) in emojis" @click="mobileEmojiItemClick(index)" class="emoji-item" :src="item" alt="">
+              <span class="delete" @click="emojiBackDel">回删</span>
+            </mt-swipe-item>
+            <mt-swipe-item>2</mt-swipe-item>
+            <mt-swipe-item>3</mt-swipe-item>
+          </mt-swipe>
+        </div>
+        <!-- 其他工具 -->
+        <div class="tools" v-show="toolIndex===2">
+          <div class="tools-photos">
+            <img src="../assets/img/tools-photos.png" alt="">
+            <div class="uploadImg-h5">
+              <input type="file" id="fleH5" v-on:change="mobileFileSelected">
+            </div>
           </div>
         </div>
       </div>
@@ -72,16 +115,18 @@
 </template>
 
 <script>
-import { Header, Button } from 'mint-ui'
+import { Header, Button, Swipe, SwipeItem } from 'mint-ui'
 import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
+import EmojiObj from '../assets/js/mapEmoji.js'
+import EmojiMsgObj from '../assets/js/mapEmojiMsg.js'
 import api from '../service/api'
 import $ from 'jquery'
 
 export default {
   name: 'chat',
-  components: { Header, Button, ServiceHeader },
+  components: { Header, Button, ServiceHeader, Swipe, SwipeItem },
   props: {},
   data() {
     return {
@@ -118,7 +163,13 @@ export default {
       isShowToolBox: false,
       platForm: '',
       noRepeat: false,
-      isWaiterOnLine: false
+      emojis: [],
+      showEmoji: false,
+      mobileEmojiHandled: false,
+      // 手机端发送按钮是否显示
+      mobileSendShow: false,
+      toolIndex: 0,
+      isWaiterOnLine: ''
     }
   },
   async created() {
@@ -142,32 +193,174 @@ export default {
       this.waiterInfo = waiterInfo
       console.log('chat-waiterInfo', this.waiterInfo)
     })
+    // 获取用户所以消息
     this.$root.eventBus.$on('userAllMsg', obj => {
-      this.currentUserAllMsg = obj.userAllMsg
+      this.currentUserAllMsg = obj.userAllMsg.map(item => {
+        console.log('item', item)
+        if (item.msg) {
+          item.msg = this.filterMsg(item.msg)
+        }
+        return item
+      })
+      console.log('obj.userAllMsg', obj.userAllMsg)
       this.currentUserName = obj.userAllMsg[0].name + '的聊天'
       this.currentUserOpenId = obj.openId
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 200)
     })
+
+    // 获取用户每条发送的消息
     this.$root.eventBus.$on('userMsg', arr => {
+      console.log('arr', arr)
       arr[0].formatTime = formatTime(arr[0].msgTime, 6)
       arr[0].headImg = arr[0].headImg
         ? arr[0].headImg
         : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
+
+      // 过滤信息,也许带有表情
+      arr[0].msg = this.filterMsg(arr[0].msg)
       this.currentUserAllMsg.push(arr[0])
-      // console.log('this.scroll', this.scroll.scrollerHeight)
-      // const last = document.querySelector('.message .item')
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 200)
-      // this.scroll.scrollTo(0, -this.scroll.scrollerHeight)
     })
   },
   mounted() {
     this.$nextTick(() => {
       this.reloadMessageScroll()
+
       // 手机端滚动
+      this.bindMobileInputNewLine()
+
+      // 添加表情
+      this.loadEmojis()
+    })
+  },
+  methods: {
+    messageContainerClick() {
+      this.isShowToolBox = false
+
+      // 重置消息框
+      this.reloadMessageScroll()
+    },
+    /**
+     * mobile 表情字符回删键
+     */
+    emojiBackDel() {
+      if (this.inputData) {
+        this.inputData = this.inputData.substr(0, this.inputData.length - 1)
+        this.$refs.mobileTextArea.innerText = this.inputData
+      }
+    },
+    /**
+     * h5点击表情工具
+     */
+    emojiMobileHandleClick() {
+      this.mobileEmojiHandled = !this.mobileEmojiHandled
+      this.isShowToolBox = true
+      this.toolIndex = 1
+      // 重置消息盒子
+      this.resetMessageBox()
+
+      // 如果mobileEmojiHandled 为false,触发input的focus时间
+      if (!this.mobileEmojiHandled) {
+        this.focusMobileInput()
+      }
+    },
+    /**
+     * 触发手机端input框focus
+     */
+    focusMobileInput() {
+      this.$refs.mobileTextArea.focus()
+    },
+    /**
+     * 过滤消息中的表情
+     */
+    filterMsg(msg = '') {
+      let newMsg = ''
+      const reg = new RegExp(
+        "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>/|/::\\$|/:\\–b|\\[囧\\]|/::’\\||/::'\\(",
+        'g'
+      )
+      reg.compile(reg)
+      newMsg = msg.replace(reg, (p1, p2, matches) => {
+        console.log('p1', p1)
+        console.log('p2', p2)
+        console.log('matches', matches)
+        // 过滤相应的图片
+        return this.filterCodeToImg(p1)
+      })
+      return newMsg
+    },
+    /**
+     * 把表情代码过滤成表情图片
+     */
+    filterCodeToImg(code) {
+      console.log('code', code)
+      let emoji = ''
+      this.emojiMsgAlias.forEach((item, index) => {
+        if (item === code) {
+          console.log('this.emojiAlias', item)
+          emoji = this.emojiMsgs[index]
+        }
+      })
+      // this.emojiAlias.forEach((item, index) => {
+      //   if (item === code) {
+      //     console.log('this.emojiAlias', item)
+      //     emoji = this.emojis[index]
+      //   }
+      // })
+      return `<img class="text-img" src='${emoji}'/>`
+    },
+    /**
+     * 每个表情的点击事件
+     */
+    emojiItemClick(index) {
+      // append数据到textarea中
+      const indexAlias = this.emojiAlias.filter((item, i) => {
+        return i === index
+      })
+      this.inputData = `${this.inputData} ${indexAlias}`
+    },
+    /**
+     * 手机端每个表情的点击事件
+     */
+    mobileEmojiItemClick(index) {
+      // append数据到textarea中
+      const indexAlias = this.emojiAlias.filter((item, i) => {
+        return i === index
+      })
+      this.inputData = `${this.inputData} ${indexAlias}`
+      this.$refs.mobileTextArea.innerText = this.inputData
+    },
+    loadEmojis() {
+      // 可以发送的表情
+      this.emojis = EmojiObj.imgs
+      this.emojiAlias = EmojiObj.alias
+      // 可以接收的表情
+      this.emojiMsgs = EmojiMsgObj.imgs
+      this.emojiMsgAlias = EmojiMsgObj.alias
+    },
+    emojiHandleClick() {
+      // this.filterMsg('阿斯顿撒旦法/::)/::~121我萨达')
+      this.showEmoji = !this.showEmoji
+
+      // 定位emoji的位置
+      this.locationEmoji()
+    },
+    /**
+     * 定位emoji的位置
+     */
+    locationEmoji() {
+      this.$nextTick(() => {
+        const faceContainer = document.querySelector('.face-container')
+        const height = faceContainer.offsetHeight
+        console.log('height', height)
+        faceContainer.style.top = `-${height + 5}px`
+      })
+    },
+    bindMobileInputNewLine() {
       const that = this
       this.$refs.mobileTextArea.onscroll = function(e) {
         if (that.onTextScroll) {
@@ -175,9 +368,7 @@ export default {
           that.mobileInputChange()
         }
       }
-    })
-  },
-  methods: {
+    },
     // 无法粘贴文字, 粘贴动作的时候如果是文字就将内容赋值给inputData
     pasteImg() {
       document.addEventListener('paste', event => {
@@ -274,7 +465,8 @@ export default {
       }
     },
     showToolBox() {
-      this.isShowToolBox = !this.isShowToolBox
+      this.isShowToolBox = true
+      this.toolIndex = 2
       // 重置message显示框的高度
       this.resetMessageBox()
     },
@@ -317,15 +509,17 @@ export default {
       }
     },
     reloadMessageScroll() {
-      this.timer = null
+      // this.timer = null
+      clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.scroll = new Bscroll(this.$refs.wrapper, {
           mouseWheel: true,
           click: true,
           tap: true,
-          preventDefault: false,
-          preventDefaultException: { className: /(^\s)text(\s$)/ }
+          preventDefault: true,
+          preventDefaultException: { className: /(^|\s)text(\s|$)/ }
         })
+        clearTimeout(this.timer)
         console.log('scroll', scroll)
       }, 100)
     },
@@ -469,10 +663,15 @@ export default {
           this.inputData = ''
           this.rows = 1
           this.lineHeight = ''
+
+          this.$refs.mobileTextArea.innerHTML = ''
+          // 重置message显示框的高度
+          this.resetMessageBox()
         }, 100)
+
+        // 发送之后键盘不弹下去
+        this.$refs.mobileTextArea.focus()
       }
-      // 重置message显示框的高度
-      this.resetMessageBox()
     },
     chatBack() {
       this.$root.eventBus.$emit('toSession', {
@@ -494,9 +693,17 @@ export default {
       console.log('---------this.waiterInfo---------', this.waiterInfo)
       this.$emit('sendWaiterMsgToUser', obj)
     },
-    focus() {
+    focus(e) {
       this.isShowToolBox = false
+      this.mobileEmojiHandled = false
       var agent = navigator.userAgent.toLowerCase()
+      var textbox = document.getElementById('mobileInputDiv')
+      var sel = window.getSelection()
+      var range = document.createRange()
+      range.selectNodeContents(textbox)
+      range.collapse(false)
+      sel.removeAllRanges()
+      sel.addRange(range)
       var version
       if (agent.indexOf('like mac os x') > 0) {
         // ios
@@ -526,6 +733,17 @@ export default {
       } else if (width < 768) {
         this.platForm = 'mobile'
         return 'mobile'
+      }
+    }
+  },
+  watch: {
+    inputData: function(val, oldVal) {
+      // this.$refs.mobileTextArea.innerText = val
+      console.log('val', val)
+      if (val && val.trim().length > 0) {
+        this.mobileSendShow = true
+      } else if (val.trim().length === 0) {
+        this.mobileSendShow = false
       }
     }
   }
@@ -588,6 +806,10 @@ export default {
                 word-wrap: break-word;
                 white-space: pre-wrap;
                 overflow: hidden;
+                .text-img {
+                  width: 40px;
+                  height: 40px;
+                }
               }
               .image {
                 width: 256px;
@@ -650,6 +872,11 @@ export default {
         margin: auto;
         background: #fff;
         form {
+          .mobile-input {
+            max-height: 200px;
+            word-break: break-all;
+            overflow: scroll;
+          }
           .text-input {
             line-height: 40px;
             margin-left: 40px;
@@ -671,15 +898,23 @@ export default {
             width: 120px;
             height: 80px;
             line-height: 80px;
-            margin: 0 10px;
+            margin-right: 16px;
           }
           .more-tools {
             width: 70px;
             height: 70px;
             padding-left: 8px;
+            margin-right: 16px;
             > img {
               width: 100%;
               height: 100%;
+            }
+          }
+          .emoji-handle {
+            .item {
+              width: 70px;
+              height: 70px;
+              margin: 0 16px;
             }
           }
         }
@@ -687,28 +922,41 @@ export default {
       .tools-box {
         width: 100%;
         height: 448px;
-        .tools-photos {
-          width: 110px;
-          height: 110px;
-          padding: 28px;
-          position: relative;
-          > img {
-            width: 110px;
-            height: 110px;
-            position: absolute;
+        // 表情内容
+        .emoji-box {
+          width: 100%;
+          height: 100%;
+          .emoji-item {
+            width: 80px;
+            height: 80px;
+            padding: 5px;
           }
-          .uploadImg-h5 {
+        }
+        .tools {
+          // 打开相册
+          .tools-photos {
             width: 110px;
             height: 110px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            color: transparent;
-            opacity: 0;
-            z-index: 1;
-            > input {
-              width: 100%;
-              height: 100%;
+            padding: 28px;
+            position: relative;
+            > img {
+              width: 110px;
+              height: 110px;
+              position: absolute;
+            }
+            .uploadImg-h5 {
+              width: 110px;
+              height: 110px;
+              position: absolute;
+              top: 0;
+              left: 0;
+              color: transparent;
+              opacity: 0;
+              z-index: 1;
+              > input {
+                width: 100%;
+                height: 100%;
+              }
             }
           }
         }
@@ -716,11 +964,14 @@ export default {
     }
   }
 }
+
+// pc 端
 @media screen and (min-width: 768px) {
   .chat {
     position: relative;
+    min-width: 500px;
     border-left: 2px solid #e5e5e5;
-    margin-left: 460px;
+    // margin-left: 460px;
     .service-header {
       display: none;
     }
@@ -789,6 +1040,10 @@ export default {
                 text-align: left;
                 word-break: break-all;
                 line-height: 42px;
+                .text-img {
+                  width: 40px;
+                  height: 40px;
+                }
               }
               .image {
                 width: 256px;
@@ -875,29 +1130,57 @@ export default {
           left: 0;
           width: 100%;
           height: 54px;
+          align-items: center;
           // border: 1px solid red;
           .tools-img {
+            position: relative;
             width: 40px;
             height: 36px;
-            padding-top: 10px;
-            padding-left: 18px;
+            margin-left: 24px;
             cursor: pointer;
-            > img {
+            .upload-img-tag {
               width: 100%;
               height: 100%;
             }
             .uploadImg {
               position: absolute;
-              left: 10px;
-              top: 10px;
-              width: 40px;
-              height: 10px;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
               cursor: pointer;
               > input {
+                display: block;
                 width: 100%;
                 height: 100%;
                 opacity: 0;
                 color: transparent;
+              }
+            }
+          }
+          .face {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            margin-left: 24px;
+            .face-handle,
+            .face-handle-active {
+              width: 100%;
+              height: 100%;
+            }
+            .face-container {
+              position: absolute;
+              top: -40px;
+              width: 480px;
+              background: rgba(0, 0, 0, 0.7);
+              border-radius: 6px 4px;
+              flex-wrap: wrap;
+              .item {
+                padding: 4px;
+                img {
+                  width: 40px;
+                  height: 40px;
+                }
               }
             }
           }
