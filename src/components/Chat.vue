@@ -116,6 +116,7 @@ import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
 import EmojiObj from '../assets/js/mapEmoji.js'
+import EmojiMsgObj from '../assets/js/mapEmojiMsg.js'
 import api from '../service/api'
 import $ from 'jquery'
 
@@ -274,7 +275,7 @@ export default {
     filterMsg(msg = '') {
       let newMsg = ''
       const reg = new RegExp(
-        "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>/|/::\\$|/:\\–b|\\[囧\\]|/::’\\||/::’\\(",
+        "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>/|/::\\$|/:\\–b|\\[囧\\]|/::’\\||/::'\\(",
         'g'
       )
       reg.compile(reg)
@@ -293,12 +294,18 @@ export default {
     filterCodeToImg(code) {
       console.log('code', code)
       let emoji = ''
-      this.emojiAlias.forEach((item, index) => {
+      this.emojiMsgAlias.forEach((item, index) => {
         if (item === code) {
           console.log('this.emojiAlias', item)
-          emoji = this.emojis[index]
+          emoji = this.emojiMsgs[index]
         }
       })
+      // this.emojiAlias.forEach((item, index) => {
+      //   if (item === code) {
+      //     console.log('this.emojiAlias', item)
+      //     emoji = this.emojis[index]
+      //   }
+      // })
       return `<img class="text-img" src='${emoji}'/>`
     },
     /**
@@ -323,8 +330,12 @@ export default {
       this.$refs.mobileTextArea.innerText = this.inputData
     },
     loadEmojis() {
+      // 可以发送的表情
       this.emojis = EmojiObj.imgs
       this.emojiAlias = EmojiObj.alias
+      // 可以接收的表情
+      this.emojiMsgs = EmojiMsgObj.imgs
+      this.emojiMsgAlias = EmojiMsgObj.alias
     },
     emojiHandleClick() {
       // this.filterMsg('阿斯顿撒旦法/::)/::~121我萨达')
