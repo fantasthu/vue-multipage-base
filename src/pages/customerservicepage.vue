@@ -2,7 +2,8 @@
   <div class="customer-service">
     <!-- 此处是图片lightBox -->
     <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl" @click.stop="closeFullImg">
-      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;">    
+      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-if="isIOS" @click.stop="fullImgClick" @touchstart="fullImgTouchStart" @touchend="fullImgTouchStartEnd">    
+      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-else>    
     </div>
     <!-- 此处是聊天界面 -->
     <div class="s-container flex-h">
@@ -73,10 +74,13 @@ export default {
       platForm: '',
       showFullImgUrl: '',
       iNotifyMsg: null,
-      currentPageIsActive: true
+      currentPageIsActive: true,
+      isIOS: true
     }
   },
   created() {
+    var u = navigator.userAgent
+    this.isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) // ios终端
     // this.$root.eventBus.$off('sho2wCurrentImg')
     window.onfocus = () => {
       this.currentPageIsActive = true
@@ -138,6 +142,18 @@ export default {
      */
     closeFullImg() {
       this.showFullImgUrl = ''
+    },
+    fullImgClick(e) {
+      // 阻止事件冒泡
+      console.log('e', e)
+    },
+    fullImgTouchStart(e) {
+      this.timeStamp = e.timeStamp
+    },
+    fullImgTouchStartEnd(e) {
+      if (e.timeStamp - this.timeStamp < 500) {
+        this.showFullImgUrl = ''
+      }
     },
     /**
      * socket 连接
