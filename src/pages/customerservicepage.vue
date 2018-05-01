@@ -2,7 +2,7 @@
   <div class="customer-service">
     <!-- 此处是图片lightBox -->
     <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl" @click.stop="closeFullImg">
-      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" >    
+      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;">    
     </div>
     <!-- 此处是聊天界面 -->
     <div class="s-container flex-h">

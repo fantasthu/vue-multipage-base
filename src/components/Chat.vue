@@ -9,8 +9,7 @@
       <ul class="message-list">
 
         <template v-for="(item,index) in currentUserAllMsg">
-          <!-- 左侧消息 -->
-          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" >
+          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" @click.stop="setKeyboardDown">
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -21,8 +20,7 @@
             </div>
           </li>
 
-          <!-- 右侧消息 -->
-          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" >
+          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" @click.stop="setKeyboardDown">
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -74,8 +72,14 @@
     <!-- 手机端input -->
     <div class="input-container">
       <div class="to-input">
-        <form action="javascrpt:;" class="flex-h flex-cc">
-          <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" v-model="inputData" @input="inputData = $event.target.innerText" @focus="focus"></div>
+        <!-- <form action="javascrpt:;" class="flex-h flex-cc" @click.stop="setLastMsgInView">
+          <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
+          <div class="more-tools" @click.stop="showToolBox"><img src="../assets/img/add-icon.png" alt=""></div>
+          <div class="h5-send" @click.stop="mobileSendMsg">发送</div> -->
+
+        <form action="javascrpt:;" class="flex-h flex-cc" @click.stop="setLastMsgInView">
+          <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
+          <!-- <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" v-model="inputData" @input="inputData = $event.target.innerText" @focus="focus"></div> -->
           <div class="emoji-handle" @click.stop="emojiMobileHandleClick">
             <img src="../assets/img/emoji-handle.png" class="item" v-show="!mobileEmojiHandled" alt="">
             <img src="../assets/img/emoji-handle-active.png" class="item active" v-show="mobileEmojiHandled" alt="">
@@ -116,6 +120,7 @@ import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
 import EmojiObj from '../assets/js/mapEmoji.js'
+import EmojiMsgObj from '../assets/js/mapEmojiMsg.js'
 import api from '../service/api'
 import $ from 'jquery'
 
@@ -168,6 +173,7 @@ export default {
     }
   },
   async created() {
+    this.pasteImg()
     let isWaiterOnLine = await api.checkWaiterIsOnLine({})
     this.isWaiterOnLine = isWaiterOnLine.isWaiterOnLine
     this.client = new OSS.Wrapper({
@@ -274,7 +280,7 @@ export default {
     filterMsg(msg = '') {
       let newMsg = ''
       const reg = new RegExp(
-        "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>/|/::\\$|/:\\–b|\\[囧\\]|/::’\\||/::’\\(",
+        "/::\\)|/::~|/::B|/::\\||/:8-\\)|/::<|/::$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:#-0|/:hiphot|/:kiss|/:<&|/:&>/|/::\\$|/:\\–b|\\[囧\\]|/::’\\||/::'\\(",
         'g'
       )
       reg.compile(reg)
@@ -293,12 +299,18 @@ export default {
     filterCodeToImg(code) {
       console.log('code', code)
       let emoji = ''
-      this.emojiAlias.forEach((item, index) => {
+      this.emojiMsgAlias.forEach((item, index) => {
         if (item === code) {
           console.log('this.emojiAlias', item)
-          emoji = this.emojis[index]
+          emoji = this.emojiMsgs[index]
         }
       })
+      // this.emojiAlias.forEach((item, index) => {
+      //   if (item === code) {
+      //     console.log('this.emojiAlias', item)
+      //     emoji = this.emojis[index]
+      //   }
+      // })
       return `<img class="text-img" src='${emoji}'/>`
     },
     /**
@@ -325,6 +337,9 @@ export default {
     loadEmojis() {
       this.emojis = EmojiObj.imgs.slice(0, 38)
       this.emojiAlias = EmojiObj.alias
+      // 可以接收的表情
+      this.emojiMsgs = EmojiMsgObj.imgs
+      this.emojiMsgAlias = EmojiMsgObj.alias
     },
     emojiHandleClick() {
       // this.filterMsg('阿斯顿撒旦法/::)/::~121我萨达')
@@ -353,6 +368,64 @@ export default {
         }
       }
     },
+    // 无法粘贴文字, 粘贴动作的时候如果是文字就将内容赋值给inputData
+    pasteImg() {
+      document.addEventListener('paste', event => {
+        if (this.$root.eventBus.showWidth < 768) return
+        if (event.clipboardData || event.originalEvent) {
+          var clipboardData =
+            event.clipboardData || event.originalEvent.clipboardData
+          if (clipboardData.getData('text/plain')) {
+            this.inputData = clipboardData.getData('text/plain')
+            return
+          }
+          if (clipboardData.items) {
+            var items = clipboardData.items
+            var len = items.length
+            var blob = null
+            console.log('len', len)
+            console.log('items', items)
+            event.preventDefault()
+            for (var i = 0; i < len; i++) {
+              console.log(items[i])
+              if (items[i].type.indexOf('image') !== -1) {
+                blob = items[i].getAsFile()
+              }
+            }
+            if (blob !== null) {
+              var reader = new FileReader()
+              reader.onload = event => {
+                // event.target.result 即为图片的Base64编码字符串
+                var base64Str = event.target.result
+                this.pcSendImgPaste(base64Str, blob)
+              }
+              reader.readAsDataURL(blob)
+            }
+          }
+        }
+      })
+    },
+    setKeyboardDown() {
+      let width = window.document.documentElement.clientWidth
+      console.log('setKeyboardDown', width)
+      if (width < 768) {
+        if (!this.noRepeat) {
+          this.noRepeat = true
+          this.resetMessageBox()
+          console.log('setKeyboardDown')
+          this.isShowToolBox = false
+          this.reloadMessageScroll()
+          setTimeout(() => {
+            this.resetMessageBox()
+            this.reloadMessageScroll()
+            this.noRepeat = false
+          }, 1500)
+        }
+      }
+    },
+    setLastMsgInView() {
+      this.scroll.scrollTo(0, this.scroll.maxScrollY - 350)
+    },
     async setWaiterIsOnLine() {
       if (this.isWaiterOnLine === 0) {
         this.isWaiterOnLine = 1
@@ -380,8 +453,13 @@ export default {
         if (file) {
           // 有图片消息, 优先发送图片, 不发文字
           this.pcSendImg(file)
-          $('.message').css('bottom', 70)
+          // $('.message').css('bottom', 70)
+          // this.resetMessageBox()
         }
+        setTimeout(() => {
+          this.resetMessageBox()
+          this.reloadMessageScroll()
+        }, 1500)
         this.isShowToolBox = false
       }
     },
@@ -506,6 +584,26 @@ export default {
           this.currentUserAllMsg[0].openId,
           ossUrl
         )
+        this.$toast('图片正在上传中...')
+        $('#fleH5').val('')
+      }
+    },
+    async pcSendImgPaste(base64Img, blob) {
+      var reader = new FileReader()
+      var AllowImgFileSize = 2100000
+      reader.readAsDataURL(blob)
+      reader.onload = async e => {
+        if (AllowImgFileSize !== 0 && AllowImgFileSize < reader.result.length) {
+          this.$toast('图片超过2M, 上传失败!')
+          return
+        }
+        let ossUrl = await this.uploadImgToOSS(blob)
+        this.uploadImgToUser(
+          base64Img,
+          this.currentUserAllMsg[0].openId,
+          ossUrl
+        )
+        this.$toast('图片正在上传中...')
         $('#fleH5').val('')
       }
     },
@@ -618,7 +716,12 @@ export default {
         window.scrollTo(0, document.body.scrollHeight)
       }, 500)
       // 重置message显示框的高度
+      // this.resetMessageBox()
+      // this.scroll.scrollTo(0, -90)
       this.resetMessageBox()
+      console.log('setKeyboardDown')
+      this.isShowToolBox = false
+      this.reloadMessageScroll()
     },
     currentPlatform() {
       let width = window.document.documentElement.clientWidth
