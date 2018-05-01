@@ -323,7 +323,7 @@ export default {
       this.$refs.mobileTextArea.innerText = this.inputData
     },
     loadEmojis() {
-      this.emojis = EmojiObj.imgs
+      this.emojis = EmojiObj.imgs.slice(0, 38)
       this.emojiAlias = EmojiObj.alias
     },
     emojiHandleClick() {
@@ -430,7 +430,6 @@ export default {
       }
     },
     reloadMessageScroll() {
-      // this.timer = null
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.scroll = new Bscroll(this.$refs.wrapper, {
@@ -823,9 +822,9 @@ export default {
           width: 100%;
           height: 100%;
           .emoji-item {
-            width: 80px;
-            height: 80px;
-            padding: 5px;
+            width: 60px;
+            height: 60px;
+            padding: 10px 10px;
           }
         }
         .tools {
