@@ -9,7 +9,7 @@
       <ul class="message-list">
 
         <template v-for="(item,index) in currentUserAllMsg">
-          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" @click.stop="setKeyboardDown">
+          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -20,7 +20,7 @@
             </div>
           </li>
 
-          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" @click.stop="setKeyboardDown">
+          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -72,14 +72,9 @@
     <!-- 手机端input -->
     <div class="input-container">
       <div class="to-input">
-        <!-- <form action="javascrpt:;" class="flex-h flex-cc" @click.stop="setLastMsgInView">
-          <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
-          <div class="more-tools" @click.stop="showToolBox"><img src="../assets/img/add-icon.png" alt=""></div>
-          <div class="h5-send" @click.stop="mobileSendMsg">发送</div> -->
-
         <form action="javascrpt:;" class="flex-h flex-cc" @click.stop="setLastMsgInView">
-          <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="focus"></textarea>
-          <!-- <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" v-model="inputData" @input="inputData = $event.target.innerText" @focus="focus"></div> -->
+          <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="mobileInputFocus"></textarea>
+          <!-- <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" @input="inputData = $event.target.innerText" @focus="focus"></div> -->
           <div class="emoji-handle" @click.stop="emojiMobileHandleClick">
             <img src="../assets/img/emoji-handle.png" class="item" v-show="!mobileEmojiHandled" alt="">
             <img src="../assets/img/emoji-handle-active.png" class="item active" v-show="mobileEmojiHandled" alt="">
@@ -96,8 +91,6 @@
               <img v-for ="(item,index) in emojis" @click="mobileEmojiItemClick(index)" class="emoji-item" :src="item" alt="">
               <span class="delete" @click="emojiBackDel">回删</span>
             </mt-swipe-item>
-            <mt-swipe-item>2</mt-swipe-item>
-            <mt-swipe-item>3</mt-swipe-item>
           </mt-swipe>
         </div>
         <!-- 其他工具 -->
@@ -169,7 +162,8 @@ export default {
       // 手机端发送按钮是否显示
       mobileSendShow: false,
       toolIndex: 0,
-      isWaiterOnLine: ''
+      isWaiterOnLine: '',
+      inputChangeTimer: null
     }
   },
   async created() {
@@ -196,13 +190,11 @@ export default {
     // 获取用户所以消息
     this.$root.eventBus.$on('userAllMsg', obj => {
       this.currentUserAllMsg = obj.userAllMsg.map(item => {
-        console.log('item', item)
         if (item.msg) {
           item.msg = this.filterMsg(item.msg)
         }
         return item
       })
-      console.log('obj.userAllMsg', obj.userAllMsg)
       this.currentUserName = obj.userAllMsg[0].name + '的聊天'
       this.currentUserOpenId = obj.openId
       setTimeout(() => {
@@ -242,7 +234,7 @@ export default {
       this.isShowToolBox = false
 
       // 重置消息框
-      this.reloadMessageScroll()
+      this.resetMessageBox()
     },
     /**
      * mobile 表情字符回删键
@@ -305,12 +297,6 @@ export default {
           emoji = this.emojiMsgs[index]
         }
       })
-      // this.emojiAlias.forEach((item, index) => {
-      //   if (item === code) {
-      //     console.log('this.emojiAlias', item)
-      //     emoji = this.emojis[index]
-      //   }
-      // })
       return `<img class="text-img" src='${emoji}'/>`
     },
     /**
@@ -362,9 +348,12 @@ export default {
     bindMobileInputNewLine() {
       const that = this
       this.$refs.mobileTextArea.onscroll = function(e) {
+        console.log('====>')
+
         if (that.onTextScroll) {
-          that.onTextScroll = false
+          console.log('imcommein')
           that.mobileInputChange()
+          that.onTextScroll = false
         }
       }
     },
@@ -405,24 +394,6 @@ export default {
         }
       })
     },
-    setKeyboardDown() {
-      let width = window.document.documentElement.clientWidth
-      console.log('setKeyboardDown', width)
-      if (width < 768) {
-        if (!this.noRepeat) {
-          this.noRepeat = true
-          this.resetMessageBox()
-          console.log('setKeyboardDown')
-          this.isShowToolBox = false
-          this.reloadMessageScroll()
-          setTimeout(() => {
-            this.resetMessageBox()
-            this.reloadMessageScroll()
-            this.noRepeat = false
-          }, 1500)
-        }
-      }
-    },
     setLastMsgInView() {
       this.scroll.scrollTo(0, this.scroll.maxScrollY - 350)
     },
@@ -453,12 +424,9 @@ export default {
         if (file) {
           // 有图片消息, 优先发送图片, 不发文字
           this.pcSendImg(file)
-          // $('.message').css('bottom', 70)
-          // this.resetMessageBox()
         }
         setTimeout(() => {
           this.resetMessageBox()
-          this.reloadMessageScroll()
         }, 1500)
         this.isShowToolBox = false
       }
@@ -524,14 +492,18 @@ export default {
     mobileInputChange() {
       this.lineHeight = '1.6'
       this.rows += 1
+      console.log('this.rows', this.rows)
       if (this.rows > 3) {
         return false
       }
-      setTimeout(() => {
+      this.inputChangeTimer = null
+      this.inputChangeTimer = setTimeout(() => {
         this.onTextScroll = true
       }, 500)
     },
-    // pc 端提交消息
+    /**
+     * pc 端提交消息
+     */
     enterHandler(event) {
       const keyCode = event.keyCode
         ? event.keyCode
@@ -541,19 +513,14 @@ export default {
         if (this.inputData) {
           this.pcSendMsg()
         }
-        // if (!this.inputData && $('#fle')[0]) {
-        //   var file = $('#fle')[0].files[0]
-        //   if (file) {
-        //     // 有图片消息,优先发送图片,不发文字
-        //     this.pcSendImg(file)
-        //   }
-        // }
         setTimeout(() => {
           this.inputData = ''
         }, 100)
       }
     },
-    // pc端发送文本消息
+    /**
+     *  pc端发送文本消息
+     */
     pcSendMsg() {
       let obj = {
         name: this.waiterInfo.name,
@@ -567,7 +534,9 @@ export default {
       }
       this.$emit('sendWaiterMsgToUser', obj)
     },
-    // pc端发送图片消息
+    /**
+     * pc端发送图片消息
+     */
     pcSendImg(file) {
       var reader = new FileReader()
       var AllowImgFileSize = 2100000
@@ -691,17 +660,10 @@ export default {
       console.log('---------this.waiterInfo---------', this.waiterInfo)
       this.$emit('sendWaiterMsgToUser', obj)
     },
-    focus(e) {
+    mobileInputFocus(e) {
       this.isShowToolBox = false
       this.mobileEmojiHandled = false
       var agent = navigator.userAgent.toLowerCase()
-      var textbox = document.getElementById('mobileInputDiv')
-      var sel = window.getSelection()
-      var range = document.createRange()
-      range.selectNodeContents(textbox)
-      range.collapse(false)
-      sel.removeAllRanges()
-      sel.addRange(range)
       var version
       if (agent.indexOf('like mac os x') > 0) {
         // ios
@@ -715,13 +677,10 @@ export default {
       this.timer = setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight)
       }, 500)
+
       // 重置message显示框的高度
-      // this.resetMessageBox()
-      // this.scroll.scrollTo(0, -90)
       this.resetMessageBox()
-      console.log('setKeyboardDown')
       this.isShowToolBox = false
-      this.reloadMessageScroll()
     },
     currentPlatform() {
       let width = window.document.documentElement.clientWidth
@@ -736,12 +695,13 @@ export default {
   },
   watch: {
     inputData: function(val, oldVal) {
-      // this.$refs.mobileTextArea.innerText = val
       console.log('val', val)
       if (val && val.trim().length > 0) {
         this.mobileSendShow = true
       } else if (val.trim().length === 0) {
         this.mobileSendShow = false
+        this.rows = 1
+        this.onTextScroll = true
       }
     }
   }
