@@ -231,10 +231,12 @@ export default {
   },
   methods: {
     messageContainerClick() {
-      this.isShowToolBox = false
+      if (this.$root.eventBus.showWidth && this.isShowToolBox) {
+        this.isShowToolBox = false
 
-      // 重置消息框
-      this.resetMessageBox()
+        // 重置消息框
+        this.resetMessageBox()
+      }
     },
     /**
      * mobile 表情字符回删键
@@ -318,7 +320,6 @@ export default {
         return i === index
       })
       this.inputData = `${this.inputData} ${indexAlias}`
-      this.$refs.mobileTextArea.innerText = this.inputData
     },
     loadEmojis() {
       this.emojis = EmojiObj.imgs.slice(0, 38)
@@ -348,10 +349,7 @@ export default {
     bindMobileInputNewLine() {
       const that = this
       this.$refs.mobileTextArea.onscroll = function(e) {
-        console.log('====>')
-
         if (that.onTextScroll) {
-          console.log('imcommein')
           that.mobileInputChange()
           that.onTextScroll = false
         }
