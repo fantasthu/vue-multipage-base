@@ -72,7 +72,7 @@
     <!-- 手机端input -->
     <div class="input-container">
       <div class="to-input">
-        <form action="javascrpt:;" class="flex-h flex-cc" @click.stop="setLastMsgInView">
+        <form action="javascrpt:;" class="flex-h flex-cc">
           <textarea  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input flex-1" v-model="inputData" @focus="mobileInputFocus"></textarea>
           <!-- <div contenteditable="true" id='mobileInputDiv'  ref="mobileTextArea" :style="{'lineHeight':lineHeight}" :rows="rows"  type="text" class="text-input mobile-input flex-1" @input="inputData = $event.target.innerText" @focus="focus"></div> -->
           <div class="emoji-handle" @click.stop="emojiMobileHandleClick">
@@ -394,9 +394,6 @@ export default {
         }
       })
     },
-    setLastMsgInView() {
-      this.scroll.scrollTo(0, this.scroll.maxScrollY - 350)
-    },
     async setWaiterIsOnLine() {
       if (this.isWaiterOnLine === 0) {
         this.isWaiterOnLine = 1
@@ -674,12 +671,14 @@ export default {
           return
         }
       }
-      this.timer = setTimeout(() => {
-        window.scrollTo(0, document.body.scrollHeight)
-      }, 500)
+      // this.timer = setTimeout(() => {
+      //   window.scrollTo(0, document.body.scrollHeight)
+      // }, 500)
 
       // 重置message显示框的高度
-      this.resetMessageBox()
+      setTimeout(() => {
+        this.resetMessageBox()
+      }, 500)
       this.isShowToolBox = false
     },
     currentPlatform() {
