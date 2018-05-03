@@ -20,7 +20,7 @@
                 </div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
                    <lightbox
-                    id="mylightbox"
+                    :id="index"
                     :images="getLightBoxImgs(item.msgPicUrl)"
                     >
                   </lightbox>
@@ -36,7 +36,7 @@
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
-                <div class="image" v-if="item.msgType == 'image'">
+                <div class="image" v-if="item.msgType == 'image'&&screenWidth<768">
                   <img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)">
                 </div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
@@ -251,7 +251,8 @@ export default {
       this.loadEmojis()
 
       // 获取屏幕宽度
-      this.screenWidth = this.$root.eventBus.showWidth
+      this.screenWidth = window.document.documentElement.clientWidth
+      console.log('this.screenWidth', this.screenWidth)
     })
   },
   methods: {
@@ -702,9 +703,6 @@ export default {
           return
         }
       }
-      // this.timer = setTimeout(() => {
-      //   window.scrollTo(0, document.body.scrollHeight)
-      // }, 500)
 
       // 重置message显示框的高度
       setTimeout(() => {
@@ -740,6 +738,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+// lightbox 的样式
 .my-gallery {
   a {
     img {

@@ -448,11 +448,21 @@ body {
   padding-bottom: constant(safe-area-inset-bottom);
   user-select: text;
 }
+// pc端预览图片样式
+.simple-lightbox {
+  .sl-counter,
+  .sl-navigation {
+    display: none !important;
+  }
+  .sl-close {
+    font-size: 80px;
+  }
+}
 .customer-service {
   .showFullImgBox {
     // display: none;
     position: fixed;
-    top: 0px;
+    top: 0;
     left: 0;
     bottom: 0;
     right: 0;
@@ -462,13 +472,12 @@ body {
     z-index: 10;
     .showFullImgUrl {
       position: absolute;
-      top: 0;
+      top: 50%;
       left: 0;
       right: 0;
       bottom: 0;
-      // overflow: scroll;
       margin: 0 auto;
-      // transform: translateY(-50%);
+      transform: translateY(-50%);
       z-index: 9;
     }
   }
