@@ -20,7 +20,7 @@
                 </div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
                    <lightbox
-                    :id="index"
+                    :id="`${index}`"
                     :images="getLightBoxImgs(item.msgPicUrl)"
                     >
                   </lightbox>
@@ -42,7 +42,7 @@
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
                   <lightbox
                     v-if="item.msgType == 'image'"
-                    id="mylightbox"
+                    :id="`${index}`"
                     :images="getLightBoxImgs(item.msgPicUrl)"
                     >
                   </lightbox>
