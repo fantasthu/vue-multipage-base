@@ -15,7 +15,17 @@
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
-                <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)"></div>
+                <div class="image" v-if="item.msgType == 'image'&&screenWidth<768">
+                  <img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)">
+                </div>
+                <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
+                   <lightbox
+                    id="mylightbox"
+                    :images="getLightBoxImgs(item.msgPicUrl)"
+                    >
+                  </lightbox>
+                </div>
+
               </div>
             </div>
           </li>
@@ -26,7 +36,17 @@
               <div class="time">{{item.formatTime}}</div>
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
-                <div class="image" v-if="item.msgType == 'image'"><img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)"></div>
+                <div class="image" v-if="item.msgType == 'image'">
+                  <img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)">
+                </div>
+                <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
+                  <lightbox
+                    v-if="item.msgType == 'image'"
+                    id="mylightbox"
+                    :images="getLightBoxImgs(item.msgPicUrl)"
+                    >
+                  </lightbox>
+                </div>
               </div>
             </div>
           </li>
@@ -116,10 +136,11 @@ import EmojiObj from '../assets/js/mapEmoji.js'
 import EmojiMsgObj from '../assets/js/mapEmojiMsg.js'
 import api from '../service/api'
 import $ from 'jquery'
+import Lightbox from 'vue-simple-lightbox'
 
 export default {
   name: 'chat',
-  components: { Header, Button, ServiceHeader, Swipe, SwipeItem },
+  components: { Header, Button, ServiceHeader, Swipe, SwipeItem, Lightbox },
   props: {},
   data() {
     return {
@@ -163,7 +184,8 @@ export default {
       mobileSendShow: false,
       toolIndex: 0,
       isWaiterOnLine: '',
-      inputChangeTimer: null
+      inputChangeTimer: null,
+      screenWidth: ''
     }
   },
   async created() {
@@ -227,9 +249,20 @@ export default {
 
       // 添加表情
       this.loadEmojis()
+
+      // 获取屏幕宽度
+      this.screenWidth = this.$root.eventBus.showWidth
     })
   },
   methods: {
+    getLightBoxImgs(img) {
+      console.log('img', img)
+      if (/\.(jpg|jpeg|png|bmp)$/.test(img)) {
+        return [{ src: `${img}` }]
+      } else {
+        return [{ src: `${img}.png` }]
+      }
+    },
     messageContainerClick() {
       if (this.$root.eventBus.showWidth && this.isShowToolBox) {
         this.isShowToolBox = false
@@ -707,6 +740,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+.my-gallery {
+  a {
+    img {
+      width: 100%;
+      border: none;
+    }
+  }
+}
 @media (max-width: 768px) {
   .chat {
     position: relative;

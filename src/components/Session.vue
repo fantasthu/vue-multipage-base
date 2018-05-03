@@ -191,6 +191,10 @@ export default {
           padding: 30px 42px;
           .avatar {
             position: relative;
+            width: 100px;
+            height: 100px;
+            background: #eeeeee;
+            border-radius: 12px;
             img {
               width: 100px;
               height: 100px;
@@ -335,6 +339,10 @@ export default {
           padding: 24px;
           .avatar {
             position: relative;
+            width: 70px;
+            height: 70px;
+            background: #eeeeee;
+            border-radius: 12px;
             img {
               width: 70px;
               height: 70px;

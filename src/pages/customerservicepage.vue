@@ -465,8 +465,9 @@ body {
       top: 0;
       left: 0;
       right: 0;
-      margin: auto;
-      width: 100%;
+      bottom: 0;
+      // overflow: scroll;
+      margin: 0 auto;
       // transform: translateY(-50%);
       z-index: 9;
     }
