@@ -1,9 +1,14 @@
 <template>
   <div class="session">
     <!-- <service-header class="service-header" title="客服会话管理"></service-header> -->
+    <div class="session-search flex-h flex-cc">
+      <img src="../assets/img/icon_search.png" alt="">
+      <input type="text" class="search flex-1" v-model="searchName"  placeholder="请输入昵称">
+    </div>
     <div class="session-wrapper" ref="wrapper">
       <div class="list">
-        <div class="item flex-h" v-for="(item,index) in userList" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId, item.name, item.whichProgramme)">
+        <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId, item.name, item.whichProgramme)">
+        <!-- <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId)"> -->
           <div class="avatar">
             <img :src="item.headImg" alt="">
             <div class="tag" :hidden="item.hasBeenRead == 1"></div>
@@ -21,6 +26,12 @@
           <div class="line"></div>
         </div>
       </div>
+      <div class="search-empty flex-h" v-show="!searchSessions||searchSessions.length===0">
+        <div class="search-icon flex-h flex-cc">
+          <img src="../assets/img/icon_search.png" alt="">
+        </div>
+        <div class="des">无匹配用户</div>
+      </div>
     </div>
   </div>
 </template>
@@ -29,6 +40,7 @@
 // import { Field, Radio, Button, MessageBox, Indicator } from 'mint-ui'
 import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
+import _ from 'lodash'
 
 export default {
   name: 'session',
@@ -46,7 +58,11 @@ export default {
       back: require('../assets/img/icon_oneway.png'),
       items: null,
       itemActiveIndex: 0,
-      itemActiveOpenId: ''
+      itemActiveOpenId: '',
+      searchName: '',
+      searchSessions: [1],
+      sessions: [],
+      isCalculating: false
     }
   },
   created() {
@@ -68,6 +84,8 @@ export default {
     })
   },
   mounted() {
+    console.log('this=======>>', this.userList)
+
     this.$nextTick(() => {
       // 初始化会话绑定滚动
       this.loadScroll()
@@ -110,6 +128,27 @@ export default {
         })
         console.log('index, openId', index, openId)
       }
+    },
+    doSearchSession: _.debounce(function(val) {
+      this.searchSessions = []
+      this.sessions.map(item => {
+        if (item.name.indexOf(val) > 0) {
+          this.searchSessions.push(item)
+        }
+      })
+      if (this.searchName.trim().length === 0) {
+        this.searchSessions = this.sessions
+      }
+    }, 500)
+  },
+  watch: {
+    userList(val, oval) {
+      // 保存当前组件列表值
+      this.sessions = JSON.parse(JSON.stringify(val || []))
+      this.searchSessions = JSON.parse(JSON.stringify(val || []))
+    },
+    searchName(val, oVal) {
+      this.doSearchSession(val)
     }
   }
 }
@@ -122,13 +161,36 @@ export default {
   .session {
     width: 100%;
     position: relative;
-    top: 0;
     left: 0;
     bottom: 0;
     right: 0;
+    .session-search {
+      position: relative;
+      height: 110px;
+      img {
+        position: absolute;
+        left: 84px;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        width: 24px;
+        height: 24px;
+      }
+      input {
+        height: 72px;
+        margin: 0 42px;
+        padding-left: 108px;
+        font-family: PingFang-SC-Medium;
+        font-size: 22px;
+        color: #353535;
+        letter-spacing: 1.83px;
+        background: #f4f4f4;
+        border-radius: 100px;
+      }
+    }
     .session-wrapper {
       position: absolute;
-      top: 0;
+      top: 110px;
       left: 0;
       bottom: 0;
       right: 0;
@@ -141,6 +203,10 @@ export default {
           padding: 30px 42px;
           .avatar {
             position: relative;
+            width: 100px;
+            height: 100px;
+            background: #eeeeee;
+            border-radius: 12px;
             img {
               width: 100px;
               height: 100px;
@@ -214,6 +280,29 @@ export default {
           }
         }
       }
+      .search-empty {
+        align-items: center;
+        background: #eeeeee;
+        height: 118px;
+        .search-icon {
+          width: 70px;
+          height: 70px;
+          margin-left: 18px;
+          background: #ffe654;
+          border-radius: 12px;
+          img {
+            width: 26px;
+            height: 26px;
+          }
+        }
+        .des {
+          margin-left: 20px;
+          font-family: PingFangSC-Regular;
+          font-size: 24px;
+          color: #353535;
+          letter-spacing: 0;
+        }
+      }
     }
   }
 }
@@ -223,9 +312,33 @@ export default {
   .session {
     position: relative;
     width: 460px;
+    .session-search {
+      position: relative;
+      height: 116px;
+      img {
+        position: absolute;
+        left: 46px;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        width: 26px;
+        height: 26px;
+      }
+      input {
+        height: 60px;
+        border: 1px solid #e5e5e5;
+        margin: 0 18px;
+        padding-left: 70px;
+        font-family: PingFang-SC-Medium;
+        font-size: 22px;
+        color: #353535;
+        letter-spacing: 1.83px;
+        border-radius: 100px;
+      }
+    }
     .session-wrapper {
       position: absolute;
-      top: 0;
+      top: 116px;
       left: 0;
       bottom: 0;
       right: 0;
@@ -238,6 +351,10 @@ export default {
           padding: 24px;
           .avatar {
             position: relative;
+            width: 70px;
+            height: 70px;
+            background: #eeeeee;
+            border-radius: 12px;
             img {
               width: 70px;
               height: 70px;
@@ -314,6 +431,29 @@ export default {
         }
         .item.active {
           background: #d2d2d2;
+        }
+      }
+      .search-empty {
+        align-items: center;
+        background: #eeeeee;
+        height: 118px;
+        .search-icon {
+          width: 70px;
+          height: 70px;
+          margin-left: 18px;
+          background: #ffe654;
+          border-radius: 12px;
+          img {
+            width: 26px;
+            height: 26px;
+          }
+        }
+        .des {
+          margin-left: 20px;
+          font-family: PingFangSC-Regular;
+          font-size: 24px;
+          color: #353535;
+          letter-spacing: 0;
         }
       }
     }
