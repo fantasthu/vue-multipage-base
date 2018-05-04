@@ -62,8 +62,13 @@ export default {
 @media screen and (min-width: 768px) {
   .right-menu {
     // max-width: 600px;
-    // width: 600px;
+    width: 600px;
     border-left: 2px solid #e5e5e5;
+    position: relative;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
   }
 }
 </style>

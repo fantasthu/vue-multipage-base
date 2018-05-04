@@ -1,8 +1,8 @@
 <template>
   <div class="chat flex-1">
-    <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='currentUserName'></service-header>
+    <service-header  @chatBack="chatBack" @showRightMenu="showRightMenu" :back="true" class="service-header" :title='currentChatTitle'></service-header>
     <div class="pc-header flex-h">
-      <div class="name">{{currentUserName}}</div>
+      <div class="name">{{currentChatTitle}}</div>
       <div class="singOut" @click.stop="singOut">退出</div>
     </div>
     <div class="message" ref="wrapper" @click.stop="messageContainerClick">
@@ -124,6 +124,23 @@
         </div>
       </div>
     </div>
+    <!-- 移动端右侧菜单 -->
+    <div class="rightMenu" v-show="showMenuStatus" @click.stop="closeRightMenu">
+      <div class="rightMenuList" @click.stop=''>
+        <div class="rightMenuTitle flex-h flex-cc">用户信息</div>
+        <div class="rightMenuUser flex-v flex-cc" @click.stop="toUserInfo">
+          <img src="../assets/img/user-head.png" alt="">
+          <div class="menuDes">用户信息</div>
+        </div>
+        <div class="rightMenuUser flex-v flex-cc" @click.stop="toUserInfo">
+          <img src="../assets/img/user-head.png" alt="">
+          <div class="menuDes">用户工单</div>
+        </div>
+      </div>
+    </div>
+    <div class="mobileMenuArea" v-show="showMobileUserinfo">
+      <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></MobileUserinfo>
+    </div>
   </div>
 </template>
 
@@ -134,14 +151,25 @@ import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
 import EmojiObj from '../assets/js/mapEmoji.js'
 import EmojiMsgObj from '../assets/js/mapEmojiMsg.js'
+import MobileUserinfo from './mobileUserinfo'
 import api from '../service/api'
 import $ from 'jquery'
 import Lightbox from 'vue-simple-lightbox'
 
 export default {
   name: 'chat',
-  components: { Header, Button, ServiceHeader, Swipe, SwipeItem, Lightbox },
-  props: {},
+  components: {
+    Header,
+    Button,
+    ServiceHeader,
+    Swipe,
+    SwipeItem,
+    MobileUserinfo,
+    Lightbox
+  },
+  props: {
+    showLeftMenu: false
+  },
   data() {
     return {
       timerId: null,
@@ -169,6 +197,8 @@ export default {
       currentUserOpenId: '',
       waiterInfo: {},
       currentUserName: '',
+      currentChatTitle: '',
+      currentUserWhichProgramme: false,
       scroll: null,
       rows: 1,
       lineHeight: '',
@@ -185,6 +215,8 @@ export default {
       toolIndex: 0,
       isWaiterOnLine: '',
       inputChangeTimer: null,
+      showMenuStatus: false,
+      showMobileUserinfo: false,
       screenWidth: ''
     }
   },
@@ -217,8 +249,11 @@ export default {
         }
         return item
       })
-      this.currentUserName = obj.userAllMsg[0].name + '的聊天'
+      this.currentChatTitle = obj.userAllMsg[0].name + '的聊天'
       this.currentUserOpenId = obj.openId
+      this.currentUserName = obj.userAllMsg[0].name
+      this.currentUserWhichProgramme =
+        obj.userAllMsg[0].whichProgramme === 'vip'
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 200)
@@ -238,6 +273,12 @@ export default {
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 200)
+    })
+    // 隐藏移动端用户信息
+    this.$root.eventBus.$on('hideMobileMenu', res => {
+      if (res.from === 'mobileUserinfo') {
+        this.showMobileUserinfo = false
+      }
     })
   },
   mounted() {
@@ -674,6 +715,9 @@ export default {
         from: 'chat',
         currentUserOpenId: this.currentUserOpenId
       })
+      // 返回列表时隐藏右侧菜单
+      this.showMenuStatus = false
+      this.showMobileUserinfo = false
     },
     sendWaiterMsg(inputData) {
       let obj = {
@@ -719,6 +763,26 @@ export default {
         this.platForm = 'mobile'
         return 'mobile'
       }
+    },
+    /**
+     * 显示右侧菜单
+     */
+    showRightMenu() {
+      this.showMenuStatus = true
+      console.log('chat-page =>showRightMenu =>显示右侧菜单')
+    },
+    /**
+     * 关闭右侧菜单
+     */
+    closeRightMenu() {
+      this.showMenuStatus = false
+    },
+    /**
+     * 打开移动端用户信息
+     */
+    toUserInfo() {
+      this.showMobileUserinfo = true
+      this.$root.eventBus.$emit('getOrderList')
     }
   },
   watch: {
@@ -730,6 +794,16 @@ export default {
         this.mobileSendShow = false
         this.rows = 1
         this.onTextScroll = true
+      }
+    },
+    /**
+     * 页面宽度变成pc时，隐藏手机端右侧菜单
+     */
+    showLeftMenu: function(val, oldVal) {
+      console.log(val, oldVal)
+      if (val) {
+        this.showMenuStatus = false
+        this.showMobileUserinfo = false
       }
     }
   }
@@ -956,6 +1030,53 @@ export default {
           }
         }
       }
+    }
+    .rightMenu {
+      background: rgba(0, 0, 0, 0.25);
+      position: fixed;
+      // z-index: 9999;
+      top: 88px;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      .rightMenuList {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 190px;
+        background: #fff;
+        .rightMenuTitle {
+          height: 88px;
+          background: #f4f4f4;
+          font-size: 28px;
+          color: #353535;
+          letter-spacing: 3px;
+        }
+        .rightMenuUser {
+          margin: 52px auto 0;
+          // border: 2px solid #dddddd;
+          // border-radius: 16px;
+          img {
+            width: 110px;
+            height: 110px;
+          }
+          .menuDes {
+            font-size: 24px;
+            color: #b2b2b2;
+            letter-spacing: 2.4px;
+            text-align: center;
+            margin-top: 18px;
+          }
+        }
+      }
+    }
+    .mobileMenuArea {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
   }
 }

@@ -1,32 +1,147 @@
 <template>
-  <div>
+  <div id="right-userinfo-wrap">
     <div class="flex-v right-user-info">
-      <div class="name ">昵称：司徒史蒂夫 <span>(xdfxdf)</span><div class="copyname">复制</div></div>
-      <div class="identity">用户身份： VIP</div>
+      <div class="name ">昵称：{{name}} <span>({{openId.slice(0, 5)}})</span><div class="copyname" :data-clipboard-text="openId">复制ID</div></div>
+      <div class="identity">用户身份： {{whichProgramme?'VIP':'小白'}}</div>
     </div>
-    <right-order></right-order>
+    <right-order  :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
   </div>
 </template>
 
 <script>
 import RightOrder from './RightOrder.vue'
+import axios from 'axios'
+import { formatTime } from '../service/tools'
+import ClipboardJS from 'clipboard'
+
 export default {
   name: 'rightuserinfo',
   components: { RightOrder },
   props: {},
   data() {
     return {
-      activeIndex: 0,
-      tabs: [{ name: '用户信息' }, { name: '工单' }, { name: '知识库' }]
+      name: '',
+      openId: '',
+      whichProgramme: false,
+      temOrderList: [],
+      orderList: [],
+      page: 1,
+      preventRepeat: true,
+      over: false,
+      showMoreBtn: true
     }
   },
-  created() {},
+  created() {
+    /**
+     * 获取右侧用户信息和订单
+     */
+    this.$root.eventBus.$on(
+      'getCurrentUsrInfo',
+      (name, whichProgramme, openId) => {
+        // this.name = name.substr(0, 3) + '...'
+        if (name.length > 6) {
+          this.name = name.substr(0, 6) + '...'
+        } else {
+          this.name = name
+        }
+        this.whichProgramme = whichProgramme
+        this.openId = openId
+        this.temOrderList = []
+        this.orderList = []
+        this.showMoreBtn = true
+        this.page = 1
+        // 获取订单列表
+        this.getOrderList(openId, 'first')
+      }
+    )
+    /**
+     * 点击查看更多
+     */
+    this.$root.eventBus.$on('checkMoreOrder', () => {
+      this.checkMoreOrder()
+    })
+
+    // 复制id
+    this.clipboard = new ClipboardJS('.copyname')
+    this.clipboard.on('success', e => {
+      this.$toast('复制成功')
+      e.clearSelection()
+    })
+  },
   mounted() {},
   methods: {
     changeTab(index) {
       if (this.activeIndex !== index) {
         this.activeIndex = index
         this.$root.eventBus.$emit('toChangeTab', index)
+      }
+    },
+    getOrderList(openid, flag) {
+      var instance = axios.create({
+        headers: {
+          velo_admin: 'nRF9L8ZaOKlE2lew'
+        }
+      })
+      var data = {
+        openid,
+        startPage: this.page,
+        pageSize: 5
+      }
+      // axios
+      instance
+        .get(
+          'http://192.168.1.44:9000/repair-service/repair/getOrderByOrderNo',
+          {
+            params: data
+          }
+        )
+        .then(res => {
+          if (res.data.code === 0) {
+            if (res.data.obj.orderList.length === 0) {
+              this.over = true
+              this.showMoreBtn = false
+              return false
+            }
+            if (flag) {
+              res.data.obj.orderList.forEach(item => {
+                item.createTime = formatTime(item.createTime / 1000)
+              })
+              if (res.data.obj.orderList.length === 1) {
+                this.showMoreBtn = false
+              }
+              this.temOrderList = res.data.obj.orderList
+              this.orderList.push(res.data.obj.orderList[0])
+            } else {
+              // 请求多个order数据
+              this.orderList = this.orderList.concat(res.data.obj.orderList)
+            }
+            this.page++
+          } else {
+            this.showMoreBtn = false
+          }
+        })
+        .catch(e => {
+          console.log('请求失败:', e)
+          this.showMoreBtn = false
+          this.$toast('网络异常,请重试~')
+          // Indicator.close()
+        })
+    },
+    checkMoreOrder() {
+      if (this.preventRepeat && !this.over) {
+        this.preventRepeat = false
+        this.showMoreBtn = false
+
+        if (this.temOrderList.length > 0) {
+          this.orderList = this.temOrderList
+          this.temOrderList = []
+        } else {
+          this.getOrderList(this.openId)
+        }
+
+        setTimeout(() => {
+          this.preventRepeat = true
+        }, 500)
       }
     }
   }
@@ -37,15 +152,18 @@ export default {
 <style scoped lang="scss">
 // 手机端
 @media (max-width: 768px) {
-  .right-menu {
+  .right-user-info {
   }
 }
 
 //pc端
 @media screen and (min-width: 768px) {
+  #right-userinfo-wrap {
+  }
   .right-user-info {
-    background: #f1f1f1;
     padding: 36px 42px;
+    background: #f1f1f1;
+
     .name {
       font-size: 30px;
       color: #353535;
@@ -60,7 +178,7 @@ export default {
         border: 2px solid #b2b2b2;
         display: inline-block;
         margin-left: 24px;
-        width: 64px;
+        width: 90px;
         height: 32px;
         font-size: 22px;
         line-height: 32px;

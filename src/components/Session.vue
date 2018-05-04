@@ -8,7 +8,8 @@
     <search v-model="searchName"></search>
     <div class="session-wrapper" ref="wrapper">
       <div class="list">
-        <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId)">
+        <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId, item.name, item.whichProgramme)">
+        <!-- <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId)"> -->
           <div class="avatar">
             <img :src="item.headImg" alt="">
             <div class="tag" :hidden="item.hasBeenRead == 1"></div>
@@ -70,9 +71,16 @@ export default {
   created() {
     // 获取会话列表
     this.$root.eventBus.$on('userList', userList => {
+      console.log('userList', userList)
+
       // pc 端默认选中第一个用户
       if (this.$root.eventBus.showWidth > 768) {
-        this.sessionItemClick(0, userList[0].openId)
+        this.sessionItemClick(
+          0,
+          userList[0].openId,
+          userList[0].name,
+          userList[0].whichProgramme
+        )
       }
       // 注销事件
       this.$root.eventBus.$off('userList')
@@ -101,12 +109,14 @@ export default {
     /**
      * 列表中item点击
      */
-    sessionItemClick(index, openId) {
+    sessionItemClick(index, openId, name, whichProgramme) {
       if (this.$root.eventBus.showWidth < 768) {
         // 手机
         this.$root.eventBus.$emit('toChat', {
           openId: openId,
-          from: 'm-session'
+          from: 'm-session',
+          name: name,
+          whichProgramme: whichProgramme
         })
         console.log('index, openId', index, openId)
       } else {
@@ -115,7 +125,9 @@ export default {
         this.itemActiveOpenId = openId
         this.$root.eventBus.$emit('toChat', {
           openId: openId,
-          from: 'p-session'
+          from: 'p-session',
+          name: name,
+          whichProgramme: whichProgramme
         })
         console.log('index, openId', index, openId)
       }
