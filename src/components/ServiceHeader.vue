@@ -1,7 +1,7 @@
 <template>
   <mt-header :title="title" :fixed="true">
       <mt-button icon="back" @click="chatBack" slot="left" v-show="back"></mt-button>
-      <mt-button icon="more" slot="right" v-show="more"></mt-button>
+      <mt-button icon="more" @click="showRightMenu" slot="right" v-show="more"></mt-button>
   </mt-header>
 </template>
 
@@ -15,7 +15,7 @@ export default {
       default: ''
     },
     more: {
-      default: false
+      default: true
     },
     back: {
       default: false
@@ -29,6 +29,9 @@ export default {
   methods: {
     chatBack() {
       this.$emit('chatBack')
+    },
+    showRightMenu() {
+      this.$emit('showRightMenu')
     }
   }
 }

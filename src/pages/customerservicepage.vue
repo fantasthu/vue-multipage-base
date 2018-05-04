@@ -9,8 +9,8 @@
     <div class="s-container flex-h">
       <left-menu v-show="showLeftMenu"></left-menu>
       <session v-if="showSession" :userList.sync="userList"></session>
-      <chat v-show="showChat" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
-      <right-menu v-show="showLeftMenu"></right-menu>
+      <chat v-show="showChat" :showLeftMenu="showLeftMenu" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
+      <right-menu v-show="showRightMenu"></right-menu>
       <mt-popup
         v-model="popupVisible"
         popup-transition="popup-fade"
@@ -65,6 +65,7 @@ export default {
       showSession: true,
       showChat: true,
       showLeftMenu: true,
+      showRightMenu: true,
       userList: [],
       currentUserAllMsg: [],
       waiterOpenId: '',
@@ -79,6 +80,7 @@ export default {
     }
   },
   created() {
+    // 用于ios用户长按保存图片时触发点击事件
     var u = navigator.userAgent
     this.isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) // ios终端
     // this.$root.eventBus.$off('sho2wCurrentImg')
@@ -178,6 +180,18 @@ export default {
         // 点击用户列表进入对话框, 改变当前接受消息对象
         if (params.openId) {
           this.socket.emit('receiveThisUserMsg', params.openId)
+          // 更改右侧用户信息
+        }
+        // 获取用户信息
+        if (this.$root.eventBus.showWidth > 768) {
+          this.$root.eventBus.$emit(
+            'getCurrentUsrInfo',
+            params.name,
+            params.whichProgramme === 'vip' ? 1 : 0,
+            params.openId
+          )
+          // 获取订单信息
+          this.$root.eventBus.$emit('getUserFirstOrder', params.openId)
         }
       })
       this.$root.eventBus.$on('toSession', params => {
@@ -201,9 +215,9 @@ export default {
       // 获取左侧的用户列表
       this.socket.on('userList', userList => {
         userList.forEach((item, index) => {
-          if (item.name.length > 3) {
-            item.name = item.name.substr(0, 3) + '...'
-          }
+          // if (item.name.length > 3) {
+          //   item.name = item.name.substr(0, 3) + '...'
+          // }
           item.formatTime = formatTime(item.msgTime, 6)
           item.headImg = item.headImg
             ? item.headImg
@@ -225,6 +239,7 @@ export default {
       })
       // 接收到当前用户的所有msg
       this.socket.on('userAllMsg', obj => {
+        console.log('接收到当前用户的所有msg')
         this.currentUserAllMsg = obj.userAllMsg
         obj.userAllMsg.forEach((item, index) => {
           item.headImg = item.headImg
@@ -358,6 +373,7 @@ export default {
         that.showSession = true
         that.showChat = true
         that.showLeftMenu = true
+        that.showRightMenu = width > 1170
       } else if (width < 768) {
         if (!wtoi.innerHTML) {
           // 不在微信端
@@ -371,6 +387,7 @@ export default {
         that.showSession = true
         that.showChat = false
         that.showLeftMenu = false
+        that.showRightMenu = false
       }
       window.onresize = function(e) {
         width = window.document.documentElement.clientWidth
@@ -382,6 +399,8 @@ export default {
           that.showSession = true
           that.showChat = true
           that.showLeftMenu = true
+          that.showRightMenu = width > 1170
+
           // 告知chat组件重新定义message滚动
           that.$root.eventBus.$emit('pcChatHandler')
         } else if (width < 768) {
@@ -395,10 +414,12 @@ export default {
             that.showChat = true
             that.showSession = false
             that.showLeftMenu = false
+            that.showRightMenu = false
           } else {
             that.showSession = true
             that.showChat = false
             that.showLeftMenu = false
+            that.showRightMenu = false
           }
         }
       }
