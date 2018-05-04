@@ -458,6 +458,10 @@ body {
     font-size: 80px;
   }
 }
+// element-ui
+.el-loading-mask {
+  z-index: 999999 !important;
+}
 .customer-service {
   .showFullImgBox {
     // display: none;

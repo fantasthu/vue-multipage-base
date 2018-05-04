@@ -8,13 +8,21 @@
         <img src="../assets/img/chat.png" alt="">
       </div>
     </div>
+    <div class="content">
+      <!-- 包含工单,知识库组件 -->
+      <!-- 我是内容 -->
+      <!-- <LeftWorkOrder></LeftWorkOrder> -->
+      <LeftKnowledge></LeftKnowledge>
+    </div>
   </div>
 </template>
 
 <script>
+import LeftWorkOrder from './LeftWorkOrder'
+import LeftKnowledge from './LeftKnowledge'
 export default {
   name: 'leftmenu',
-  components: {},
+  components: { LeftWorkOrder, LeftKnowledge },
   props: {},
   data() {
     return {}
@@ -55,6 +63,14 @@ export default {
           margin-top: 60px;
         }
       }
+    }
+    .content {
+      position: absolute;
+      left: 118px;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      z-index: 10000;
     }
   }
 }
