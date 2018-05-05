@@ -114,12 +114,15 @@
           </mt-swipe>
         </div>
         <!-- 其他工具 -->
-        <div class="tools" v-show="toolIndex===2">
+        <div class="tools flex-h" v-show="toolIndex===2">
           <div class="tools-photos">
             <img src="../assets/img/tools-photos.png" alt="">
             <div class="uploadImg-h5">
               <input type="file" id="fleH5" v-on:change="mobileFileSelected">
             </div>
+          </div>
+          <div class="knowledges">
+            <img src="../assets/img/knowledge.png" alt="" @click.stop="toKnowledge">
           </div>
         </div>
       </div>
@@ -132,7 +135,7 @@
           <img src="../assets/img/user-head.png" alt="">
           <div class="menuDes">用户信息</div>
         </div>
-        <div class="rightMenuUser flex-v flex-cc" @click.stop="toUserInfo">
+        <div class="rightMenuUser flex-v flex-cc" @click.stop="toWorkList">
           <img src="../assets/img/user-head.png" alt="">
           <div class="menuDes">用户工单</div>
         </div>
@@ -140,6 +143,12 @@
     </div>
     <div class="mobileMenuArea" v-show="showMobileUserinfo">
       <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></MobileUserinfo>
+    </div>
+    <div class="mobileMenuArea" v-show="showMobileWorkList">
+      <RightUserWorkList :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></RightUserWorkList>
+    </div>
+    <div class="mobileMenuArea" v-show="showMobileKnowledge">
+      <RightKnowledge></RightKnowledge>
     </div>
   </div>
 </template>
@@ -152,6 +161,8 @@ import { formatTime } from '../service/tools'
 import EmojiObj from '../assets/js/mapEmoji.js'
 import EmojiMsgObj from '../assets/js/mapEmojiMsg.js'
 import MobileUserinfo from './mobileUserinfo'
+import RightUserWorkList from './RightUserWorkList'
+import RightKnowledge from './RightKnowledge'
 import api from '../service/api'
 import $ from 'jquery'
 import Lightbox from 'vue-simple-lightbox'
@@ -165,7 +176,9 @@ export default {
     Swipe,
     SwipeItem,
     MobileUserinfo,
-    Lightbox
+    Lightbox,
+    RightUserWorkList,
+    RightKnowledge
   },
   props: {
     showLeftMenu: false
@@ -217,6 +230,8 @@ export default {
       inputChangeTimer: null,
       showMenuStatus: false,
       showMobileUserinfo: false,
+      showMobileWorkList: false,
+      showMobileKnowledge: false,
       screenWidth: ''
     }
   },
@@ -274,10 +289,20 @@ export default {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 200)
     })
-    // 隐藏移动端用户信息
     this.$root.eventBus.$on('hideMobileMenu', res => {
+      console.log(res)
+
+      // 隐藏移动端用户信息
       if (res.from === 'mobileUserinfo') {
         this.showMobileUserinfo = false
+      }
+      // 隐藏移动端用户工单
+      if (res.from === 'workList') {
+        this.showMobileWorkList = false
+      }
+      // 隐藏移动端用户工单
+      if (res.from === 'knowledge') {
+        this.showMobileKnowledge = false
       }
     })
   },
@@ -718,6 +743,7 @@ export default {
       // 返回列表时隐藏右侧菜单
       this.showMenuStatus = false
       this.showMobileUserinfo = false
+      this.showMobileWorkList = false
     },
     sendWaiterMsg(inputData) {
       let obj = {
@@ -783,6 +809,17 @@ export default {
     toUserInfo() {
       this.showMobileUserinfo = true
       this.$root.eventBus.$emit('getOrderList')
+    },
+    /**
+     * 打开移动端工单
+     */
+    toWorkList() {
+      this.showMobileWorkList = true
+      this.$root.eventBus.$emit('getWorkList')
+      // this.$root.eventBus.$emit('getOrderList')
+    },
+    toKnowledge() {
+      this.showMobileKnowledge = true
     }
   },
   watch: {
@@ -1002,6 +1039,7 @@ export default {
           }
         }
         .tools {
+          flex-wrap: wrap;
           // 打开相册
           .tools-photos {
             width: 110px;
@@ -1026,6 +1064,18 @@ export default {
                 width: 100%;
                 height: 100%;
               }
+            }
+          }
+          .knowledges {
+            width: 110px;
+            height: 110px;
+            padding: 28px;
+            position: relative;
+            margin-left: 56px;
+            > img {
+              width: 110px;
+              height: 110px;
+              position: absolute;
             }
           }
         }
@@ -1077,6 +1127,7 @@ export default {
       bottom: 0;
       left: 0;
       right: 0;
+      background: #fff;
     }
   }
 }

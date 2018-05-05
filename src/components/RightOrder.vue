@@ -6,7 +6,10 @@
         <div class="order-title">订单明细</div>
         <div class="order-list" v-for="item in orderList">
           <!-- {{orderList}} -->
-          <div class="order-time">{{item.createTime}}</div>
+          <div class="flex-h justify">
+            <div class="order-time">{{item.createTime}}</div>
+            <div class="create-work" @click.stop="toCreateWorkList(item.orderNo)">新建工单</div>
+          </div>
           <div class="order-info order-status">订单状态：{{item.status}}</div>
           <div class="order-info">订单编号：{{item.orderNo}}</div>
           <div class="order-info flex-h flex-bc"><div>物流编号：{{item.mailNo}}</div><div class="check-mail" @click.stop="checkMail({mailNo:item.mailNo,mailName:item.mailName,mailCom:item.mailCom})">查询</div></div>
@@ -68,19 +71,8 @@ export default {
       tap: true,
       preventDefault: true,
       preventDefaultException: { className: /(^|\s)text(\s|$)/ }
-      // pullUpLoad: {
-      //   threshold: 100
-      // }
     })
-    // 手机端加载更多
-    // this.scroll.on('pullingUp', () => {
-    //   // this.items += 10
-    //   this.$nextTick(function() {
-    //     alert(1)
-    //     this.scroll.finishPullUp()
-    //     this.$root.eventBus.$emit('checkMoreOrder')
-    //   })
-    // })
+
     this.scroll.on('scrollStart', res => {
       this.$nextTick(function() {
         this.startY = this.scroll.y
@@ -184,6 +176,14 @@ export default {
           }
         }
       })
+    },
+    toCreateWorkList(orderNo) {
+      // that.$root.eventBus.showWidth
+      if (this.$root.eventBus.showWidth < 768) {
+        this.$root.eventBus.$emit('createFromOrder', orderNo)
+      } else {
+        this.$toast('调用pc端组件')
+      }
     }
   }
 }
@@ -215,6 +215,9 @@ export default {
     .order-list {
       padding: 38px 0;
       border-bottom: 2px solid #e5e5e5;
+      .justify {
+        justify-content: space-between;
+      }
       .order-time {
         background: #f4f4f4;
         border-radius: 100px;
@@ -224,6 +227,17 @@ export default {
         letter-spacing: 0;
         display: inline-block;
         padding: 0 17px;
+      }
+      .create-work {
+        background: #ffe654;
+        border-radius: 100px;
+        width: 130px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        font-size: 22px;
+        color: #000000;
+        letter-spacing: 2px;
       }
       .order-info {
         font-size: 28px;
@@ -344,15 +358,30 @@ export default {
     .order-list {
       padding: 38px 0;
       border-bottom: 2px solid #e5e5e5;
+      .justify {
+        justify-content: space-between;
+      }
       .order-time {
         background: #f4f4f4;
         border-radius: 100px;
         height: 36px;
+        line-height: 36px;
         font-size: 24px;
         color: #888888;
         letter-spacing: 0;
         display: inline-block;
         padding: 0 17px;
+      }
+      .create-work {
+        background: #ffe654;
+        border-radius: 100px;
+        width: 130px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        font-size: 22px;
+        color: #000000;
+        letter-spacing: 2px;
       }
       .order-info {
         font-size: 24px;
@@ -361,7 +390,7 @@ export default {
         margin-top: 24px;
       }
       .order-status {
-        margin-top: 36px;
+        margin-top: 20px;
       }
       .check-mail {
         border: 2px solid #b2b2b2;

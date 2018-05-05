@@ -1,7 +1,7 @@
 <template>
   <div class="flex-h flex-cc search">
       <img src="../assets/img/icon_search.png" alt="">
-      <input type="text" class="search flex-1" @input="searchInput"  placeholder="请输入昵称">
+      <input type="text" class="search flex-1" @input="searchInput" @focus="searchFocus" placeholder="请输入昵称">
   </div>
 </template>
 
@@ -18,6 +18,9 @@ export default {
   methods: {
     searchInput(e) {
       this.$emit('input', e.target.value)
+    },
+    searchFocus(e) {
+      this.$emit('focus')
     }
   }
 }

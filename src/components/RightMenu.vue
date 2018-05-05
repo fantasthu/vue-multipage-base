@@ -1,23 +1,43 @@
 <template>
   <div class="right-menu flex-v">
     <right-menu-tabs></right-menu-tabs>
-    <right-user-info></right-user-info> 
+    <right-user-info v-if="tab == 0"></right-user-info>
+    <rightUserWorkList v-if="tab == 1"></rightUserWorkList>
+    <rightKnowledge v-if="tab == 2"></rightKnowledge>
   </div>
 </template>
 
 <script>
 import RightMenuTabs from '../components/RightMenuTabs.vue'
 import RightUserInfo from '../components/RightUserInfo.vue'
+import RightUserWorkList from '../components/RightUserWorkList.vue'
+import RightKnowledge from '../components/RightKnowledge.vue'
 export default {
   name: 'rightmenu',
-  components: { RightMenuTabs, RightUserInfo },
+  components: {
+    RightMenuTabs,
+    RightUserInfo,
+    RightUserWorkList,
+    RightKnowledge
+  },
   props: {},
   data() {
-    return {}
+    return {
+      tab: 0
+    }
   },
   created() {
     this.$root.eventBus.$on('toChangeTab', index => {
       console.log('rightmenu =>created =>index', index)
+      this.tab = index
+      if (index === 1) {
+        this.$root.eventBus.$emit('getWorkList')
+      }
+      if (index === 2) {
+        this.$root.eventBus.$emit('toKnowledge')
+      }
+      console.log(typeof index)
+
       // this.reloadMessageScroll()
     })
   },

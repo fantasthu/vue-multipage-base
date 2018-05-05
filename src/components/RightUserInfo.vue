@@ -1,8 +1,8 @@
 <template>
   <div id="right-userinfo-wrap">
-    <div class="flex-v right-user-info">
+     <div class="flex-v right-user-info">
       <div class="name ">昵称：{{name}} <span>({{openId.slice(0, 5)}})</span><div class="copyname" :data-clipboard-text="openId">复制ID</div></div>
-      <div class="identity">用户身份： {{whichProgramme?'VIP':'小白'}}</div>
+      <div class="identity">用户身份： {{whichProgramme?'VIP':'普通用户'}}</div>
     </div>
     <right-order  :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
   </div>
@@ -15,7 +15,7 @@ import { formatTime } from '../service/tools'
 import ClipboardJS from 'clipboard'
 
 export default {
-  name: 'rightuserinfo',
+  name: 'rightUserInfo',
   components: { RightOrder },
   props: {},
   data() {
@@ -70,12 +70,6 @@ export default {
   },
   mounted() {},
   methods: {
-    changeTab(index) {
-      if (this.activeIndex !== index) {
-        this.activeIndex = index
-        this.$root.eventBus.$emit('toChangeTab', index)
-      }
-    },
     getOrderList(openid, flag) {
       var instance = axios.create({
         headers: {

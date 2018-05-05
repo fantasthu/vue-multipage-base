@@ -7,6 +7,7 @@
         <div class="identity">用户身份： {{whichProgramme?'VIP':'小白'}}</div>
       </div>
       <right-order :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
+      <editWorkList v-show="showEditWorkList" :name="name" :orderNo="orderNo" from="order" :needTop='needTop'></editWorkList>
     </div>
   </div>
 </template>
@@ -17,10 +18,11 @@ import ServiceHeader from '../components/ServiceHeader'
 import RightOrder from '../components/RightOrder.vue'
 import { formatTime } from '../service/tools'
 import ClipboardJS from 'clipboard'
+import editWorkList from './EditWorkList'
 
 export default {
   name: 'mobileUserinfo',
-  components: { RightOrder, ServiceHeader },
+  components: { RightOrder, ServiceHeader, editWorkList },
   props: {
     openId: {
       type: String,
@@ -46,22 +48,31 @@ export default {
       page: 1,
       preventRepeat: true,
       over: false,
-      showMoreBtn: true
+      showMoreBtn: true,
+      showEditWorkList: false,
+      needTop: true,
+      orderNo: ''
     }
   },
   created() {
-    this.temOrderList = []
-    this.orderList = []
-    this.showMoreBtn = true
-    this.page = 1
-
     // 获取订单列表
-
     this.$root.eventBus.$on('getOrderList', () => {
+      this.orderList = []
+      this.temOrderList = []
+      this.page = 1
+      this.showMoreBtn = true
       this.getOrderList(this.openId, 'first')
     })
+
     this.$root.eventBus.$on('checkMoreOrder', () => {
       this.checkMoreOrder()
+    })
+    this.$root.eventBus.$on('createFromOrder', orderNo => {
+      this.showEditWorkList = true
+      this.orderNo = orderNo
+    })
+    this.$root.eventBus.$on('hideworkFromOrder', () => {
+      this.showEditWorkList = false
     })
 
     // 复制id
@@ -192,6 +203,7 @@ body {
   // left: 0;
   // right: 0;
   height: 100%;
+  background: #fff;
   .userinfo-content {
     position: absolute;
     top: 88px;

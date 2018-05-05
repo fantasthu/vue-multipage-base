@@ -8,12 +8,12 @@
         <img src="../assets/img/chat.png" alt="">
       </div>
     </div>
-    <div class="content">
+    <!-- <div class="content"> -->
       <!-- 包含工单,知识库组件 -->
       <!-- 我是内容 -->
       <!-- <LeftWorkOrder></LeftWorkOrder> -->
-      <LeftKnowledge></LeftKnowledge>
-    </div>
+      <!-- <LeftKnowledge></LeftKnowledge> -->
+    <!-- </div> -->
   </div>
 </template>
 
