@@ -1,7 +1,7 @@
 <template>
   <div class="flex-h flex-cc search">
       <img src="../assets/img/icon_search.png" alt="">
-      <input type="text" class="search flex-1" @input="searchInput"  placeholder="请输入昵称">
+      <input type="text" class="search flex-1" @input="searchInput"  :placeholder="placeholder">
   </div>
 </template>
 
@@ -9,7 +9,12 @@
 export default {
   name: 'search',
   components: {},
-  props: {},
+  props: {
+    placeholder: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {}
   },
