@@ -483,6 +483,9 @@ body {
 .el-loading-mask {
   z-index: 999999 !important;
 }
+.el-message {
+  z-index: 1000000 !important;
+}
 .customer-service {
   .showFullImgBox {
     // display: none;

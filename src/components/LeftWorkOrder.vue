@@ -58,15 +58,15 @@
     </el-dialog>
     <!-- 侧边 -->
     <div class="menu">
-      <Search v-model="searchName"/>
+      <Search v-model="searchName" placeholder = "搜索工单名"/>
       <div class="list">
         <div class="item active flex-h flex-cc">
           <div class="name">所有工单</div>
-          <div class="number">12</div>
+          <div class="number">(12)</div>
         </div>
         <div class="item flex-h flex-cc">
           <div class="name">所有工单</div>
-          <div class="number">12</div>
+          <div class="number">(12)</div>
         </div>
       </div>
     </div>
@@ -125,12 +125,12 @@
         </el-table>
       </div>
       <div class="pagination">
-        <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="100">
-        </el-pagination>
-      </div>
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="100">
+          </el-pagination>
+        </div>
     </div>
   </div>
 </template>
@@ -200,7 +200,7 @@ export default {
           address: '上海市普陀区金沙江路 1516 弄'
         }
       ],
-      addOrderShow: ''
+      addOrderShow: false
     }
   },
   created() {},
@@ -317,6 +317,7 @@ export default {
       }
     }
     .menu {
+      width: 460px;
       .list {
         border-top: 2px solid #e5e5e5;
         .item {
@@ -338,6 +339,7 @@ export default {
       }
     }
     .content {
+      position: relative;
       .head {
         height: 116px;
         border-bottom: 2px solid #e5e5e5;
@@ -359,9 +361,16 @@ export default {
         }
       }
       .table-con {
-        padding: 0 36px;
+        position: absolute;
+        left: 36px;
+        right: 36px;
+        top: 118px;
+        bottom: 100px;
+        overflow: scroll;
       }
       .pagination {
+        position: absolute;
+        bottom: 0;
         margin: 20px 0;
       }
     }

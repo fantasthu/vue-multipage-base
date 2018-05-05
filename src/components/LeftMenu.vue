@@ -4,15 +4,24 @@
       <img src="../assets/img/icon_oneway.png" alt="">
     </div>
     <div class="list">
-      <div class="item">
-        <img src="../assets/img/chat.png" alt="">
+      <div class="item" @click="menuClick(1)">
+        <img src="../assets/img/chat-line.png" v-show="chooseIndex!==1" alt="">
+        <img src="../assets/img/chat.png" v-show="chooseIndex===1" alt="">
+      </div>
+      <div class="item" @click="menuClick(2)">
+        <img src="../assets/img/file-line.png" v-show="chooseIndex!==2" alt="">
+        <img src="../assets/img/file.png" v-show="chooseIndex===2" alt="">
+      </div>
+      <div class="item" @click="menuClick(3)">
+        <img src="../assets/img/book-line.png" v-show="chooseIndex!==3" alt="">
+        <img src="../assets/img/book.png" v-show="chooseIndex===3" alt="">
       </div>
     </div>
-    <div class="content">
+    <div class="content" v-show="chooseIndex!==1">
       <!-- 包含工单,知识库组件 -->
       <!-- 我是内容 -->
-      <LeftWorkOrder></LeftWorkOrder>
-      <!-- <LeftKnowledge></LeftKnowledge> -->
+      <LeftWorkOrder v-show="chooseIndex === 2"></LeftWorkOrder>
+      <LeftKnowledge v-show="chooseIndex === 3"></LeftKnowledge>
     </div>
   </div>
 </template>
@@ -25,11 +34,17 @@ export default {
   components: { LeftWorkOrder, LeftKnowledge },
   props: {},
   data() {
-    return {}
+    return {
+      chooseIndex: 1
+    }
   },
   created() {},
   mounted() {},
-  methods: {}
+  methods: {
+    menuClick(index) {
+      this.chooseIndex = index
+    }
+  }
 }
 </script>
 
