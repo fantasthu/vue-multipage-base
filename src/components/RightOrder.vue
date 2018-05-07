@@ -193,6 +193,7 @@ export default {
               })
               this.mailList = mailData.data
             } else {
+              this.$toast(mailData.msg)
               // this.message = true
             }
           } else {

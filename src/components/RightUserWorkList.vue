@@ -137,7 +137,6 @@ export default {
           if (res.data.status === 0) {
             if (res.data.data.list.length === 0) {
               this.over = true
-              alert(this.over)
               return false
             }
             res.data.data.list.map(el => {
@@ -203,7 +202,6 @@ export default {
             !this.over
           ) {
             this.preventRepeat = false
-            alert(this.page)
             this.getWorkList()
 
             setTimeout(() => {
