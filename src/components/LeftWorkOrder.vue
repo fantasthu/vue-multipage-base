@@ -121,7 +121,6 @@
     </el-dialog>
     <!-- 侧边 -->
     <div class="menu">
-      <Search v-model="searchName" placeholder = "搜索工单名"/>
       <div class="list">
         <div class="item  flex-h flex-cc" :class="{'active':orderCategoryIndex===0}" @click="orderCategoryItemClick('',0)">
           <div class="name">所有工单</div>
@@ -135,7 +134,7 @@
     </div>
     <div class="content flex-1 flex-v">
       <div class="head flex-h flex-bc">
-        <div class="name">所有工单</div>
+        <Search v-model="searchName" placeholder = "搜索工单名"/>
         <div class="addorder" @click="addOrderClick">新建工单</div>
       </div>
       <div class="table-con">
@@ -198,7 +197,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pagination">
+      <div class="pagination" v-show="totalWorkOrders>0">
           <el-pagination
             background
             :page-size="pageSize"
@@ -254,6 +253,9 @@ export default {
 
     // 查询所有工单
     this.searchWorkOrder()
+
+    // 监听eventbus事件
+    this.initEvent()
   },
   mounted() {},
   watch: {
@@ -262,6 +264,11 @@ export default {
     }
   },
   methods: {
+    initEvent() {
+      this.$root.eventBus.$on('addPcWorkOrder', () => {
+        this.addOrderShow = true
+      })
+    },
     toSearchWorkOrder: _.debounce(function(val) {
       this.searchName = val
       this.searchWorkOrder()
@@ -557,10 +564,10 @@ export default {
     }
     .menu {
       width: 460px;
+      border-right: 2px solid #e5e5e5;
       .list {
-        border-top: 2px solid #e5e5e5;
         .item {
-          height: 118px;
+          height: 116px;
           font-family: PingFang-SC-Medium;
           font-size: 30px;
           color: #b2b2b2;

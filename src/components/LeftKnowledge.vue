@@ -71,7 +71,6 @@
     </el-dialog>
     <!-- 侧边分类 -->
     <div class="menu">
-      <Search v-model="searchName" placeholder="搜索知识"/>
       <div class="list">
         <div class="item flex-h flex-cc" :class="{'active': categoryItemIndex===0}" @click="categoryItemClick('')">
           <div class="name">所有知识库</div>
@@ -86,7 +85,7 @@
     <!-- 内容 -->
     <div class="content flex-1 flex-v">
       <div class="head flex-h flex-bc">
-        <div class="name">分类2</div>
+        <Search v-model="searchName" placeholder="搜索知识"/>
         <div class="right-handle flex-h flex-cc">
           <div class="add-category" @click="addCategoryClick">新建分类</div>
           <div class="add-knowledge" @click="addKnowledgeClick">新建知识</div>
@@ -136,7 +135,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pagination">
+      <div class="pagination" v-show="knowledgeTotal>0">
           <el-pagination
             background
             layout="prev, pager, next"
@@ -210,10 +209,9 @@ export default {
      */
     addKnowledge() {
       console.log('this.categoryForm', this.knowledgeForm)
-      // TODO 此处待开发
       axios
         .post('http://cs.velo.top/customerService/csapi/addknowledge', {
-          category: '分类2' || this.knowledgeForm.category,
+          category: this.knowledgeForm.category,
           problem: this.knowledgeForm.problem,
           answer: this.knowledgeForm.answer,
           creator: this.knowledgeForm.creator
@@ -259,10 +257,9 @@ export default {
      * 修改知识按钮确定
      */
     updateKnowledge() {
-      // TODO
       axios
         .post('http://cs.velo.top/customerService/csapi/updateknowledge', {
-          category: '分类2' || this.knowledgeForm.category,
+          category: this.knowledgeForm.category,
           problem: this.knowledgeForm.problem,
           answer: this.knowledgeForm.answer,
           creator: this.knowledgeForm.creator,
@@ -464,17 +461,17 @@ export default {
     height: 100%;
     .menu {
       position: relative;
+      border-right: 2px solid #e5e5e5;
       width: 460px;
       .list {
         position: absolute;
         left: 0;
         right: 0;
-        top: 112px;
+        top: 0;
         bottom: 0;
         overflow: scroll;
-        border-top: 2px solid #e5e5e5;
         .item {
-          height: 118px;
+          height: 116px;
           font-family: PingFang-SC-Medium;
           font-size: 30px;
           color: #b2b2b2;
