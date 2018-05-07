@@ -17,12 +17,12 @@
         <img src="../assets/img/book.png" v-show="chooseIndex===3" alt="">
       </div>
     </div>
-    <div class="content" v-show="chooseIndex!==1">
+    <!-- <div class="content" v-show="chooseIndex!==1"> -->
       <!-- 包含工单,知识库组件 -->
       <!-- 我是内容 -->
-      <LeftWorkOrder v-show="chooseIndex === 2"></LeftWorkOrder>
+      <!-- <LeftWorkOrder v-show="chooseIndex === 2"></LeftWorkOrder>
       <LeftKnowledge v-show="chooseIndex === 3"></LeftKnowledge>
-    </div>
+    </div> -->
   </div>
 </template>
 

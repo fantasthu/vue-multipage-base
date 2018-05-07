@@ -6,7 +6,10 @@
         <div class="order-title">订单明细</div>
         <div class="order-list" v-for="item in orderList">
           <!-- {{orderList}} -->
-          <div class="order-time">{{item.createTime}}</div>
+          <div class="flex-h justify">
+            <div class="order-time">{{item.createTime}}</div>
+            <div class="create-work" @click.stop="toCreateWorkList(item.orderNo)">新建工单</div>
+          </div>
           <div class="order-info order-status">订单状态：{{item.status}}</div>
           <div class="order-info">订单编号：{{item.orderNo}}</div>
           <div class="order-info flex-h flex-bc"><div>物流编号：{{item.mailNo}}</div><div class="check-mail" @click.stop="checkMail({mailNo:item.mailNo,mailName:item.mailName,mailCom:item.mailCom})">查询</div></div>
@@ -14,8 +17,9 @@
           <div class="order-info">实付金额：￥{{item.realPrice/100}}</div>
         </div>
 
-        <!-- <div class="nomore" v-show="over">没有更多订单了</div> -->
+        <div class="nomore" v-show="over">没有更多订单了</div>
         <div class="more" @click="checkMoreOrder" v-show="showMoreBtn">查看历史订单</div>
+        <div class="slot"></div>
       </div>
     </div>
     <div class="modal" v-show="showMail" @click.stop="closeMail"></div>
@@ -46,6 +50,10 @@ export default {
       type: String,
       default: ''
     },
+    over: {
+      type: Boolean,
+      default: true
+    },
     showMoreBtn: {
       type: Boolean,
       default: true
@@ -67,35 +75,34 @@ export default {
       click: true,
       tap: true,
       preventDefault: true,
-      preventDefaultException: { className: /(^|\s)text(\s|$)/ }
-      // pullUpLoad: {
-      //   threshold: 100
-      // }
+      preventDefaultException: { className: /(^|\s)text(\s|$)/ },
+      pullUpLoad: {
+        threshold: 100
+      }
     })
-    // 手机端加载更多
-    // this.scroll.on('pullingUp', () => {
-    //   // this.items += 10
-    //   this.$nextTick(function() {
-    //     alert(1)
-    //     this.scroll.finishPullUp()
-    //     this.$root.eventBus.$emit('checkMoreOrder')
-    //   })
-    // })
+
     this.scroll.on('scrollStart', res => {
       this.$nextTick(function() {
         this.startY = this.scroll.y
         console.log('开始滚动', this.scroll.y)
       })
     })
+
     this.scroll.on('scroll', res => {
       this.$nextTick(function() {
         if (res.y - this.scroll.maxScrollY < 100 && res.y < this.startY - 50) {
-          this.$root.eventBus.$emit('checkMoreOrder')
+          this.$root.eventBus.$emit(
+            'checkMoreOrder',
+            this.$root.eventBus.showWidth
+          )
         }
       })
     })
   },
   methods: {
+    /**
+     * 查询物流
+     */
     checkMail(opts) {
       console.log('right-order =>checkmail =>查询物流')
       this.mailList = []
@@ -111,13 +118,21 @@ export default {
         this.getNormalMail(opts.mailCom, opts.mailNo)
       }
     },
+    /**
+     * 关闭物流模块
+     */
     closeMail() {
       this.showMail = false
     },
+    /**
+     * 查看更多订单
+     */
     checkMoreOrder() {
-      this.$root.eventBus.$emit('checkMoreOrder')
+      this.$root.eventBus.$emit('checkMoreOrder', this.$root.eventBus.showWidth)
     },
-
+    /**
+     * 九曳物流
+     */
     _getJyMailInfo(nu) {
       $.post(
         'http://192.168.1.44:9000/order-service/order/getJyMailInfo',
@@ -143,7 +158,9 @@ export default {
         }
       )
     },
-
+    /**
+     * 常规物流
+     */
     getNormalMail(com, nu) {
       $.ajax({
         type: 'get',
@@ -176,6 +193,7 @@ export default {
               })
               this.mailList = mailData.data
             } else {
+              this.$toast(mailData.msg)
               // this.message = true
             }
           } else {
@@ -184,6 +202,17 @@ export default {
           }
         }
       })
+    },
+    /**
+     * 调出创建工单页面
+     */
+    toCreateWorkList(orderNo) {
+      // that.$root.eventBus.showWidth
+      if (this.$root.eventBus.showWidth < 768) {
+        this.$root.eventBus.$emit('createFromOrder', orderNo)
+      } else {
+        this.$toast('调用pc端组件')
+      }
     }
   }
 }
@@ -191,6 +220,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.slot {
+  height: 40px;
+}
 // 手机端
 @media (max-width: 768px) {
   .right-order-wrap {
@@ -215,6 +247,9 @@ export default {
     .order-list {
       padding: 38px 0;
       border-bottom: 2px solid #e5e5e5;
+      .justify {
+        justify-content: space-between;
+      }
       .order-time {
         background: #f4f4f4;
         border-radius: 100px;
@@ -224,6 +259,17 @@ export default {
         letter-spacing: 0;
         display: inline-block;
         padding: 0 17px;
+      }
+      .create-work {
+        background: #ffe654;
+        border-radius: 100px;
+        width: 130px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        font-size: 22px;
+        color: #000000;
+        letter-spacing: 2px;
       }
       .order-info {
         font-size: 28px;
@@ -249,10 +295,10 @@ export default {
       }
     }
     .nomore {
-      color: #555555;
+      color: #bbb;
       letter-spacing: 3px;
       text-align: center;
-      margin: 60px auto;
+      margin: 60px auto 0;
     }
     .more {
       margin: 60px auto;
@@ -262,7 +308,7 @@ export default {
       border: 2px solid #b2b2b2;
       margin-top: 36px;
       font-size: 28px;
-      color: #555555;
+      color: #bbb;
       letter-spacing: 3px;
       text-align: center;
     }
@@ -344,15 +390,30 @@ export default {
     .order-list {
       padding: 38px 0;
       border-bottom: 2px solid #e5e5e5;
+      .justify {
+        justify-content: space-between;
+      }
       .order-time {
         background: #f4f4f4;
         border-radius: 100px;
         height: 36px;
+        line-height: 36px;
         font-size: 24px;
         color: #888888;
         letter-spacing: 0;
         display: inline-block;
         padding: 0 17px;
+      }
+      .create-work {
+        background: #ffe654;
+        border-radius: 100px;
+        width: 130px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        font-size: 22px;
+        color: #000000;
+        letter-spacing: 2px;
       }
       .order-info {
         font-size: 24px;
@@ -361,7 +422,7 @@ export default {
         margin-top: 24px;
       }
       .order-status {
-        margin-top: 36px;
+        margin-top: 20px;
       }
       .check-mail {
         border: 2px solid #b2b2b2;
@@ -379,7 +440,7 @@ export default {
       font-size: 24px;
       color: #888888;
       letter-spacing: 2px;
-      margin: 30px auto;
+      margin: 30px auto 0;
     }
     .more {
       font-size: 24px;
