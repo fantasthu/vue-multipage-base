@@ -2,13 +2,14 @@
   <div class="flex-h left-knowledge">
     <!--  新增知识库 -->
     <el-dialog title="新增知识库" :visible.sync="addKnowledgeShow">
+      {{categories}}
       <el-form :model="knowledgeForm">
          <el-form-item label="关键字">
           <el-select v-model="knowledgeForm.category" placeholder="请选择关键字">
-            <el-option  label="item.name" value="item.name"></el-option>
+            <el-option v-for="(item,index) in categories" :key="item.id" :label="item.name" :value="item.name"></el-option>
           </el-select>
         </el-form-item>
-        
+
         <el-form-item label="问题" :label-width="formLabelWidth">
           <el-input v-model="knowledgeForm.problem" auto-complete="off"></el-input>
         </el-form-item>
@@ -27,6 +28,35 @@
         <el-button type="primary" @click="addKnowledge">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!--  编辑知识库 -->
+    <el-dialog title="编辑知识库" :visible.sync="updateKnowledgeShow">
+      <el-form :model="knowledgeForm">
+         <el-form-item label="关键字">
+          <el-select v-model="knowledgeForm.category" placeholder="请选择关键字">
+            <el-option v-for="(item,index) in categories" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="问题" :label-width="formLabelWidth">
+          <el-input v-model="knowledgeForm.problem" auto-complete="off"></el-input>
+        </el-form-item>
+        
+        <el-form-item label="答案" :label-width="formLabelWidth">
+          <el-input v-model="knowledgeForm.answer" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="创建人" :label-width="formLabelWidth">
+          <el-input v-model="knowledgeForm.creator" auto-complete="off"></el-input>
+        </el-form-item>
+        
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="updateKnowledgeShow = false">取 消</el-button>
+        <el-button type="primary" @click="updateKnowledge">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <!--  新增分类 -->
     <el-dialog title="新增类别" :visible.sync="addCategoryShow">
       <el-form :model="categoryForm">
@@ -40,17 +70,17 @@
         <el-button type="primary" @click="addCategory">确 定</el-button>
       </div>
     </el-dialog>
-    <!-- 侧边 -->
+    <!-- 侧边分类 -->
     <div class="menu">
       <Search v-model="searchName" placeholder="搜索知识"/>
       <div class="list">
-        <div class="item active flex-h flex-cc">
+        <div class="item flex-h flex-cc" :class="{'active': categoryItemIndex===0}" @click="categoryItemClick('')">
           <div class="name">所有知识库</div>
-          <div class="number">200</div>
+          <div class="number">({{totalCategory}})</div>
         </div>
-        <div class="item flex-h flex-cc" v-for="item in categories">
+        <div class="item flex-h flex-cc" v-for="(item,index) in categories" :class="{'active': categoryItemIndex===(index+1)}"  @click="categoryItemClick(item,index+1)">
           <div class="name">{{item.name}}</div>
-          <div class="number">12</div>
+          <div class="number">({{item.cnum}})</div>
         </div>
       </div>
     </div>
@@ -65,31 +95,26 @@
       </div>
       <div class="table-con">
         <el-table
-        :data="tableData"
+        :data="knowledges"
         style="width: 100%"
         :default-sort = "{prop: 'date', order: 'descending'}"
         >
           <el-table-column
-            prop="name"
-            label="工单名称"
-            sortable
+            prop="problem"
+            label="知识名称"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="status"
-            label="状态"
-            sortable
+            prop="category"
+            label="分类"
+            
             width="180">
           </el-table-column>
           <el-table-column
-            prop="user"
-            label="用户"
-            :formatter="formatter">
-          </el-table-column>
-          <el-table-column
-            prop="customerService"
-            label="受理客服"
-            :formatter="formatter">
+            prop="createtime"
+            label="最近编辑时间"
+            sortable
+           >
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -97,13 +122,13 @@
             width="120">
             <template slot-scope="scope">
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                @click.native.prevent="updateKnowledgeClick(scope.$index, scope.row)"
                 type="text"
                 size="small">
                 编辑
               </el-button>
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                @click.native.prevent="deleteKnowledgeClick(scope.$index, scope.row)"
                 type="text"
                 size="small">
                 删除
@@ -116,7 +141,9 @@
           <el-pagination
             background
             layout="prev, pager, next"
-            :total="100">
+            @current-change="handleCurrentChange"
+            :page-size = "pageSize"
+            :total="knowledgeTotal">
           </el-pagination>
         </div>
     </div>
@@ -127,6 +154,7 @@
 import Search from './Search'
 // import Table from 'element-ui'
 import axios from 'axios'
+import _ from 'lodash'
 
 export default {
   name: 'leftknowledge',
@@ -135,84 +163,61 @@ export default {
   data() {
     return {
       searchName: '',
+      startPage: 1,
+      pageSize: 8,
+      knowledgeTotal: 0,
       addKnowledgeShow: false,
+      updateKnowledgeShow: false,
       addCategoryShow: false,
       formLabelWidth: '500',
+      // 当前分类名称,默认全部
+      currentCategory: '',
+      // 当前选中分类index,默认全部
+      categoryItemIndex: 0,
       knowledgeForm: {
         category: '',
         problem: '',
         answer: '',
-        creator: ''
+        creator: '',
+        region: ''
       },
       categoryForm: {
         name: ''
       },
+      updateRow: {},
       categories: [],
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
-      ]
+      totalCategory: 0,
+      knowledges: []
     }
   },
   created() {
-    // 查询分类
+    // 查询知识
     this.searchCategory()
+
+    // 查询知识
+    this.searchKnowledge()
   },
   mounted() {},
   methods: {
     /**
-     * 添加分类
+     * 分页页码改变
+     */
+    handleCurrentChange(currentPage) {
+      this.startPage = currentPage
+      this.searchKnowledge()
+    },
+    /**
+     * 添加知识确认按钮
      */
     addKnowledge() {
+      console.log('this.categoryForm', this.knowledgeForm)
+      // TODO 此处待开发
       axios
         .post('http://cs.velo.top/customerService/csapi/addknowledge', {
-          category: this.categoryForm.category,
-          problem: this.categoryForm.problem,
-          answer: this.categoryForm.answer,
-          creator: this.categoryForm.creator
+          category: '分类2' || this.knowledgeForm.category,
+          problem: this.knowledgeForm.problem,
+          answer: this.knowledgeForm.answer,
+          creator: this.knowledgeForm.creator
         })
         .then(_ => {
           if (_.data.status === 0) {
@@ -227,11 +232,95 @@ export default {
               type: 'error'
             })
           }
+
+          // 更新一遍所有知识
+          this.searchKnowledge()
+
+          // 更新所有分类
+          this.searchCategory()
           console.log('LeftKnowledgeAddCategory=>addKnowledge', _)
+        })
+      this.knowledgeForm = {
+        category: '',
+        problem: '',
+        answer: '',
+        creator: ''
+      }
+    },
+    /**
+     * 修改知识内容
+     */
+    updateKnowledgeClick(index, row) {
+      console.log('LeftKnowledgeAddCategory=>updateKnowledge', index, row)
+      this.updateKnowledgeShow = true
+      this.updateRow = row
+    },
+    /**
+     * 修改知识按钮确定
+     */
+    updateKnowledge() {
+      // TODO
+      axios
+        .post('http://cs.velo.top/customerService/csapi/updateknowledge', {
+          category: '分类2' || this.knowledgeForm.category,
+          problem: this.knowledgeForm.problem,
+          answer: this.knowledgeForm.answer,
+          creator: this.knowledgeForm.creator,
+          id: this.updateRow.id
+        })
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.updateCategoryShow = false
+          } else {
+            this.$message({
+              message: '修改失败',
+              type: 'error'
+            })
+          }
+
+          // 更新一遍所有知识
+          this.searchKnowledge()
+          console.log('LeftKnowledgeAddCategory=>updateKnowledgeShow=>_', _)
         })
     },
     /**
-     * 查询分类
+     * 删除知识内容
+     */
+    deleteKnowledgeClick(index, row) {
+      console.log('LeftKnowledgeAddCategory=>deleteKnowledgeClick', index, row)
+      axios
+        .post('http://cs.velo.top/customerService/csapi/delknowledge', {
+          id: row.id
+        })
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+
+            // 更新一遍所有知识
+            this.searchKnowledge()
+
+            // 更新一遍分类
+            this.searchCategory()
+          } else {
+            this.$message({
+              message: '删除失败',
+              type: 'error'
+            })
+          }
+
+          console.log('LeftKnowledgeAddCategory=>updateKnowledgeShow=>_', _)
+        })
+    },
+
+    /**
+     * 查询知识
      */
     searchCategory() {
       axios
@@ -241,10 +330,75 @@ export default {
         .then(_ => {
           if (_.data.status === 0) {
             this.categories = _.data.data
-          }
 
+            // 过滤出分类的总数
+            this.filterTotalCategory(_.data.data)
+
+            // 处理新建知识库初始化分类
+            this.initCategory(_.data.data)
+          }
           console.log('LeftKnowledgeAddCategory=>searchCategory', _)
         })
+    },
+    /**
+     * 每个分类item的点击
+     */
+    categoryItemClick(item, index) {
+      console.log('LeftKnowledgeAddCategory=>categoryItemClick=>item', item)
+      // 重置分页开始页
+      this.startPage = 1
+      if (typeof item === 'string') {
+        this.currentCategory = ''
+        this.categoryItemIndex = 0
+      } else {
+        this.currentCategory = item.name
+        this.categoryItemIndex = index
+      }
+      this.searchKnowledge()
+    },
+    filterTotalCategory(arr = []) {
+      // 重置分类总数
+      this.totalCategory = 0
+      arr.map(item => {
+        this.totalCategory += item.cnum
+      })
+    },
+    /**
+     * 查询知识
+     */
+    searchKnowledge(
+      problem = this.searchName,
+      category = this.currentCategory,
+      pageSize = this.pageSize,
+      startPage = this.startPage
+    ) {
+      console.log(
+        'LeftKnowledgeAddCategory=>searchKnowledge=参数',
+        problem,
+        category,
+        pageSize,
+        startPage
+      )
+      axios
+        .post('http://cs.velo.top/customerService/csapi/searchKnowledge', {
+          problem,
+          category,
+          pageSize,
+          startPage
+        })
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.knowledges = _.data.data.list
+            this.knowledgeTotal = _.data.data.total
+          }
+          console.log('LeftKnowledgeAddCategory=>searchKnowledge', _)
+        })
+    },
+    /**
+     * 初始化新建知识库的时候的分类
+     */
+    initCategory(categories) {
+      this.knowledgeForm.category = categories[0]
     },
     /**
      * 添加分类确认按钮
@@ -261,6 +415,9 @@ export default {
               type: 'success'
             })
             this.addCategoryShow = false
+
+            // 更新分类
+            this.searchCategory()
           } else {
             this.$message({
               message: '添加失败',
@@ -276,8 +433,17 @@ export default {
     addKnowledgeClick() {
       this.addKnowledgeShow = true
     },
-    formatter(row, column) {
-      return row.address
+    /**
+     * 搜索知识输入
+     */
+    toSearchKnowledge: _.debounce(function(val) {
+      this.problem = val
+      this.searchKnowledge()
+    }, 500)
+  },
+  watch: {
+    searchName(val, oval) {
+      this.toSearchKnowledge(val)
     }
   }
 }
@@ -314,6 +480,7 @@ export default {
           color: #b2b2b2;
           letter-spacing: 0;
           text-align: center;
+          cursor: pointer;
           .name {
           }
           .number {
