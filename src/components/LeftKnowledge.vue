@@ -5,7 +5,7 @@
       <el-form :model="knowledgeForm">
          <el-form-item label="关键字">
           <el-select v-model="knowledgeForm.category" placeholder="请选择关键字">
-            <el-option  v-for="item in categories" :label="item.name" :value="item.name"></el-option>
+            <el-option  label="item.name" value="item.name"></el-option>
           </el-select>
         </el-form-item>
         
@@ -139,7 +139,7 @@ export default {
       addCategoryShow: false,
       formLabelWidth: '500',
       knowledgeForm: {
-        keyword: '',
+        category: '',
         problem: '',
         answer: '',
         creator: ''
