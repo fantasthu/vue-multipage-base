@@ -6,18 +6,18 @@
       <div class="typeTitle">类别</div>
       <div class="flex-h list">
         <!-- active类待定 -->
-        <div class="type" v-for="item,index in typeList" @click.stop="selectType(item,index)">{{item}}</div>
+        <div class="type" v-for="item,index in categories" @click.stop="selectType(item.name,index)">{{item.name}}</div>
       </div>
     </div>
-    <div class='result' v-show="showSearchResult">
+    <div ref="result" class='result' v-show="showSearchResult">
       <div class="wrapper " v-if="knowledgeList.length>0">
         <div class="work-list flex-h" v-for="item in knowledgeList">
           <div class="left-dot"></div>
           <div class="right-wrap flex-1 flex-v">
-            <div class="question">问题：asfadf</div>
-            <div class="answer">asfadf</div>
+            <div class="question">问题：{{item.problem}}</div>
+            <div class="answer">{{item.answer}}</div>
             <div class="flex-h sendBtn">
-              <div class="sendAnswer">发送答案</div>
+              <div class="sendAnswer" @click.stop="sendAnswer(item.answer)">发送答案</div>
             </div>
           </div>
         </div>
@@ -32,6 +32,7 @@
 import Search from './Search'
 import axios from 'axios'
 import ServiceHeader from './ServiceHeader'
+import Bscroll from 'better-scroll'
 
 export default {
   name: 'rightUserWorkList',
@@ -43,49 +44,112 @@ export default {
       preventRepeat: true,
       over: false,
       showMoreBtn: true,
-      knowledgeList: [1, 2, 3],
+      knowledgeList: [],
       searchKnowledge: '',
       showSearchResult: false,
-      typeList: ['111', '222', '333'],
       typeIndex: 0,
-      pageTitle: '知识库'
+      pageTitle: '知识库',
+      categories: []
     }
   },
   created() {
-    this.getKnowledgeCategory()
+    this.searchCategory()
+    this.selectType('')
   },
-  mounted() {},
+  mounted() {
+    this.scroll = new Bscroll(this.$refs.result, {
+      mouseWheel: true,
+      click: true,
+      tap: true,
+      preventDefault: true,
+      preventDefaultException: { className: /(^|\s)text(\s|$)/ },
+      pullUpLoad: {
+        threshold: 100
+      }
+    })
+
+    this.scroll.on('scrollStart', res => {
+      this.$nextTick(function() {
+        this.startY = this.scroll.y
+        console.log('开始滚动', this.scroll.y)
+      })
+    })
+    this.scroll.on('scroll', res => {
+      this.$nextTick(function() {
+        if (res.y - this.scroll.maxScrollY < 100 && res.y < this.startY - 50) {
+          // this.$root.eventBus.$emit('checkMoreOrder')
+        }
+      })
+    })
+  },
   methods: {
-    getKnowledgeCategory() {},
+    /**
+     * 查询分类
+     */
+    searchCategory() {
+      axios
+        .post(
+          'http://cs.velo.top/customerService/csapi/selectKnowledgeCategory'
+        )
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.categories = _.data.data
+          }
+
+          console.log('LeftKnowledgeAddCategory=>searchCategory', _)
+        })
+    },
+    /**
+     * 查询知识列表
+     */
     selectType(type, index) {
       // 调用搜索接口
       console.log(type, index)
       this.showSearchResult = true
       axios
-        .post(
-          'http://cs.velo.top/customerService/csapi/selectKnowledgeCategory',
-          {}
-        )
-        .then(res => {})
+        .post('http://cs.velo.top/customerService/csapi/searchKnowledge', {
+          problem: type,
+          startPage: this.page,
+          pageSize: 5
+        })
+        .then(res => {
+          console.log('res', res)
+          if (res.data.status === 0) {
+            this.knowledgeList = res.data.data.list
+          } else {
+            this.$toast(res.data.message)
+          }
+        })
     },
+    /**
+     * 获取焦点
+     */
     focus() {
       this.showSearchResult = false
     },
+    /**
+     * 返回
+     */
     chatBack() {
       // 返回
       this.$root.eventBus.$emit('hideMobileMenu', {
         from: 'knowledge'
       })
     },
-    search() {
-      axios.post(
-        'http://cs.velo.top/customerService/csapi/selectKnowledgeCategory'
-      )
+    /**
+     * 发送答案
+     */
+    sendAnswer(answer) {
+      this.$root.eventBus.$emit('sendAnswer', answer)
+      if (this.$root.eventBus.showWidth < 768) {
+        // 隐藏知识库
+        this.chatBack()
+      }
     }
   },
   watch: {
     searchKnowledge(val, oldVal) {
-      axios.post('http://cs.velo.top/customerService/csapi/selectKnowledge', {})
+      this.selectType(val)
     }
   }
 }
@@ -204,6 +268,10 @@ export default {
         font-size: 24px;
         color: #888888;
         letter-spacing: 0;
+        position: absolute;
+        top: 40%;
+        width: 100%;
+        text-align: center;
       }
     }
   }
@@ -250,6 +318,15 @@ export default {
           border: 0;
         }
       }
+    }
+    .result {
+      position: absolute;
+      top: 110px;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      overflow: scroll;
+      -webkit-overflow-scrolling: touch;
     }
     .work-list:nth-child(1) {
       margin-top: 16px;
@@ -309,6 +386,10 @@ export default {
       font-size: 24px;
       color: #888888;
       letter-spacing: 0;
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
     }
   }
 }

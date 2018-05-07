@@ -16,7 +16,7 @@
         <img v-show='showType' src="../assets/img/up.png" alt="">
         <img v-show="!showType" src="../assets/img/down.png" alt="">
       </div>
-      <div v-show="showType" class="type" v-for="item,index in typeList" @click.stop="choiceType(index)">{{item}}</div>
+      <div v-show="showType" :class="['type',{'typeSelect':typeIndex==index}]" v-for="item,index in typeList" @click.stop="choiceType(index)">{{item}}</div>
       
       <div class="list input-title"><input type="text" v-model="workTitle" placeholder="标题"></div>
       
@@ -82,13 +82,14 @@ export default {
       showType: false,
       workDes: '',
       isUpdate: false,
-      typeIndex: 0,
+      typeIndex: -1,
       customer: '客服',
       ordernum: '',
       identity: '' // 提交的用户名
     }
   },
   created() {
+    // 初始化oss
     this.client = new OSS.Wrapper({
       region: 'oss-cn-beijing',
       accessKeyId: 'LTAIqZNxHpwAnq9r',
@@ -96,9 +97,17 @@ export default {
       bucket: 'velo-bucket',
       secure: true
     })
+
+    // 判断创建或修改
     this.$root.eventBus.$on('updateWorkList', (info, index) => {
       console.log(info, index)
-
+      this.initworkData(info)
+      console.log('this.isUpdate', this.isUpdate)
+    })
+  },
+  mounted() {},
+  methods: {
+    initworkData(info) {
       if (info) {
         // 修改工单
         this.isUpdate = true
@@ -119,52 +128,74 @@ export default {
         this.upImgs = []
         this.workDes = ''
         this.workTitle = ''
-        this.typeIndex = 0
+        this.typeIndex = -1
         this.ordernum = ''
         this.identity = ''
         this.statusIndex = 0
         this.customer = '客服'
       }
+      this.choice =
+        this.typeIndex > -1 ? this.typeList[this.typeIndex] : '请选择'
+    },
 
-      console.log('this.isUpdate', this.isUpdate)
-    })
-  },
-  mounted() {},
-  methods: {
-    chatBack() {
+    /**
+     * 返回
+     */
+    chatBack(refresh = false) {
       if (this.from === 'order') {
         // 用户信息的订单点击创建工单
         this.$root.eventBus.$emit('hideworkFromOrder')
       } else {
         // 隐藏移动端用户信息
-        this.$root.eventBus.$emit('hideEditWorkList')
+        this.$root.eventBus.$emit('hideEditWorkList', refresh)
       }
     },
+
+    /**
+     * 显示隐藏类型
+     */
     toChoice() {
-      // 显示隐藏
       this.showType = !this.showType
     },
+
+    /**
+     * 选择类型
+     */
     choiceType(index) {
-      // this.choiceTypeIndex = index
-      console.log(index)
       this.typeIndex = index
       this.choice = this.typeList[index]
       this.showType = false
     },
+
+    /**
+     * 选择状态
+     */
     choiceStatus(index) {
       this.statusIndex = index
       console.log(this.workDes)
     },
+
+    /**
+     * 删除图片
+     */
     deleteImg(index) {
       this.upImgs.splice(index, 1)
       console.log(this.upImgs)
     },
+
+    /**
+     * 选择图片
+     */
     async selectPic(e) {
       console.log(e.target.files[0])
       var ossUrl = await this.uploadImgToOSS(e.target.files[0])
       console.log('ossUrl', ossUrl)
       this.upImgs.push(ossUrl)
     },
+
+    /**
+     * 上传oss
+     */
     uploadImgToOSS(img) {
       return new Promise((resolve, reject) => {
         const timestamp = +new Date()
@@ -185,7 +216,23 @@ export default {
           })
       })
     },
+
+    /**
+     * 保存工单
+     */
     toSaveWorkList() {
+      if (this.typeIndex < 0) {
+        this.$toast('请选择类型')
+        return
+      }
+      if (!this.workTitle.trim()) {
+        this.$toast('请输入标题')
+        return
+      }
+      if (!this.workDes.trim()) {
+        this.$toast('请输入描述')
+        return
+      }
       let url = ''
       let data = {
         customer: '客服人员',
@@ -208,23 +255,13 @@ export default {
         .post(url, data)
         .then(res => {
           var message = ''
-          console.log(res)
           if (res.data.status === 0) {
             message = this.isUpdate ? '修改工单成功' : '创建工单成功'
             this.$toast(message)
-            // if (this.isUpdate) {
-            //   this.$toast('修改工单成功')
-            // } else {
-            //   this.$toast('创建工单成功')
-            // }
+            this.chatBack(true)
           } else {
             message = this.isUpdate ? '修改工单失败' : '创建工单失败'
             this.$toast(message)
-            // if (this.isUpdate) {
-            //   this.$toast('修改工单失败')
-            // } else {
-            //   this.$toast('创建工单失败')
-            // }
           }
         })
         .catch(() => {
@@ -304,9 +341,9 @@ export default {
         font-size: 28px;
         color: #353535;
         letter-spacing: 3px;
-        &:nth-child(2n + 1) {
-          background: #f4f4f4;
-        }
+      }
+      .typeSelect {
+        background: #f4f4f4;
       }
       .des {
         padding: 38px 0 30px;

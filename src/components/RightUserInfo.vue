@@ -4,7 +4,7 @@
       <div class="name ">昵称：{{name}} <span>({{openId.slice(0, 5)}})</span><div class="copyname" :data-clipboard-text="openId">复制ID</div></div>
       <div class="identity">用户身份： {{whichProgramme?'VIP':'普通用户'}}</div>
     </div>
-    <right-order  :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
+    <right-order :over="over"  :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
   </div>
 </template>
 
@@ -54,11 +54,14 @@ export default {
         this.getOrderList(openId, 'first')
       }
     )
+
     /**
      * 点击查看更多
      */
-    this.$root.eventBus.$on('checkMoreOrder', () => {
-      this.checkMoreOrder()
+    this.$root.eventBus.$on('checkMoreOrder', width => {
+      if (width > 768) {
+        this.checkMoreOrder()
+      }
     })
 
     // 复制id
@@ -68,8 +71,20 @@ export default {
       e.clearSelection()
     })
   },
-  mounted() {},
+  mounted() {
+    this.$root.eventBus.$on('getUserInfo', () => {
+      console.log('this.openId', this.openId)
+      console.log('this.name', this.name)
+      console.log('this.whichProgramme', this.whichProgramme)
+      // 获取订单列表
+      this.getOrderList(this.openId, 'first')
+      this.$root.eventBus.$off('getUserInfo')
+    })
+  },
   methods: {
+    /**
+     * 获取订单列表
+     */
     getOrderList(openid, flag) {
       var instance = axios.create({
         headers: {
@@ -118,9 +133,11 @@ export default {
           console.log('请求失败:', e)
           this.showMoreBtn = false
           this.$toast('网络异常,请重试~')
-          // Indicator.close()
         })
     },
+    /**
+     * 查看更多订单
+     */
     checkMoreOrder() {
       if (this.preventRepeat && !this.over) {
         this.preventRepeat = false

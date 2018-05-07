@@ -30,15 +30,15 @@ export default {
     this.$root.eventBus.$on('toChangeTab', index => {
       console.log('rightmenu =>created =>index', index)
       this.tab = index
+      if (index === 0) {
+        this.$root.eventBus.$emit('getUserInfo')
+      }
       if (index === 1) {
         this.$root.eventBus.$emit('getWorkList')
       }
       if (index === 2) {
         this.$root.eventBus.$emit('toKnowledge')
       }
-      console.log(typeof index)
-
-      // this.reloadMessageScroll()
     })
   },
   mounted() {},

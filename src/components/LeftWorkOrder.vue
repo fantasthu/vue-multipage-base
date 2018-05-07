@@ -58,15 +58,15 @@
     </el-dialog>
     <!-- 侧边 -->
     <div class="menu">
-      <Search v-model="searchName"/>
+      <Search v-model="searchName" placeholder = "搜索工单名"/>
       <div class="list">
         <div class="item active flex-h flex-cc">
           <div class="name">所有工单</div>
-          <div class="number">12</div>
+          <div class="number">(12)</div>
         </div>
         <div class="item flex-h flex-cc">
           <div class="name">所有工单</div>
-          <div class="number">12</div>
+          <div class="number">(12)</div>
         </div>
       </div>
     </div>
@@ -75,60 +75,62 @@
         <div class="name">所有工单</div>
         <div class="addorder" @click="addOrderClick">新建工单</div>
       </div>
-      <el-table
-      :data="tableData"
-      style="width: 100%"
-      :default-sort = "{prop: 'date', order: 'descending'}"
-      >
-        <el-table-column
-          prop="name"
-          label="工单名称"
-          sortable
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="status"
-          label="状态"
-          sortable
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="user"
-          label="用户"
-          :formatter="formatter">
-        </el-table-column>
-        <el-table-column
-          prop="customerService"
-          label="受理客服"
-          :formatter="formatter">
-        </el-table-column>
-        <el-table-column
-          fixed="right"
-          label="操作"
-          width="120">
-          <template slot-scope="scope">
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData4)"
-              type="text"
-              size="small">
-              编辑
-            </el-button>
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData4)"
-              type="text"
-              size="small">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination">
-        <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="100">
-        </el-pagination>
+      <div class="table-con">
+        <el-table
+        :data="tableData"
+        style="width: 100%"
+        :default-sort = "{prop: 'date', order: 'descending'}"
+        >
+          <el-table-column
+            prop="name"
+            label="工单名称"
+            sortable
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="status"
+            label="状态"
+            sortable
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="user"
+            label="用户"
+            :formatter="formatter">
+          </el-table-column>
+          <el-table-column
+            prop="customerService"
+            label="受理客服"
+            :formatter="formatter">
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            label="操作"
+            width="120">
+            <template slot-scope="scope">
+              <el-button
+                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                type="text"
+                size="small">
+                编辑
+              </el-button>
+              <el-button
+                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                type="text"
+                size="small">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
+      <div class="pagination">
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="100">
+          </el-pagination>
+        </div>
     </div>
   </div>
 </template>
@@ -198,7 +200,7 @@ export default {
           address: '上海市普陀区金沙江路 1516 弄'
         }
       ],
-      addOrderShow: ''
+      addOrderShow: false
     }
   },
   created() {},
@@ -315,23 +317,60 @@ export default {
       }
     }
     .menu {
+      width: 460px;
       .list {
+        border-top: 2px solid #e5e5e5;
         .item {
+          height: 118px;
+          font-family: PingFang-SC-Medium;
+          font-size: 30px;
+          color: #b2b2b2;
+          letter-spacing: 0;
+          text-align: center;
           .name {
           }
           .number {
           }
         }
+        .active {
+          background: #eee;
+          color: #353535;
+        }
       }
     }
     .content {
+      position: relative;
       .head {
+        height: 116px;
+        border-bottom: 2px solid #e5e5e5;
+        padding-left: 36px;
         .name {
+          font-family: PingFangSC-Medium;
+          font-size: 30px;
+          color: #353535;
+          letter-spacing: 0;
         }
         .addorder {
+          width: 168px;
+          height: 62px;
+          line-height: 62px;
+          background: #ffe654;
+          border-radius: 100px;
+          text-align: center;
+          margin-right: 60px;
         }
       }
+      .table-con {
+        position: absolute;
+        left: 36px;
+        right: 36px;
+        top: 118px;
+        bottom: 100px;
+        overflow: scroll;
+      }
       .pagination {
+        position: absolute;
+        bottom: 0;
         margin: 20px 0;
       }
     }

@@ -5,7 +5,7 @@
     <div class="create-work flex-h flex-cc" @click.stop="toCreateWorkList"><img src="../assets/img/add.png" alt="">新建工单</div>
     
     <div ref="workWrapper" class="wrapper" >
-      <div>
+      <div style="padding-bottom:40px;">
         <div class="work-list flex-h" v-for="item,index in workList">
           <div class="left-dot"></div>
           <div class="right-wrap flex-1 flex-v">
@@ -25,7 +25,7 @@
             </div>
           </div>
         </div>
-        <div class="nomore">没有更多工单了</div>
+        <div class="nomore" v-show="over">没有更多工单了</div>
       </div>
     </div>
     <!-- <div class="noList" v-else>无工单</div> -->
@@ -66,29 +66,33 @@ export default {
     /**
      * 隐藏工单详情
      */
-    this.$root.eventBus.$on('hideEditWorkList', () => {
+    this.$root.eventBus.$on('hideEditWorkList', refresh => {
       this.showEditWorkList = false
+      if (refresh) {
+        // 刷新页面
+        this.refreshData()
+      }
     })
-    // /**
-    //  * pc端点击右侧工单
-    //  */
-    // this.$root.eventBus.$on('hideEditWorkList', () => {
-    //   this.showEditWorkList = false
-    // })
-  },
-  mounted() {
     this.$root.eventBus.$on('getWorkList', () => {
       // 获取工单列表
-      this.getWorkList()
+      this.refreshData()
     })
+  },
+  mounted() {
     this.$nextTick(() => {
       this.initBScroll()
-      /**
-       * 获取右侧工单列表
-       */
     })
   },
   methods: {
+    /**
+     * 刷新页面
+     */
+    refreshData() {
+      this.page = 1
+      this.workList = []
+      this.over = false
+      this.getWorkList()
+    },
     /**
      * 新建工单
      */
@@ -102,29 +106,45 @@ export default {
         // this.$root.eventBus.$emit('createWorkList')
       }
     },
+    /**
+     * 修改工单
+     */
     toEditWork(item, index) {
       if (this.$root.eventBus.showWidth < 768) {
         this.showEditWorkList = true
         this.$root.eventBus.$emit('updateWorkList', item, index)
       }
     },
+    /**
+     * 移动端返回
+     */
     chatBack() {
-      console.log(222)
       this.$root.eventBus.$emit('hideMobileMenu', { from: 'workList' })
-      // 隐藏移动端用户信息
     },
+    /**
+     * 获取工单列表
+     */
     getWorkList() {
+      if (this.over) {
+        return
+      }
       axios
         .post('http://cs.velo.top/customerService/csapi/selectWorkOrder', {
-          pageSize: 10,
-          startPage: 1
+          pageSize: 5,
+          startPage: this.page
         })
         .then(res => {
           if (res.data.status === 0) {
+            if (res.data.data.list.length === 0) {
+              this.over = true
+              alert(this.over)
+              return false
+            }
             res.data.data.list.map(el => {
               el.createtime = formatTime(el.createtime / 1000)
             })
-            this.workList = res.data.data.list
+            this.workList = this.workList.concat(res.data.data.list)
+            this.page++
           } else {
             this.$toast(res.data.message)
           }
@@ -134,6 +154,9 @@ export default {
           this.$toast('网络错误')
         })
     },
+    /**
+     * 删除工单
+     */
     deleteWork(id, index) {
       axios
         .post('http://cs.velo.top/customerService/csapi/delWorkOrder', {
@@ -151,12 +174,18 @@ export default {
           this.$toast('网络错误')
         })
     },
+    /**
+     * 初始化BS
+     */
     initBScroll() {
       this.scroll = new Bscroll(this.$refs.workWrapper, {
         mouseWheel: true,
         click: true,
         tap: true,
-        preventDefault: true
+        preventDefault: true,
+        pullUpLoad: {
+          threshold: 100
+        }
       })
 
       this.scroll.on('scrollStart', res => {
@@ -169,9 +198,19 @@ export default {
         this.$nextTick(function() {
           if (
             res.y - this.scroll.maxScrollY < 100 &&
-            res.y < this.startY - 50
+            res.y < this.startY - 50 &&
+            this.preventRepeat &&
+            !this.over
           ) {
-            this.$root.eventBus.$emit('checkMoreOrder')
+            this.preventRepeat = false
+            alert(this.page)
+            this.getWorkList()
+
+            setTimeout(() => {
+              this.preventRepeat = true
+            }, 500)
+
+            // this.$root.eventBus.$emit('checkMoreOrder')
           }
         })
       })
@@ -289,7 +328,7 @@ img {
     }
     .nomore {
       font-size: 24px;
-      color: #888888;
+      color: #bbbbbb;
       letter-spacing: 2px;
       margin: 36px auto 0;
       text-align: center;

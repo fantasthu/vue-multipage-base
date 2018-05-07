@@ -141,13 +141,13 @@
         </div>
       </div>
     </div>
-    <div class="mobileMenuArea" v-show="showMobileUserinfo">
+    <div class="mobileMenuArea" v-show="showMobileUserinfo&&screenWidth<768">
       <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></MobileUserinfo>
     </div>
-    <div class="mobileMenuArea" v-show="showMobileWorkList">
+    <div class="mobileMenuArea" v-show="showMobileWorkList&&screenWidth<768">
       <RightUserWorkList :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></RightUserWorkList>
     </div>
-    <div class="mobileMenuArea" v-show="showMobileKnowledge">
+    <div class="mobileMenuArea" v-show="showMobileKnowledge&&screenWidth<768">
       <RightKnowledge></RightKnowledge>
     </div>
   </div>
@@ -304,6 +304,20 @@ export default {
       if (res.from === 'knowledge') {
         this.showMobileKnowledge = false
       }
+    })
+    // 发送知识库答案
+    this.$root.eventBus.$on('sendAnswer', answer => {
+      let obj = {
+        name: this.waiterInfo.name,
+        headImg: this.waiterInfo.headImg,
+        openId: this.currentUserAllMsg[0].openId,
+        msg: answer,
+        msgType: 'text',
+        isWaiter: 'yes',
+        waiterOpenId: this.waiterInfo.openId,
+        whichProgramme: this.currentUserAllMsg[0].whichProgramme
+      }
+      this.$emit('sendWaiterMsgToUser', obj)
     })
   },
   mounted() {
