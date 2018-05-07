@@ -2,7 +2,6 @@
   <div class="flex-h left-knowledge">
     <!--  新增知识库 -->
     <el-dialog title="新增知识库" :visible.sync="addKnowledgeShow">
-      {{categories}}
       <el-form :model="knowledgeForm">
          <el-form-item label="关键字">
           <el-select v-model="knowledgeForm.category" placeholder="请选择关键字">
@@ -254,6 +253,7 @@ export default {
       console.log('LeftKnowledgeAddCategory=>updateKnowledge', index, row)
       this.updateKnowledgeShow = true
       this.updateRow = row
+      this.knowledgeForm = row
     },
     /**
      * 修改知识按钮确定

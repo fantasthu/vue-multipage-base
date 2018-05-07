@@ -11,10 +11,72 @@
             
             <el-form-item class="flex-1" label="处理状态" :label-width="formLabelWidth">
               <el-select v-model="orderForm.status" placeholder="请选择">
-                <el-option label="已处理" value="hasDone"></el-option>
-                <el-option label="未处理" value="noDone"></el-option>
+                <el-option label="未解决" value="未解决"></el-option>
+                <el-option label="已解决" value="已解决"></el-option>
               </el-select>
             </el-form-item>
+          </div>
+          <div class="column flex-h">
+            <el-form-item class="flex-1" label="用户昵称/微信ID:" :label-width="formLabelWidth">
+              <el-input v-model="orderForm.identity" auto-complete="off"></el-input>
+            </el-form-item>
+
+            <el-form-item class="flex-1" label="订单号" :label-width="formLabelWidth">
+              <el-input v-model="orderForm.ordernum" auto-complete="off"></el-input>
+            </el-form-item>
+          </div>
+        </div>
+        <el-form-item label="类型" :label-width="formLabelWidth">
+          <el-select v-model="orderForm.ordertype" placeholder="请选择">
+                <el-option label="客诉" value="客诉"></el-option>
+                <el-option label="建议" value="建议"></el-option>
+              </el-select>
+        </el-form-item>
+
+        <el-form-item label="标题" :label-width="formLabelWidth">
+          <el-input v-model="orderForm.title" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="描述" :label-width="formLabelWidth">
+          <el-input v-model="orderForm.describe" auto-complete="off"></el-input>
+        </el-form-item>
+          <!-- 图片上传 -->
+        <div class="pic-upload flex-h">
+          <div class="pics flex-h">
+            <div class="item" v-for="(item,index) in orderPics">
+              <i class="el-icon-error" @click="delPic(index)"></i>
+              <img :src="item" alt="">
+            </div>
+          </div>
+          <div class="pic-add flex-h flex-cc" @click="picAddClick">
+              <input type="file" filetype="image/*" ref="addfileinput" class="pic-file" style="display:none" @change="handleFiles">  
+              <i class="el-icon-plus"></i>
+          </div>
+        </div>
+      </el-form>
+      
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addOrderShow = false">取 消</el-button>
+        <el-button type="primary" @click="addOrderSubmit">确 定</el-button>
+      </div>
+    </el-dialog>
+
+     <!--  编辑工单 -->
+    <el-dialog title="编辑工单" :visible.sync="updateOrderShow" class="add-card">
+      <el-form :model="orderForm">
+        <div class="top flex-v">
+          <div class="column flex-h">
+            <el-form-item class="flex-1" label="所属客服" :label-width="formLabelWidth">
+              <el-input v-model="orderForm.customer" auto-complete="off"></el-input>
+            </el-form-item>
+            
+            <!-- <el-form-item class="flex-1" label="处理状态" :label-width="formLabelWidth"> -->
+              <el-select v-model="orderForm.status" placeholder="请选择">
+                <el-option label="已处理" value="已处理" key="1"></el-option>
+                <el-option label="未处理" value="未处理" key="2"></el-option>
+              </el-select>
+            <!-- </el-form-item> -->
+
           </div>
           <div class="column flex-h">
             <el-form-item class="flex-1" label="用户昵称/微信ID:" :label-width="formLabelWidth">
@@ -40,7 +102,8 @@
           <!-- 图片上传 -->
         <div class="pic-upload flex-h">
           <div class="pics flex-h">
-            <div class="item" v-for="item in orderPics">
+            <div class="item" v-for="(item,index) in orderPics">
+              <i class="el-icon-error" @click="delPic(index)"></i>
               <img :src="item" alt="">
             </div>
           </div>
@@ -52,21 +115,21 @@
       </el-form>
       
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addCategoryShow = false">取 消</el-button>
-        <el-button type="primary" @click="addCategoryShow = false">确 定</el-button>
+        <el-button @click="updateOrderShow = false">取 消</el-button>
+        <el-button type="primary" @click="updateOrderSubmit">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 侧边 -->
     <div class="menu">
       <Search v-model="searchName" placeholder = "搜索工单名"/>
       <div class="list">
-        <div class="item active flex-h flex-cc">
+        <div class="item  flex-h flex-cc" :class="{'active':orderCategoryIndex===0}" @click="orderCategoryItemClick('',0)">
           <div class="name">所有工单</div>
-          <div class="number">(12)</div>
+          <div class="number">({{allOrderCategories}})</div>
         </div>
-        <div class="item flex-h flex-cc">
-          <div class="name">所有工单</div>
-          <div class="number">(12)</div>
+        <div class="item flex-h flex-cc" v-for="(item,index) in orderCategories" :class="{'active':orderCategoryIndex===index+1}" @click="orderCategoryItemClick(item,index+1)">
+          <div class="name">{{item.ordertype}}</div>
+          <div class="number">({{item.cnum}})</div>
         </div>
       </div>
     </div>
@@ -77,14 +140,18 @@
       </div>
       <div class="table-con">
         <el-table
-        :data="tableData"
+        :data="workorders"
         style="width: 100%"
-        :default-sort = "{prop: 'date', order: 'descending'}"
+       
         >
           <el-table-column
-            prop="name"
+            prop="title"
             label="工单名称"
-            sortable
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="ordertype"
+            label="类型"
             width="180">
           </el-table-column>
           <el-table-column
@@ -94,14 +161,21 @@
             width="180">
           </el-table-column>
           <el-table-column
-            prop="user"
+            prop="identity"
             label="用户"
-            :formatter="formatter">
+          >
           </el-table-column>
           <el-table-column
-            prop="customerService"
+            prop="customer"
             label="受理客服"
-            :formatter="formatter">
+            >
+          </el-table-column>
+          <el-table-column
+            prop="createtime"
+            label="时间"
+            width="180"
+            sortable
+           >
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -109,13 +183,13 @@
             width="120">
             <template slot-scope="scope">
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                @click.native.prevent="updateWorkOrderClick(scope.$index, scope.row)"
                 type="text"
                 size="small">
                 编辑
               </el-button>
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                @click.native.prevent="deleteWorkOrder(scope.$index, scope.row)"
                 type="text"
                 size="small">
                 删除
@@ -127,8 +201,10 @@
       <div class="pagination">
           <el-pagination
             background
+            :page-size="pageSize"
             layout="prev, pager, next"
-            :total="100">
+            @current-change="handleCurrentChange"
+            :total="totalWorkOrders">
           </el-pagination>
         </div>
     </div>
@@ -138,74 +214,234 @@
 <script>
 import Search from './Search'
 import { Loading } from 'element-ui'
+import axios from 'axios'
+import _ from 'lodash'
+
 export default {
   name: 'leftworkorder',
   components: { Search },
   props: {},
   data() {
     return {
+      startPage: 1,
+      pageSize: 8,
+      menuOrdertype: '',
       orderPics: [],
       searchName: '',
       formLabelWidth: '500',
       orderForm: {
         customer: '',
-        status: '',
+        ordertype: '客诉',
+        status: '未解决',
         identity: '',
-        ordernum: ''
+        ordernum: '',
+        describe: ''
       },
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
-      ],
-      addOrderShow: false
+      workorders: [],
+      totalWorkOrders: 0,
+      orderCategories: [],
+      addOrderShow: false,
+      updateOrderShow: false,
+      // 工单分类index,默认为所有
+      orderCategoryIndex: 0,
+      // 所有工单数量
+      allOrderCategories: 0
     }
   },
-  created() {},
+  created() {
+    // 查询工单的分类,现阶段暂时,客诉和建议
+    this.searchOrderCategory()
+
+    // 查询所有工单
+    this.searchWorkOrder()
+  },
   mounted() {},
+  watch: {
+    searchName(val, oval) {
+      this.toSearchWorkOrder(val)
+    }
+  },
   methods: {
+    toSearchWorkOrder: _.debounce(function(val) {
+      this.searchName = val
+      this.searchWorkOrder()
+    }, 500),
+    /**
+     * 删除图片
+     */
+    delPic(index) {
+      this.orderPics.splice(index, 1)
+    },
+    /**
+     * 查询工单列表
+     */
+    searchWorkOrder() {
+      axios
+        .post('http://cs.velo.top/customerService/csapi/searchworkorder', {
+          startPage: this.startPage,
+          pageSize: this.pageSize,
+          ordertype: this.menuOrdertype,
+          title: this.searchName
+        })
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.workorders = _.data.data.list
+            this.totalWorkOrders = _.data.data.total
+          }
+
+          console.log('LeftWorkOrder=>searchWorkOrder', _)
+        })
+    },
+    /**
+     * 工单查询分页
+     */
+    handleCurrentChange(currentIndex) {
+      this.startPage = currentIndex
+      this.searchWorkOrder()
+    },
+    /**
+     * 删除工单
+     */
+    deleteWorkOrder(index, data) {
+      const id = data.id
+      axios
+        .post('http://cs.velo.top/customerService/csapi/delworkorder', {
+          id
+        })
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            this.searchWorkOrder()
+            this.searchOrderCategory()
+          } else {
+            this.$message({
+              message: '删除失败',
+              type: 'error'
+            })
+          }
+
+          console.log('LeftWorkOrder=>searchWorkOrder', _)
+        })
+    },
+    /**
+     * 查询左侧工单分类列表
+     */
+    searchOrderCategory() {
+      axios
+        .post('http://cs.velo.top/customerService/csapi/searchordercategory')
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.orderCategories = _.data.data
+            this.filterOrderCategories(_.data.data)
+          }
+
+          console.log('LeftWorkOrder=>searchOrderCategory', _)
+        })
+    },
+    filterOrderCategories(arr = []) {
+      this.allOrderCategories = 0
+      arr.map(item => {
+        this.allOrderCategories += item.cnum
+      })
+    },
+    /**
+     * 分类item点击
+     */
+    orderCategoryItemClick(item, index) {
+      this.orderCategoryIndex = index
+      this.startPage = 1
+      if (typeof item === 'string') {
+        this.menuOrdertype = ''
+      } else {
+        this.menuOrdertype = item.ordertype
+      }
+      this.searchWorkOrder()
+    },
+    addOrderClick() {
+      this.addOrderShow = true
+      this.orderForm = {}
+      this.orderPics = []
+    },
+    updateWorkOrderClick(index, item) {
+      this.updateOrderShow = true
+      this.updateRowData = item
+      console.log('item', item)
+      this.orderPics = JSON.parse(item.imgurls || '[]')
+      this.orderForm = item
+    },
+    updateOrderSubmit() {
+      this.orderForm.imgurls = JSON.stringify(this.orderPics || '')
+      axios
+        .post('http://cs.velo.top/customerService/csapi/updateworkorder', {
+          customer: this.orderForm.customer,
+          status: this.orderForm.status,
+          identity: this.orderForm.identity,
+          ordernum: this.orderForm.ordernum,
+          ordertype: this.orderForm.ordertype,
+          title: this.orderForm.title,
+          des: this.orderForm.describe,
+          imgurls: this.orderForm.imgurls,
+          id: this.updateRowData.id
+        })
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+            this.addCategoryShow = false
+          } else {
+            this.$message({
+              message: '添加失败',
+              type: 'error'
+            })
+          }
+        })
+    },
+    addOrderSubmit() {
+      this.orderForm.imgurls = JSON.stringify(this.orderPics || '')
+      axios
+        .post('http://cs.velo.top/customerService/csapi/addworkorder', {
+          customer: this.orderForm.customer,
+          status: this.orderForm.status,
+          identity: this.orderForm.identity,
+          ordernum: this.orderForm.ordernum,
+          ordertype: this.orderForm.ordertype,
+          title: this.orderForm.title,
+          describe: this.orderForm.describe,
+          imgurls: this.orderForm.imgurls
+        })
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+            this.addCategoryShow = false
+          } else {
+            this.$message({
+              message: '添加失败',
+              type: 'error'
+            })
+          }
+
+          // 更新一遍所有知识
+          this.searchWorkOrder()
+
+          // 更新所有分类
+          this.searchOrderCategory()
+          console.log('LeftKnowledgeAddCategory=>addOrderSubmit', _)
+        })
+      this.knowledgeForm = {
+        category: '',
+        problem: '',
+        answer: '',
+        creator: ''
+      }
+    },
     picAddClick() {
       this.$refs.addfileinput.click()
     },
@@ -270,9 +506,6 @@ export default {
           })
       })
     },
-    addOrderClick() {
-      this.addOrderShow = true
-    },
     formatter(row, column) {
       return row.address
     }
@@ -298,9 +531,15 @@ export default {
         flex-wrap: wrap;
         .pics {
           .item {
+            position: relative;
             width: 160px;
             height: 160px;
             margin-right: 20px;
+            .el-icon-error {
+              position: absolute;
+              right: 8px;
+              top: 8px;
+            }
             img {
               border-radius: 10px;
               width: 100%;
