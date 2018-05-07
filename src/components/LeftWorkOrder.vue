@@ -230,8 +230,9 @@ export default {
       formLabelWidth: '500',
       orderForm: {
         customer: '',
-        ordertype: '客诉',
-        status: '未解决',
+        ordertype: '',
+        status: '',
+        title: '',
         identity: '',
         ordernum: '',
         describe: ''
@@ -369,7 +370,15 @@ export default {
     },
     addOrderClick() {
       this.addOrderShow = true
-      this.orderForm = {}
+      this.orderForm = {
+        customer: '',
+        ordertype: '',
+        status: '',
+        identity: '',
+        ordernum: '',
+        describe: '',
+        title: ''
+      }
       this.orderPics = []
     },
     updateWorkOrderClick(index, item) {
@@ -410,6 +419,41 @@ export default {
     },
     addOrderSubmit() {
       this.orderForm.imgurls = JSON.stringify(this.orderPics || '')
+      if (this.orderForm.customer.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写所属客服'
+        })
+        return
+      }
+      if (this.orderForm.status.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写处理状态'
+        })
+        return
+      }
+      if (this.orderForm.ordertype.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写类型'
+        })
+        return
+      }
+      if (this.orderForm.title.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写标题'
+        })
+        return
+      }
+      if (this.orderForm.describe.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写描述'
+        })
+        return
+      }
       axios
         .post('http://cs.velo.top/customerService/csapi/addworkorder', {
           customer: this.orderForm.customer,
@@ -427,7 +471,7 @@ export default {
               message: '添加成功',
               type: 'success'
             })
-            this.addCategoryShow = false
+            this.addOrderShow = false
           } else {
             this.$message({
               message: '添加失败',
@@ -573,6 +617,7 @@ export default {
           color: #b2b2b2;
           letter-spacing: 0;
           text-align: center;
+          border-bottom: 1px solid #e5e5e5;
           .name {
           }
           .number {

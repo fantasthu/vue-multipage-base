@@ -209,6 +209,34 @@ export default {
      */
     addKnowledge() {
       console.log('this.categoryForm', this.knowledgeForm)
+      if (this.knowledgeForm.category.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写分类'
+        })
+        return
+      }
+      if (this.knowledgeForm.problem.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写问题'
+        })
+        return
+      }
+      if (this.knowledgeForm.answer.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写答案'
+        })
+        return
+      }
+      if (this.knowledgeForm.creator.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写创建人'
+        })
+        return
+      }
       axios
         .post('http://cs.velo.top/customerService/csapi/addknowledge', {
           category: this.knowledgeForm.category,
@@ -395,12 +423,19 @@ export default {
      * 初始化新建知识库的时候的分类
      */
     initCategory(categories) {
-      this.knowledgeForm.category = categories[0]
+      this.knowledgeForm.category = categories[0].name
     },
     /**
      * 添加分类确认按钮
      */
     addCategory() {
+      if (this.categoryForm.name.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写关键字'
+        })
+        return
+      }
       axios
         .post('http://cs.velo.top/customerService/csapi/addknowledgecategory', {
           name: this.categoryForm.name
@@ -417,7 +452,7 @@ export default {
             this.searchCategory()
           } else {
             this.$message({
-              message: '添加失败',
+              message: _.data.message,
               type: 'error'
             })
           }
@@ -477,6 +512,7 @@ export default {
           color: #b2b2b2;
           letter-spacing: 0;
           text-align: center;
+          border-bottom: 1px solid #e5e5e5;
           cursor: pointer;
           .name {
           }
