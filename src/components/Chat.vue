@@ -276,11 +276,6 @@ export default {
         }
         return item
       })
-      // this.currentChatTitle = obj.userAllMsg[0].name + '的聊天'
-      // this.currentUserOpenId = obj.openId
-      // this.currentUserName = obj.userAllMsg[0].name
-      // this.currentUserWhichProgramme =
-      //   obj.userAllMsg[0].whichProgramme === 'vip'
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 200)
