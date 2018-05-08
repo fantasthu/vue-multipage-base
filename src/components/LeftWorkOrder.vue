@@ -265,11 +265,7 @@ export default {
     }
   },
   methods: {
-    initEvent() {
-      this.$root.eventBus.$on('addPcWorkOrder', () => {
-        this.addOrderShow = true
-      })
-    },
+    initEvent() {},
     toSearchWorkOrder: _.debounce(function(val) {
       this.searchName = val
       this.searchWorkOrder()
@@ -386,7 +382,9 @@ export default {
       this.updateRowData = item
       console.log('item', item)
       this.orderPics = JSON.parse(item.imgurls || '[]')
+      item.describe = item.des
       this.orderForm = item
+      // this.orderForm.describe = item.des
     },
     updateOrderSubmit() {
       this.orderForm.imgurls = JSON.stringify(this.orderPics || '')
@@ -398,20 +396,21 @@ export default {
           ordernum: this.orderForm.ordernum,
           ordertype: this.orderForm.ordertype,
           title: this.orderForm.title,
-          des: this.orderForm.describe,
+          describe: this.orderForm.describe,
           imgurls: this.orderForm.imgurls,
           id: this.updateRowData.id
         })
         .then(_ => {
           if (_.data.status === 0) {
             this.$message({
-              message: '添加成功',
+              message: '更新成功',
               type: 'success'
             })
-            this.addCategoryShow = false
+            this.updateOrderShow = false
+            this.searchWorkOrder()
           } else {
             this.$message({
-              message: '添加失败',
+              message: '更新失败',
               type: 'error'
             })
           }

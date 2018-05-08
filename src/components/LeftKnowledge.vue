@@ -250,7 +250,7 @@ export default {
               message: '添加成功',
               type: 'success'
             })
-            this.addCategoryShow = false
+            this.addKnowledgeShow = false
           } else {
             this.$message({
               message: '添加失败',
