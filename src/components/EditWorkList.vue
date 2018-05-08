@@ -6,7 +6,7 @@
       <div class="list">所属客服：<span>客服人员</span></div>
       <div class="work-status list flex-h">处理状态：
         <div class="flex-h">
-          <div v-for="item,index in statusList" :class="['tag flex-h flex-cc' ,{'statusActive':statusIndex==index} ] " @click.stop="choiceStatus(index)">{{item}}</div>
+          <div v-for="item,index in statusList" :class="['tag flex-h flex-cc' ,{'statusActive':status==item} ] " @click.stop="choiceStatus(item)">{{item}}</div>
         </div>
       </div>
       <div class="list">用户昵称/微信ID：<span>{{identity||name}}</span></div>
@@ -16,9 +16,9 @@
         <img v-show='showType' src="../assets/img/up.png" alt="">
         <img v-show="!showType" src="../assets/img/down.png" alt="">
       </div>
-      <div v-show="showType" :class="['type',{'typeSelect':typeIndex==index}]" v-for="item,index in typeList" @click.stop="choiceType(index)">{{item}}</div>
+      <div v-show="showType" :class="['type',{'typeSelect':type==item}]" v-for="item,index in typeList" @click.stop="choiceType(item)">{{item}}</div>
       
-      <div class="list input-title"><input type="text" v-model="workTitle" placeholder="标题"></div>
+      <!-- <div class="list input-title"><input type="text" v-model="workTitle" placeholder="标题"></div> -->
       
       <div class="des">
         <textarea name="" id="" v-model="workDes"  placeholder="请描述"></textarea>
@@ -73,16 +73,16 @@ export default {
   data() {
     return {
       pageTitle: '编辑工单',
-      workTitle: '',
+      // workTitle: '',
       typeList: ['建议', '客诉'],
       statusList: ['未解决', '已解决'],
       upImgs: [],
-      statusIndex: 0,
+      status: 0,
       choice: '请选择',
       showType: false,
       workDes: '',
       isUpdate: false,
-      typeIndex: -1,
+      type: '',
       customer: '客服',
       ordernum: '',
       identity: '' // 提交的用户名
@@ -114,11 +114,11 @@ export default {
 
         this.upImgs = info.imgurls === '' ? '' : JSON.parse(info.imgurls)
         this.workDes = info.des
-        this.workTitle = info.title
-        this.typeIndex = info.ordertype
+        // this.workTitle = info.title
+        this.type = info.ordertype
         this.ordernum = info.ordernum
         this.identity = info.identity
-        this.statusIndex = info.status
+        this.status = info.status
         this.customer = info.customer
         this.id = info.id
       } else {
@@ -127,15 +127,14 @@ export default {
 
         this.upImgs = []
         this.workDes = ''
-        this.workTitle = ''
-        this.typeIndex = -1
+        // this.workTitle = ''
+        this.type = ''
         this.ordernum = ''
         this.identity = ''
-        this.statusIndex = 0
+        this.status = 0
         this.customer = '客服'
       }
-      this.choice =
-        this.typeIndex > -1 ? this.typeList[this.typeIndex] : '请选择'
+      this.choice = this.type || '请选择'
     },
 
     /**
@@ -161,18 +160,16 @@ export default {
     /**
      * 选择类型
      */
-    choiceType(index) {
-      this.typeIndex = index
-      this.choice = this.typeList[index]
+    choiceType(item) {
+      this.choice = item
       this.showType = false
     },
 
     /**
      * 选择状态
      */
-    choiceStatus(index) {
-      this.statusIndex = index
-      console.log(this.workDes)
+    choiceStatus(status) {
+      this.status = status
     },
 
     /**
@@ -221,14 +218,14 @@ export default {
      * 保存工单
      */
     toSaveWorkList() {
-      if (this.typeIndex < 0) {
+      if (!this.choice.trim()) {
         this.$toast('请选择类型')
         return
       }
-      if (!this.workTitle.trim()) {
-        this.$toast('请输入标题')
-        return
-      }
+      // if (!this.workTitle.trim()) {
+      //   this.$toast('请输入标题')
+      //   return
+      // }
       if (!this.workDes.trim()) {
         this.$toast('请输入描述')
         return
@@ -236,11 +233,11 @@ export default {
       let url = ''
       let data = {
         customer: '客服人员',
-        status: this.statusIndex,
+        status: this.status,
         identity: this.identity || this.name,
         ordernum: this.ordernum || this.orderNo,
-        ordertype: this.typeIndex, // '客诉/建议'
-        title: this.workTitle,
+        ordertype: this.type, // '客诉/建议'
+        title: '',
         describe: this.workDes,
         imgurls: JSON.stringify(this.upImgs)
       }
@@ -432,6 +429,7 @@ export default {
 //pc端
 @media screen and (min-width: 768px) {
   #right-work-list-wrap {
+    display: none;
     position: absolute;
     top: 115px;
     bottom: 0;

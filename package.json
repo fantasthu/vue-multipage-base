@@ -13,8 +13,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "better-scroll": "^1.10.2",
-    "element-ui": "^2.3.7",
     "clipboard": "^2.0.1",
+    "element-ui": "^2.3.7",
     "eslint": "^4.14.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-node": "^5.2.1",
@@ -86,5 +86,9 @@
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }

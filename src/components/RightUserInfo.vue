@@ -17,12 +17,25 @@ import ClipboardJS from 'clipboard'
 export default {
   name: 'rightUserInfo',
   components: { RightOrder },
-  props: {},
+  props: {
+    name: {
+      type: String,
+      default: ''
+    },
+    whichProgramme: {
+      type: Number,
+      default: 0
+    },
+    openId: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
-      name: '',
-      openId: '',
-      whichProgramme: false,
+      // name: '',
+      // openId: '',
+      // whichProgramme: false,
       temOrderList: [],
       orderList: [],
       page: 1,
@@ -35,25 +48,24 @@ export default {
     /**
      * 获取右侧用户信息和订单
      */
-    this.$root.eventBus.$on(
-      'getCurrentUsrInfo',
-      (name, whichProgramme, openId) => {
-        // this.name = name.substr(0, 3) + '...'
-        if (name.length > 6) {
-          this.name = name.substr(0, 6) + '...'
-        } else {
-          this.name = name
-        }
-        this.whichProgramme = whichProgramme
-        this.openId = openId
-        this.temOrderList = []
-        this.orderList = []
-        this.showMoreBtn = true
-        this.page = 1
-        // 获取订单列表
-        this.getOrderList(openId, 'first')
-      }
-    )
+    this.$root.eventBus.$on('getList', openId => {
+      // this.name = name.substr(0, 3) + '...'
+      // if (name.length > 6) {
+      //   this.name = name.substr(0, 6) + '...'
+      // } else {
+      //   this.name = name
+      // }
+      // this.whichProgramme = whichProgramme
+      // this.openId = openId
+      console.log('=================')
+
+      this.temOrderList = []
+      this.orderList = []
+      this.showMoreBtn = true
+      this.page = 1
+      // 获取订单列表
+      this.getOrderList(openId || this.openId, 'first')
+    })
 
     /**
      * 点击查看更多
@@ -72,20 +84,22 @@ export default {
     })
   },
   mounted() {
-    this.$root.eventBus.$on('getUserInfo', () => {
-      console.log('this.openId', this.openId)
-      console.log('this.name', this.name)
-      console.log('this.whichProgramme', this.whichProgramme)
-      // 获取订单列表
-      this.getOrderList(this.openId, 'first')
-      this.$root.eventBus.$off('getUserInfo')
-    })
+    // this.$root.eventBus.$on('getUserInfo', () => {
+    //   console.log('this.openId', this.openId)
+    //   console.log('this.name', this.name)
+    //   console.log('this.whichProgramme', this.whichProgramme)
+    //   // 获取订单列表
+    //   this.getOrderList(this.openId, 'first')
+    //   this.$root.eventBus.$off('getUserInfo')
+    // })
   },
   methods: {
     /**
      * 获取订单列表
      */
     getOrderList(openid, flag) {
+      console.log('----------------', openid, flag)
+
       var instance = axios.create({
         headers: {
           velo_admin: 'nRF9L8ZaOKlE2lew'
@@ -118,6 +132,41 @@ export default {
               if (res.data.obj.orderList.length === 1) {
                 this.showMoreBtn = false
               }
+              res.data.obj.orderList.map(el => {
+                // el.statusDes=
+                var statusDes = ''
+                switch (el.status) {
+                  case 1:
+                    statusDes = '待付款'
+                    break
+                  case 2:
+                    statusDes = '待发货'
+                    break
+                  case 3:
+                    statusDes = '待收货'
+                    break
+                  case 4:
+                    statusDes = '待评价'
+                    break
+                  case 21:
+                    statusDes = '拼团中'
+                    break
+                  case 22:
+                    statusDes = '评团成功'
+                    break
+                  case 23:
+                    statusDes = '评团失败'
+                    break
+                  case 50:
+                  case 51:
+                  case 52:
+                  case 53:
+                  case 54:
+                    statusDes = '已完成'
+                    break
+                }
+                el.statusDes = statusDes
+              })
               this.temOrderList = res.data.obj.orderList
               this.orderList.push(res.data.obj.orderList[0])
             } else {

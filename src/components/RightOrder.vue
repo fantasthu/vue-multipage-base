@@ -10,7 +10,7 @@
             <div class="order-time">{{item.createTime}}</div>
             <div class="create-work" @click.stop="toCreateWorkList(item.orderNo)">新建工单</div>
           </div>
-          <div class="order-info order-status">订单状态：{{item.status}}</div>
+          <div class="order-info order-status">订单状态：{{item.statusDes}}</div>
           <div class="order-info">订单编号：{{item.orderNo}}</div>
           <div class="order-info flex-h flex-bc"><div>物流编号：{{item.mailNo}}</div><div class="check-mail" @click.stop="checkMail({mailNo:item.mailNo,mailName:item.mailName,mailCom:item.mailCom})">查询</div></div>
           <div class="order-info">商品名称：{{item.productName}}</div>
@@ -18,6 +18,7 @@
         </div>
 
         <div class="nomore" v-show="over">没有更多订单了</div>
+        <div class="noList" v-show="orderList.length==0">暂无订单</div>
         <div class="more" @click="checkMoreOrder" v-show="showMoreBtn">查看历史订单</div>
         <div class="slot"></div>
       </div>
@@ -300,6 +301,17 @@ export default {
       text-align: center;
       margin: 60px auto 0;
     }
+    .noList {
+      font-size: 28px;
+      color: #bbbbbb;
+      letter-spacing: 3.23px;
+      text-align: center;
+      position: absolute;
+      top: 400%;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
     .more {
       margin: 60px auto;
       height: 64px;
@@ -441,6 +453,17 @@ export default {
       color: #888888;
       letter-spacing: 2px;
       margin: 30px auto 0;
+    }
+    .noList {
+      font-size: 28px;
+      color: #bbbbbb;
+      letter-spacing: 3.23px;
+      text-align: center;
+      position: absolute;
+      top: 400%;
+      right: 0;
+      bottom: 0;
+      left: 0;
     }
     .more {
       font-size: 24px;

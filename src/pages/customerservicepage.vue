@@ -8,7 +8,7 @@
     <!-- 此处是聊天界面 -->
     <div class="s-container flex-h">
       <left-menu v-show="showLeftMenu"></left-menu>
-      <session v-if="showSession" :userList.sync="userList"></session>
+      <session v-show="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" :showLeftMenu="showLeftMenu" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
       <right-menu v-show="showRightMenu"></right-menu>
       <mt-popup
@@ -72,7 +72,7 @@ export default {
       waiterInfo: {},
       popupVisible: true,
       loginRemid: '',
-      platForm: '',
+      platForm: 'pc',
       showFullImgUrl: '',
       iNotifyMsg: null,
       currentPageIsActive: true,
@@ -394,12 +394,14 @@ export default {
         that.$root.eventBus.showWidth = width
         // wtoi如果有值则在微信端
         let wtoi = document.querySelector('.wtoi')
+
         // pc端
         if (width > 768) {
           that.showSession = true
           that.showChat = true
           that.showLeftMenu = true
           that.showRightMenu = width > 1170
+          that.platForm = 'pc'
 
           // 告知chat组件重新定义message滚动
           that.$root.eventBus.$emit('pcChatHandler')
@@ -410,6 +412,7 @@ export default {
               return
             }
           }
+          that.platForm = 'mobile'
           if (that.showChat && !that.showSession) {
             that.showChat = true
             that.showSession = false
@@ -450,7 +453,8 @@ export default {
       this.iNotifyMsg.setFavicon('')
       this.iNotifyMsg.setTitle('velo客服')
     }
-  }
+  },
+  watch: {}
 }
 </script>
 
@@ -486,6 +490,10 @@ body {
 .el-message {
   z-index: 1000000 !important;
 }
+.el-select-dropdown {
+  z-index: 999998 !important;
+}
+
 .customer-service {
   .showFullImgBox {
     // display: none;
