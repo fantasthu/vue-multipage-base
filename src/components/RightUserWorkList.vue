@@ -498,8 +498,8 @@ img {
         width: 12px;
         height: 12px;
         background: #353535;
-        margin-right: 30px;
-        margin-top: 18px;
+        margin-right: 22px;
+        margin-top: 12px;
       }
       .right-wrap {
         .content {
@@ -625,8 +625,8 @@ img {
         width: 8px;
         height: 8px;
         background: #353535;
-        margin-right: 30px;
-        margin-top: 18px;
+        margin-right: 22px;
+        margin-top: 12px;
       }
       .right-wrap {
         .content {

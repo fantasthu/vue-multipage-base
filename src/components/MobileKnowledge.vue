@@ -277,8 +277,8 @@ export default {
         margin-top: 36px;
         border-bottom: 2px solid #e5e5e5;
         .left-dot {
-          width: 8px;
-          height: 8px;
+          width: 12px;
+          height: 12px;
           background: #ff5b21;
           margin-right: 30px;
           margin-top: 18px;
