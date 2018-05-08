@@ -69,6 +69,14 @@ export default {
     }
   },
   created() {
+    this.$root.eventBus.$on('toSession', params => {
+      if (params.from === 'chat') {
+        this.$nextTick(() => {
+          // 初始化会话绑定滚动
+          this.loadScroll()
+        })
+      }
+    })
     // 获取会话列表
     this.$root.eventBus.$on('userList', userList => {
       console.log('userList', userList)
