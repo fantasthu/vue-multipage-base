@@ -1,11 +1,6 @@
 <template>
   <div class="session">
-    <!-- <service-header class="service-header" title="客服会话管理"></service-header> -->
-    <!-- <div class="session-search flex-h flex-cc">
-      <img src="../assets/img/icon_search.png" alt="">
-      <input type="text" class="search flex-1" v-model="searchName"  placeholder="请输入昵称">
-    </div> -->
-    <search v-model="searchName"></search>
+    <search v-model="searchName" placeholder="请输入昵称"></search>
     <div class="session-wrapper" ref="wrapper">
       <div class="list">
         <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId, item.name, item.whichProgramme)">
@@ -143,7 +138,7 @@ export default {
     doSearchSession: _.debounce(function(val) {
       this.searchSessions = []
       this.sessions.map(item => {
-        if (item.name.indexOf(val) > 0) {
+        if (item.name.indexOf(val) >= 0) {
           this.searchSessions.push(item)
         }
       })
