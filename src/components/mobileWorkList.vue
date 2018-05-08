@@ -39,8 +39,6 @@
 <script>
 import Bscroll from 'better-scroll'
 import axios from 'axios'
-// import { formatTime } from '../service/tools'
-// import ClipboardJS from 'clipboard'
 import ServiceHeader from './ServiceHeader'
 import editWorkList from './EditWorkList'
 
@@ -107,9 +105,6 @@ export default {
       if (this.$root.eventBus.showWidth < 768) {
         this.showEditWorkList = true
         this.$root.eventBus.$emit('updateWorkList')
-      } else {
-        // pc
-        this.$root.eventBus.$emit('addPcWorkOrder')
       }
     },
     /**
@@ -144,6 +139,7 @@ export default {
           if (res.data.status === 0) {
             if (res.data.data.list.length === 0) {
               this.over = true
+              this.scroll.refresh()
               return false
             }
             this.workList = this.workList.concat(res.data.data.list)
@@ -155,6 +151,7 @@ export default {
           } else {
             this.$toast(res.data.message)
           }
+          this.scroll.refresh()
           console.log('this.workList', this.workList)
         })
         .catch(() => {

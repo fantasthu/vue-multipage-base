@@ -33,7 +33,7 @@
           </div>
           <div class="upload-btn image-area flex-h flex-cc" v-show="upImgs.length<5">
             <img src="../assets/img/add.png" alt="">
-            <input type="file" v-on:change="selectPic">
+            <input type="file" filetype="image/*" ref="addfileinput" v-on:change="selectPic">
           </div>
         </div>
       </div>
@@ -45,9 +45,8 @@
 
 <script>
 import axios from 'axios'
-// import { formatTime } from '../service/tools'
-// import ClipboardJS from 'clipboard'
 import ServiceHeader from './ServiceHeader'
+import { Loading } from 'element-ui'
 
 export default {
   name: 'editWorkList',
@@ -191,11 +190,41 @@ export default {
     /**
      * 选择图片
      */
-    async selectPic(e) {
-      console.log(e.target.files[0])
-      var ossUrl = await this.uploadImgToOSS(e.target.files[0])
-      console.log('ossUrl', ossUrl)
-      this.upImgs.push(ossUrl)
+    async selectPic(obj) {
+      const fileValue = obj.target.value
+      const fileType = fileValue.split('.')
+      const testType = fileType[fileType.length - 1]
+      // const filename = fileType[0]
+      const file = obj.target.files[0]
+      if (/(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(testType)) {
+        let loadingInstance = Loading.service()
+        let imgUrl = await this.uploadImgToOSS(file)
+        loadingInstance.close()
+        imgUrl =
+          imgUrl.split('?')[0] +
+          '?x-oss-process=image/resize,m_lfit,h_200,w_200'
+        console.log('====================================')
+        console.log(imgUrl)
+        console.log('====================================')
+        if (imgUrl.trim() === '') {
+          this.$message({
+            message: '图片上传失败,请您稍后重试~',
+            center: true
+          })
+        }
+        this.upImgs.push(imgUrl)
+        this.$refs.addfileinput.value = ''
+        this.$message({
+          message: '图片上传成功',
+          center: true
+        })
+        console.log(file)
+      } else {
+        this.$message({
+          message: '上传失败',
+          center: true
+        })
+      }
     },
 
     /**

@@ -40,9 +40,6 @@ export default {
   data() {
     return {
       currentTitle: '用户信息',
-      // name: '',
-      // openId: '',
-      // whichProgramme: false,
       temOrderList: [],
       orderList: [],
       page: 1,
@@ -130,6 +127,7 @@ export default {
             if (res.data.obj.orderList.length === 0) {
               this.over = true
               this.showMoreBtn = false
+              this.$root.eventBus.$emit('refresh')
               return false
             }
             res.data.obj.orderList.forEach(item => {
@@ -181,6 +179,7 @@ export default {
               this.orderList = this.orderList.concat(res.data.obj.orderList)
             }
             this.page++
+            this.$root.eventBus.$emit('refresh')
           } else {
             this.showMoreBtn = false
             this.orderList = []

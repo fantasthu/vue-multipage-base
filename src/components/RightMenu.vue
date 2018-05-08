@@ -59,7 +59,7 @@ export default {
         }
         this.whichProgramme = whichProgramme
         this.openId = openId
-        this.$root.eventBus.$emit('getList', this.tab)
+        this.$root.eventBus.$emit('getList', this.tab, openId)
       }
     )
   },

@@ -39,6 +39,7 @@
 <script>
 import Bscroll from 'better-scroll'
 import { formatterDateTime } from '../service/tools'
+
 export default {
   name: 'rightorder',
   components: {},
@@ -69,7 +70,11 @@ export default {
       mailList: []
     }
   },
-  created() {},
+  created() {
+    this.$root.eventBus.$on('refresh', () => {
+      this.scroll.refresh()
+    })
+  },
   mounted() {
     this.scroll = new Bscroll(this.$refs.orderWrapper, {
       mouseWheel: true,
@@ -208,11 +213,10 @@ export default {
      * 调出创建工单页面
      */
     toCreateWorkList(orderNo) {
-      // that.$root.eventBus.showWidth
       if (this.$root.eventBus.showWidth < 768) {
         this.$root.eventBus.$emit('createFromOrder', orderNo)
       } else {
-        this.$toast('调用pc端组件')
+        this.$emit('createFromPcOrder', orderNo)
       }
     }
   }

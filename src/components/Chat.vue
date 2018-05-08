@@ -755,14 +755,18 @@ export default {
       }
     },
     chatBack() {
-      this.$root.eventBus.$emit('toSession', {
-        from: 'chat',
-        currentUserOpenId: this.currentUserOpenId
-      })
       // 返回列表时隐藏右侧菜单
       this.showMenuStatus = false
       this.showMobileUserinfo = false
       this.showMobileWorkList = false
+      this.showMobileKnowledge = false
+      this.isShowToolBox = false
+      // 重置message显示框的高度
+      // this.resetMessageBox()
+      this.$root.eventBus.$emit('toSession', {
+        from: 'chat',
+        currentUserOpenId: this.currentUserOpenId
+      })
     },
     sendWaiterMsg(inputData) {
       let obj = {
@@ -814,6 +818,9 @@ export default {
      */
     showRightMenu() {
       this.showMenuStatus = true
+      // 隐藏底部工具
+      // this.isShowToolBox = false
+      // this.resetMessageBox()
       console.log('chat-page =>showRightMenu =>显示右侧菜单')
     },
     /**

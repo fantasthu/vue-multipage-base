@@ -56,7 +56,14 @@ import { Popup, Field } from 'mint-ui'
 
 export default {
   name: 'about',
-  components: { Chat, Session, Popup, Field, LeftMenu, RightMenu },
+  components: {
+    Chat,
+    Session,
+    Popup,
+    Field,
+    LeftMenu,
+    RightMenu
+  },
   data() {
     return {
       username: '',

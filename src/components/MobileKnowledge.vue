@@ -65,7 +65,6 @@ export default {
       this.showSearchResult = false
       this.search = ''
       this.searchCategory()
-      // this.checkKnowledgeList()
     })
   },
   mounted() {
@@ -135,10 +134,6 @@ export default {
         .then(res => {
           console.log('res', res)
           if (res.data.status === 0) {
-            // if (res.data.data.list.length === 0) {
-            //   this.over = true
-            //   return false
-            // }
             this.knowledgeList = this.knowledgeList.concat(res.data.data.list)
             if (res.data.data.total <= this.page * this.pageSize) {
               this.over = true
@@ -147,6 +142,7 @@ export default {
           } else {
             this.$toast(res.data.message)
           }
+          this.scroll.refresh()
         })
         .catch(() => {
           this.$toast('网络错误')
@@ -210,8 +206,6 @@ export default {
   watch: {
     searchKnowledge(val, oldVal) {
       this.doSearchKnowledge(val)
-
-      // this.selectType(val)
     }
   }
 }

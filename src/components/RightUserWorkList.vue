@@ -31,22 +31,83 @@
       </div>
       <div class="noList" v-show="workList.length==0">无工单</div>
     </div>
+
+    <div class="flex-h left-work-order" v-show="showCreateWorkOrder" >
+      <!--  新增工单 -->
+      <el-dialog title="新增工单" :visible.sync="showCreateWorkOrder" class="add-card">
+        <el-form :model="orderForm">
+          <div class="top flex-v">
+            <div class="column flex-h">
+              <el-form-item class="flex-1" label="所属客服" :label-width="formLabelWidth">
+                <el-input v-model="orderForm.customer" auto-complete="off"></el-input>
+              </el-form-item>
+              
+              <el-form-item class="flex-1" label="处理状态" :label-width="formLabelWidth">
+                <el-select v-model="orderForm.status" placeholder="请选择">
+                  <el-option label="未解决" value="未解决"></el-option>
+                  <el-option label="已解决" value="已解决"></el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+            <div class="column flex-h">
+              <el-form-item class="flex-1" label="用户昵称/微信ID:" :label-width="formLabelWidth">
+                <el-input v-model="orderForm.identity" auto-complete="off"></el-input>
+              </el-form-item>
+
+              <el-form-item class="flex-1" label="订单号" :label-width="formLabelWidth">
+                <el-input v-model="orderForm.ordernum" auto-complete="off"></el-input>
+              </el-form-item>
+            </div>
+          </div>
+          <el-form-item label="类型" :label-width="formLabelWidth">
+            <el-select v-model="orderForm.ordertype" placeholder="请选择">
+                  <el-option label="客诉" value="客诉"></el-option>
+                  <el-option label="建议" value="建议"></el-option>
+                </el-select>
+          </el-form-item>
+
+          <el-form-item label="标题" :label-width="formLabelWidth">
+            <el-input v-model="orderForm.title" auto-complete="off"></el-input>
+          </el-form-item>
+
+          <el-form-item label="描述" :label-width="formLabelWidth">
+            <el-input v-model="orderForm.describe" auto-complete="off"></el-input>
+          </el-form-item>
+            <!-- 图片上传 -->
+          <div class="pic-upload flex-h">
+            <div class="pics flex-h">
+              <div class="item" v-for="(item,index) in orderPics">
+                <i class="el-icon-error" @click="delPic(index)"></i>
+                <img :src="item" alt="">
+              </div>
+            </div>
+            <div class="pic-add flex-h flex-cc" @click="picAddClick">
+                <input type="file" filetype="image/*" ref="addfileinput" class="pic-file" style="display:none" @change="handleFiles">  
+                <i class="el-icon-plus"></i>
+            </div>
+          </div>
+        </el-form>
+        
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="showCreateWorkOrder = false">取 消</el-button>
+          <el-button type="primary" @click="addOrderSubmit">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+    
   </div>
-  <!-- <editWorkList v-if="showEditWorkList" :name="name" :needTop='needTop'></editWorkList> -->
 </div>
 </template>
 
 <script>
 import Bscroll from 'better-scroll'
 import axios from 'axios'
-// import { formatTime } from '../service/tools'
-// import ClipboardJS from 'clipboard'
 import ServiceHeader from './ServiceHeader'
-import editWorkList from './EditWorkList'
+import { Loading } from 'element-ui'
 
 export default {
   name: 'rightUserWorkList',
-  components: { ServiceHeader, editWorkList },
+  components: { ServiceHeader },
   props: {
     name: {
       type: String,
@@ -69,8 +130,19 @@ export default {
       workList: [],
       pageTitle: '用户工单',
       showEditWorkList: false,
-      needTop: false,
-      pageSize: 10
+      pageSize: 10,
+      showCreateWorkOrder: false, // pc端创建工单的显示隐藏
+      orderPics: [],
+      formLabelWidth: '500',
+      orderForm: {
+        customer: '',
+        ordertype: '',
+        status: '',
+        title: '',
+        identity: '',
+        ordernum: '',
+        describe: ''
+      }
     }
   },
   created() {
@@ -84,15 +156,16 @@ export default {
         this.refreshData()
       }
     })
+    /**
+     * 获取工单列表
+     */
     this.$root.eventBus.$on('getWorkList', () => {
       // 获取工单列表
       this.initBScroll()
       this.refreshData()
     })
   },
-  mounted() {
-    this.$nextTick(() => {})
-  },
+  mounted() {},
   methods: {
     /**
      * 刷新页面
@@ -108,12 +181,8 @@ export default {
      */
     toCreateWorkList() {
       // 移动端
-      if (this.$root.eventBus.showWidth < 768) {
-        this.showEditWorkList = true
-        this.$root.eventBus.$emit('updateWorkList')
-      } else {
-        // pc
-        this.$root.eventBus.$emit('addPcWorkOrder')
+      if (this.$root.eventBus.showWidth >= 768) {
+        this.showCreateWorkOrder = true
       }
     },
     /**
@@ -221,6 +290,153 @@ export default {
             }, 500)
           }
         })
+      })
+    },
+    /**
+     * 删除图片
+     */
+    delPic(index) {
+      this.orderPics.splice(index, 1)
+    },
+    /**
+     * 确认生成工单
+     */
+    addOrderSubmit() {
+      this.orderForm.imgurls = JSON.stringify(this.orderPics || '')
+      if (this.orderForm.customer.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写所属客服'
+        })
+        return
+      }
+      if (this.orderForm.status.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写处理状态'
+        })
+        return
+      }
+      if (this.orderForm.ordertype.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写类型'
+        })
+        return
+      }
+      if (this.orderForm.title.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写标题'
+        })
+        return
+      }
+      if (this.orderForm.describe.trim() === '') {
+        this.$message({
+          type: 'error',
+          message: '请填写描述'
+        })
+        return
+      }
+      axios
+        .post('http://cs.velo.top/customerService/csapi/addworkorder', {
+          customer: this.orderForm.customer,
+          status: this.orderForm.status,
+          identity: this.orderForm.identity,
+          ordernum: this.orderForm.ordernum,
+          ordertype: this.orderForm.ordertype,
+          title: this.orderForm.title,
+          describe: this.orderForm.describe,
+          imgurls: this.orderForm.imgurls,
+          openid: this.openId
+        })
+        .then(_ => {
+          if (_.data.status === 0) {
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+            this.showCreateWorkOrder = false
+            this.refreshData()
+          } else {
+            this.$message({
+              message: '添加失败',
+              type: 'error'
+            })
+          }
+        })
+    },
+    /**
+     * 选择图片
+     */
+    picAddClick() {
+      this.$refs.addfileinput.click()
+    },
+    /**
+     * 上传图片
+     */
+    async handleFiles(obj) {
+      const fileValue = obj.target.value
+      const fileType = fileValue.split('.')
+      const testType = fileType[fileType.length - 1]
+      // const filename = fileType[0]
+      const file = obj.target.files[0]
+      if (/(gif|jpg|jpeg|png|GIF|JPG|PNG)$/.test(testType)) {
+        let loadingInstance = Loading.service()
+        let imgUrl = await this.handleImgUrl(file)
+        loadingInstance.close()
+        imgUrl =
+          imgUrl.split('?')[0] +
+          '?x-oss-process=image/resize,m_lfit,h_200,w_200'
+        console.log('====================================')
+        console.log(imgUrl)
+        console.log('====================================')
+        if (imgUrl.trim() === '') {
+          this.$message({
+            message: '图片上传失败,请您稍后重试~',
+            center: true
+          })
+        }
+        this.orderPics.push(imgUrl)
+        this.$refs.addfileinput.value = ''
+        this.$message({
+          message: '图片上传成功',
+          center: true
+        })
+        console.log(file)
+      } else {
+        this.$message({
+          message: '上传失败',
+          center: true
+        })
+      }
+    },
+    /**
+     * oss
+     */
+    handleImgUrl(file) {
+      return new Promise((resolve, reject) => {
+        let url = ''
+        const client = new OSS.Wrapper({
+          region: 'oss-cn-beijing',
+          accessKeyId: 'LTAIqZNxHpwAnq9r',
+          accessKeySecret: '88mdWv9IiQMecrwevspKWyyllIcd0f',
+          bucket: 'velo-bucket',
+          secure: true
+        })
+        const timestamp = +new Date()
+        const storeAs = `wenjuan/${timestamp}.png`
+        client
+          .multipartUpload(storeAs, file)
+          .then(function(result) {
+            console.log(result)
+            url = result.res.requestUrls[0]
+            resolve(url)
+          })
+          .catch(function(err) {
+            console.log(err)
+            resolve('')
+          })
       })
     }
   },
@@ -478,6 +694,104 @@ img {
     }
     .btns-hide {
       display: none;
+    }
+  }
+}
+.left-work-order {
+  background: #fff;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.25);
+  .add-card {
+    .pic-upload {
+      flex-wrap: wrap;
+      .pics {
+        .item {
+          position: relative;
+          width: 160px;
+          height: 160px;
+          margin-right: 20px;
+          .el-icon-error {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+          }
+          img {
+            border-radius: 10px;
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+      .pic-add {
+        width: 160px;
+        height: 160px;
+        border: 1px dashed #eee;
+        border-radius: 10px;
+      }
+    }
+  }
+  .menu {
+    width: 460px;
+    border-right: 2px solid #e5e5e5;
+    .list {
+      .item {
+        height: 116px;
+        font-family: PingFang-SC-Medium;
+        font-size: 30px;
+        color: #b2b2b2;
+        letter-spacing: 0;
+        text-align: center;
+        border-bottom: 1px solid #e5e5e5;
+        .name {
+        }
+        .number {
+        }
+      }
+      .active {
+        background: #eee;
+        color: #353535;
+      }
+    }
+  }
+  .content {
+    position: relative;
+    .head {
+      height: 116px;
+      border-bottom: 2px solid #e5e5e5;
+      padding-left: 36px;
+      .name {
+        font-family: PingFangSC-Medium;
+        font-size: 30px;
+        color: #353535;
+        letter-spacing: 0;
+      }
+      .addorder {
+        width: 168px;
+        height: 62px;
+        line-height: 62px;
+        background: #ffe654;
+        border-radius: 100px;
+        text-align: center;
+        margin-right: 60px;
+      }
+    }
+    .table-con {
+      position: absolute;
+      left: 36px;
+      right: 36px;
+      top: 118px;
+      bottom: 100px;
+      overflow: scroll;
+    }
+    .pagination {
+      position: absolute;
+      bottom: 0;
+      margin: 20px 0;
     }
   }
 }
