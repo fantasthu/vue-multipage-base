@@ -394,8 +394,8 @@ export default {
         width: 8px;
         height: 8px;
         background: #ff5b21;
-        margin-right: 30px;
-        margin-top: 18px;
+        margin-right: 22px;
+        margin-top: 12px;
       }
       .right-wrap {
         .question {
