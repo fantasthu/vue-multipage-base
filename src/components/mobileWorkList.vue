@@ -76,7 +76,7 @@ export default {
         this.refreshData()
       }
     })
-    this.$root.eventBus.$on('getWorkList', () => {
+    this.$root.eventBus.$on('getMobileWorkList', () => {
       // 获取工单列表
       this.initBScroll()
       this.refreshData()

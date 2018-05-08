@@ -1,9 +1,9 @@
 <template>
   <div class="right-menu flex-v">
     <right-menu-tabs></right-menu-tabs>
-    <right-user-info v-if="tab == 0"></right-user-info>
-    <rightUserWorkList v-if="tab == 1"></rightUserWorkList>
-    <rightKnowledge v-if="tab == 2"></rightKnowledge>
+    <right-user-info v-show="tab == 0" :name="name" :whichProgramme="whichProgramme" :openId="openId"></right-user-info>
+    <rightUserWorkList v-show="tab == 1"></rightUserWorkList>
+    <rightKnowledge v-show="tab == 2"></rightKnowledge>
   </div>
 </template>
 
@@ -23,7 +23,11 @@ export default {
   props: {},
   data() {
     return {
-      tab: 0
+      tab: 0,
+      name: '',
+      whichProgramme: 0,
+      openId: '',
+      width: 0
     }
   },
   created() {
@@ -31,15 +35,33 @@ export default {
       console.log('rightmenu =>created =>index', index)
       this.tab = index
       if (index === 0) {
-        this.$root.eventBus.$emit('getUserInfo')
+        // this.$root.eventBus.$emit('getUserInfo')
+        this.$root.eventBus.$emit('getList')
       }
       if (index === 1) {
         this.$root.eventBus.$emit('getWorkList')
       }
       if (index === 2) {
-        this.$root.eventBus.$emit('toKnowledge')
+        this.$root.eventBus.$emit('getKnowledgeList')
       }
     })
+    /**
+     * 获取右侧用户信息和订单
+     */
+    this.$root.eventBus.$on(
+      'getCurrentUsrInfo',
+      (name, whichProgramme, openId) => {
+        // this.name = name.substr(0, 3) + '...'
+        if (name.length > 6) {
+          this.name = name.substr(0, 6) + '...'
+        } else {
+          this.name = name
+        }
+        this.whichProgramme = whichProgramme
+        this.openId = openId
+        this.$root.eventBus.$emit('getList', openId)
+      }
+    )
   },
   mounted() {},
   methods: {}

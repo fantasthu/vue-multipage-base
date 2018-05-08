@@ -61,6 +61,7 @@ export default {
       this.temOrderList = []
       this.page = 1
       this.showMoreBtn = true
+      this.over = false
       this.getOrderList(this.openId, 'first')
     })
 
@@ -138,6 +139,41 @@ export default {
               if (res.data.obj.orderList.length === 1) {
                 this.showMoreBtn = false
               }
+              res.data.obj.orderList.map(el => {
+                // el.statusDes=
+                var statusDes = ''
+                switch (el.status) {
+                  case 1:
+                    statusDes = '待付款'
+                    break
+                  case 2:
+                    statusDes = '待发货'
+                    break
+                  case 3:
+                    statusDes = '待收货'
+                    break
+                  case 4:
+                    statusDes = '待评价'
+                    break
+                  case 21:
+                    statusDes = '拼团中'
+                    break
+                  case 22:
+                    statusDes = '评团成功'
+                    break
+                  case 23:
+                    statusDes = '评团失败'
+                    break
+                  case 50:
+                  case 51:
+                  case 52:
+                  case 53:
+                  case 54:
+                    statusDes = '已完成'
+                    break
+                }
+                el.statusDes = statusDes
+              })
               this.temOrderList = res.data.obj.orderList
               this.orderList.push(res.data.obj.orderList[0])
             } else {
@@ -147,6 +183,7 @@ export default {
             this.page++
           } else {
             this.showMoreBtn = false
+            this.orderList = []
           }
         })
         .catch(e => {

@@ -57,7 +57,7 @@ export default {
     }
   },
   created() {
-    this.$root.eventBus.$on('getKnowledgeList', () => {
+    this.$root.eventBus.$on('getMobileKnowledgeList', () => {
       this.page = 1
       this.over = false
       this.knowledgeList = []

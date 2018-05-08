@@ -115,14 +115,18 @@
         </div>
         <!-- 其他工具 -->
         <div class="tools flex-h" v-show="toolIndex===2">
-          <div class="tools-photos">
+          <!-- 相册 -->
+          <div class="tool flex-v tools-photos">
             <img src="../assets/img/tools-photos.png" alt="">
             <div class="uploadImg-h5">
               <input type="file" id="fleH5" v-on:change="mobileFileSelected">
             </div>
+            <div class="tool-des">相册</div>
           </div>
-          <div class="knowledges">
-            <img src="../assets/img/knowledge.png" alt="" @click.stop="toKnowledge">
+          <!-- 知识库 -->
+          <div class="tool flex-v" @click.stop="toKnowledge">
+            <img src="../assets/img/knowledge.png" alt="">
+            <div class="tool-des">知识库</div>
           </div>
         </div>
       </div>
@@ -141,14 +145,16 @@
         </div>
       </div>
     </div>
-    <div class="mobileMenuArea" v-show="showMobileUserinfo&&screenWidth<768">
-      <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></MobileUserinfo>
-    </div>
-    <div class="mobileMenuArea" v-show="showMobileWorkList&&screenWidth<768">
-      <RightUserWorkList :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></RightUserWorkList>
-    </div>
-    <div class="mobileMenuArea" v-show="showMobileKnowledge&&screenWidth<768">
-      <RightKnowledge></RightKnowledge>
+    <div  class="mobileMenu">
+      <div class="mobileMenuArea" v-show="showMobileUserinfo&&screenWidth<768">
+        <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></MobileUserinfo>
+      </div>
+      <div class="mobileMenuArea" v-show="showMobileWorkList&&screenWidth<768">
+        <MobileWorkList :name="currentUserName"></MobileWorkList>
+      </div>
+      <div class="mobileMenuArea" v-show="showMobileKnowledge&&screenWidth<768">
+        <MobileKnowledge></MobileKnowledge>
+      </div>
     </div>
   </div>
 </template>
@@ -161,8 +167,8 @@ import { formatTime } from '../service/tools'
 import EmojiObj from '../assets/js/mapEmoji.js'
 import EmojiMsgObj from '../assets/js/mapEmojiMsg.js'
 import MobileUserinfo from './mobileUserinfo'
-import RightUserWorkList from './RightUserWorkList'
-import RightKnowledge from './RightKnowledge'
+import MobileWorkList from './mobileWorkList'
+import MobileKnowledge from './MobileKnowledge'
 import api from '../service/api'
 import $ from 'jquery'
 import Lightbox from 'vue-simple-lightbox'
@@ -177,8 +183,8 @@ export default {
     SwipeItem,
     MobileUserinfo,
     Lightbox,
-    RightUserWorkList,
-    RightKnowledge
+    MobileWorkList,
+    MobileKnowledge
   },
   props: {
     showLeftMenu: false
@@ -829,11 +835,11 @@ export default {
      */
     toWorkList() {
       this.showMobileWorkList = true
-      this.$root.eventBus.$emit('getWorkList')
-      // this.$root.eventBus.$emit('getOrderList')
+      this.$root.eventBus.$emit('getMobileWorkList')
     },
     toKnowledge() {
       this.showMobileKnowledge = true
+      this.$root.eventBus.$emit('getMobileKnowledgeList')
     }
   },
   watch: {
@@ -1054,42 +1060,39 @@ export default {
         }
         .tools {
           flex-wrap: wrap;
-          // 打开相册
-          .tools-photos {
-            width: 110px;
-            height: 110px;
-            padding: 28px;
+          .tool {
+            padding: 42px 28px 28px;
+            box-sizing: content-box;
             position: relative;
-            > img {
+            img {
               width: 110px;
               height: 110px;
-              position: absolute;
+              // position: absolute;
             }
-            .uploadImg-h5 {
-              width: 110px;
-              height: 110px;
-              position: absolute;
-              top: 0;
-              left: 0;
-              color: transparent;
-              opacity: 0;
-              z-index: 1;
-              > input {
-                width: 100%;
-                height: 100%;
-              }
+            .tool-des {
+              margin-top: 18px;
+              text-align: center;
+              font-size: 24px;
+              color: #b2b2b2;
+              letter-spacing: 2.4px;
             }
           }
-          .knowledges {
-            width: 110px;
-            height: 110px;
-            padding: 28px;
-            position: relative;
-            margin-left: 56px;
-            > img {
-              width: 110px;
-              height: 110px;
-              position: absolute;
+          .tools-photos {
+            padding-left: 72px;
+          }
+          // 打开相册
+          .uploadImg-h5 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            color: transparent;
+            opacity: 0;
+            z-index: 1;
+            > input {
+              width: 100%;
+              height: 100%;
             }
           }
         }
@@ -1148,6 +1151,9 @@ export default {
 
 // pc 端
 @media screen and (min-width: 768px) {
+  .mobileMenu {
+    display: none;
+  }
   .chat {
     position: relative;
     min-width: 500px;
