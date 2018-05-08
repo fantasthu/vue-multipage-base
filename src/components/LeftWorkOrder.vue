@@ -390,7 +390,6 @@ export default {
       this.orderPics = JSON.parse(item.imgurls || '[]')
       item.describe = item.des
       this.orderForm = item
-      // this.orderForm.describe = item.des
     },
     updateOrderSubmit() {
       this.orderForm.imgurls = JSON.stringify(this.orderPics || '')
