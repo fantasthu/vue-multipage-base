@@ -375,7 +375,13 @@ export default {
         describe: '',
         title: ''
       }
+      // 添加默认的所属客服
+      this.orderForm.customer = this.getWaiterName()
       this.orderPics = []
+    },
+    getWaiterName() {
+      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      return waiterInfo.name || ''
     },
     updateWorkOrderClick(index, item) {
       this.updateOrderShow = true
