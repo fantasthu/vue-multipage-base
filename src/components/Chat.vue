@@ -429,6 +429,7 @@ export default {
         return i === index
       })
       this.inputData = `${this.inputData} ${indexAlias}`
+      this.showEmoji = false
     },
     /**
      * 手机端每个表情的点击事件
@@ -655,6 +656,7 @@ export default {
       var reader = new FileReader()
       var AllowImgFileSize = 2100000
       reader.readAsDataURL(file)
+      this.$toast('图片发送中...')
       reader.onload = async e => {
         if (AllowImgFileSize !== 0 && AllowImgFileSize < reader.result.length) {
           this.$toast('图片超过2M, 上传失败!')
@@ -667,7 +669,6 @@ export default {
           this.currentUserAllMsg[0].openId,
           ossUrl
         )
-        this.$toast('图片正在上传中...')
         $('#fleH5').val('')
       }
     },
@@ -675,6 +676,7 @@ export default {
       var reader = new FileReader()
       var AllowImgFileSize = 2100000
       reader.readAsDataURL(blob)
+      this.$toast('图片发送中...')
       reader.onload = async e => {
         if (AllowImgFileSize !== 0 && AllowImgFileSize < reader.result.length) {
           this.$toast('图片超过2M, 上传失败!')
@@ -686,7 +688,6 @@ export default {
           this.currentUserAllMsg[0].openId,
           ossUrl
         )
-        this.$toast('图片正在上传中...')
         $('#fleH5').val('')
       }
     },
@@ -1193,7 +1194,7 @@ export default {
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 285px;
+      bottom: 225px;
       top: 117px;
       overflow-y: hidden;
       .message-list {
