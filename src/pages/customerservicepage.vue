@@ -490,6 +490,10 @@ body {
 .el-message {
   z-index: 1000000 !important;
 }
+.el-select-dropdown {
+  z-index: 999998 !important;
+}
+
 .customer-service {
   .showFullImgBox {
     // display: none;
