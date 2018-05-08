@@ -3,7 +3,7 @@
     <!--  新增知识库 -->
     <el-dialog title="新增知识库" :visible.sync="addKnowledgeShow">
       <el-form :model="knowledgeForm">
-         <el-form-item label="关键字">
+         <el-form-item label="分类">
           <el-select v-model="knowledgeForm.category" placeholder="请选择关键字">
             <el-option v-for="(item,index) in categories" :key="item.id" :label="item.name" :value="item.name"></el-option>
           </el-select>
