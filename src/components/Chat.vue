@@ -483,7 +483,6 @@ export default {
           var clipboardData =
             event.clipboardData || event.originalEvent.clipboardData
           if (clipboardData.getData('text/plain')) {
-            this.inputData = clipboardData.getData('text/plain')
             return
           }
           if (clipboardData.items) {
