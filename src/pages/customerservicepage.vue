@@ -2,8 +2,8 @@
   <div class="customer-service">
     <!-- 此处是图片lightBox -->
     <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl" @click.stop="closeFullImg">
-      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-if="isIOS" @click.stop="fullImgClick" @touchstart="fullImgTouchStart" @touchend="fullImgTouchStartEnd">    
-      <img :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-else>    
+      <img class="fingerImg" :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-if="isIOS" @click.stop="fullImgClick" @touchstart="fullImgTouchStart" @touchend="fullImgTouchStartEnd">    
+      <img class="fingerImg" :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-else>    
     </div>
     <!-- 此处是聊天界面 -->
     <div class="s-container flex-h">
@@ -113,6 +113,104 @@ export default {
     })
   },
   methods: {
+    /**
+     * 添加图片手势库
+     */
+    addImgFinger() {
+      var topPx
+      imageLoaded('.showFullImgUrl', function(w, h) {
+        document.querySelector('.showFullImgBox').style.display = 'block'
+        topPx = window.innerHeight / 2 - h * window.innerWidth / w / 2
+        this.style.top = topPx + 'px'
+      })
+
+      function ease(x) {
+        return Math.sqrt(1 - Math.pow(x - 1, 2))
+      }
+
+      var el = document.querySelector('.fingerImg')
+      Transform(el)
+      var initScale = 1
+      new AlloyFinger(el, {
+        multipointStart: function() {
+          To.stopAll()
+          initScale = el.scaleX
+        },
+        rotate: function(evt) {
+          el.rotateZ += evt.angle
+        },
+        pinch: function(evt) {
+          el.scaleX = el.scaleY = initScale * evt.zoom
+        },
+        multipointEnd: function() {
+          To.stopAll()
+          if (el.scaleX < 1) {
+            new To(el, 'scaleX', 1, 500, ease)
+            new To(el, 'scaleY', 1, 500, ease)
+          }
+          if (el.scaleX > 2) {
+            new To(el, 'scaleX', 2, 500, ease)
+            new To(el, 'scaleY', 2, 500, ease)
+          }
+          var rotation = el.rotateZ % 360
+
+          if (rotation < 0) rotation = 360 + rotation
+          el.rotateZ = rotation
+
+          if (rotation > 0 && rotation < 45) {
+            new To(el, 'rotateZ', 0, 500, ease)
+          } else if (rotation >= 315) {
+            new To(el, 'rotateZ', 360, 500, ease)
+          } else if (rotation >= 45 && rotation < 135) {
+            new To(el, 'rotateZ', 90, 500, ease)
+          } else if (rotation >= 135 && rotation < 225) {
+            new To(el, 'rotateZ', 180, 500, ease)
+          } else if (rotation >= 225 && rotation < 315) {
+            new To(el, 'rotateZ', 270, 500, ease)
+          }
+        },
+        pressMove: function(evt) {
+          el.translateX += evt.deltaX
+          el.translateY += evt.deltaY
+          evt.preventDefault()
+        },
+        tap: function(evt) {
+          // console.log(el.scaleX + "_" + el.scaleY + "_" + el.rotateZ + "_" + el.translateX + "_" + el.translateY);
+          // console.log("tap");
+        },
+        doubleTap: function(evt) {
+          To.stopAll()
+          if (el.scaleX > 1.5) {
+            new To(el, 'scaleX', 1, 500, ease)
+            new To(el, 'scaleY', 1, 500, ease)
+            new To(el, 'translateX', 0, 500, ease)
+            new To(el, 'translateY', 0, 500, ease)
+          } else {
+            var box = el.getBoundingClientRect()
+            var y =
+              box.height -
+              (evt.changedTouches[0].pageY - topPx) * 2 -
+              (box.height / 2 - (evt.changedTouches[0].pageY - topPx))
+
+            var x =
+              box.width -
+              evt.changedTouches[0].pageX * 2 -
+              (box.width / 2 - evt.changedTouches[0].pageX)
+            new To(el, 'scaleX', 2, 500, ease)
+            new To(el, 'scaleY', 2, 500, ease)
+            new To(el, 'translateX', x, 500, ease)
+            new To(el, 'translateY', y, 500, ease)
+          }
+          // console.log("doubleTap");
+        },
+        longTap: function(evt) {
+          // console.log("longTap");
+        },
+        swipe: function(evt) {
+          // console.log("swipe" + evt.direction);
+        }
+      })
+    },
     /**
      * 添加cookie
      */
@@ -452,7 +550,16 @@ export default {
       this.iNotifyMsg.setTitle('velo客服')
     }
   },
-  watch: {}
+  watch: {
+    showFullImgUrl(val, oval) {
+      if (val) {
+        // 添加图片手势库
+        this.$nextTick(() => {
+          this.addImgFinger()
+        })
+      }
+    }
+  }
 }
 </script>
 
@@ -510,6 +617,7 @@ body {
       left: 0;
       right: 0;
       bottom: 0;
+      width: 70%;
       margin: 0 auto;
       transform: translateY(-50%);
       z-index: 9;
