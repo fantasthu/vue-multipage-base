@@ -112,10 +112,11 @@ export default {
   methods: {
     initworkData(info) {
       if (info) {
+        console.log('info', info)
         // 修改工单
         this.isUpdate = true
 
-        this.upImgs = info.imgurls === '' ? '' : JSON.parse(info.imgurls)
+        this.upImgs = JSON.parse(info.imgurls || '[]')
         this.workDes = info.des
         // this.workTitle = info.title
         this.type = info.ordertype
@@ -169,6 +170,7 @@ export default {
      */
     choiceType(item) {
       this.choice = item
+      this.type = item
       this.showType = false
     },
 
@@ -255,7 +257,7 @@ export default {
      * 保存工单
      */
     toSaveWorkList() {
-      if (!this.choice.trim()) {
+      if (!this.type.trim()) {
         this.$toast('请选择类型')
         return
       }
@@ -276,7 +278,7 @@ export default {
         ordertype: this.type, // '客诉/建议'
         title: '',
         describe: this.workDes,
-        imgurls: JSON.stringify(this.upImgs),
+        imgurls: this.upImgs.length > 0 ? JSON.stringify(this.upImgs) : '[]',
         openid: this.openId
       }
       if (this.isUpdate) {
