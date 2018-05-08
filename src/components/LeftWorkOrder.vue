@@ -265,11 +265,7 @@ export default {
     }
   },
   methods: {
-    initEvent() {
-      this.$root.eventBus.$on('addPcWorkOrder', () => {
-        this.addOrderShow = true
-      })
-    },
+    initEvent() {},
     toSearchWorkOrder: _.debounce(function(val) {
       this.searchName = val
       this.searchWorkOrder()
