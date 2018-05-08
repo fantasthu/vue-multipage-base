@@ -1,8 +1,8 @@
 <template>
   <div class="right-menu flex-v">
     <right-menu-tabs></right-menu-tabs>
-    <right-user-info v-show="tab == 0" :name="name" :whichProgramme="whichProgramme" :openId="openId"></right-user-info>
-    <rightUserWorkList v-show="tab == 1"></rightUserWorkList>
+    <right-user-info v-show="tab == 0" :tab="tab" :name="name" :whichProgramme="whichProgramme" :openId="openId"></right-user-info>
+    <rightUserWorkList v-show="tab == 1" :tab="tab" :openId="openId"></rightUserWorkList>
     <rightKnowledge v-show="tab == 2"></rightKnowledge>
   </div>
 </template>
@@ -59,7 +59,7 @@ export default {
         }
         this.whichProgramme = whichProgramme
         this.openId = openId
-        this.$root.eventBus.$emit('getList', openId)
+        this.$root.eventBus.$emit('getList', this.tab)
       }
     )
   },

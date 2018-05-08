@@ -29,13 +29,14 @@ export default {
     openId: {
       type: String,
       default: ''
+    },
+    tab: {
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
-      // name: '',
-      // openId: '',
-      // whichProgramme: false,
       temOrderList: [],
       orderList: [],
       page: 1,
@@ -48,23 +49,16 @@ export default {
     /**
      * 获取右侧用户信息和订单
      */
-    this.$root.eventBus.$on('getList', openId => {
-      // this.name = name.substr(0, 3) + '...'
-      // if (name.length > 6) {
-      //   this.name = name.substr(0, 6) + '...'
-      // } else {
-      //   this.name = name
-      // }
-      // this.whichProgramme = whichProgramme
-      // this.openId = openId
-      console.log('=================')
-
-      this.temOrderList = []
-      this.orderList = []
-      this.showMoreBtn = true
-      this.page = 1
-      // 获取订单列表
-      this.getOrderList(openId || this.openId, 'first')
+    this.$root.eventBus.$on('getList', tabIndex => {
+      console.log('tabIndex', tabIndex, tabIndex === 0)
+      if (tabIndex === 0) {
+        this.temOrderList = []
+        this.orderList = []
+        this.showMoreBtn = true
+        this.page = 1
+        // 获取订单列表
+        this.getOrderList(this.openId, 'first')
+      }
     })
 
     /**
@@ -83,23 +77,12 @@ export default {
       e.clearSelection()
     })
   },
-  mounted() {
-    // this.$root.eventBus.$on('getUserInfo', () => {
-    //   console.log('this.openId', this.openId)
-    //   console.log('this.name', this.name)
-    //   console.log('this.whichProgramme', this.whichProgramme)
-    //   // 获取订单列表
-    //   this.getOrderList(this.openId, 'first')
-    //   this.$root.eventBus.$off('getUserInfo')
-    // })
-  },
+  mounted() {},
   methods: {
     /**
      * 获取订单列表
      */
     getOrderList(openid, flag) {
-      console.log('----------------', openid, flag)
-
       var instance = axios.create({
         headers: {
           velo_admin: 'nRF9L8ZaOKlE2lew'
@@ -212,7 +195,8 @@ export default {
 <style scoped lang="scss">
 // 手机端
 @media (max-width: 768px) {
-  .right-user-info {
+  #right-userinfo-wrap {
+    display: none;
   }
 }
 

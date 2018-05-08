@@ -150,7 +150,7 @@
         <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></MobileUserinfo>
       </div>
       <div class="mobileMenuArea" v-show="showMobileWorkList&&screenWidth<768">
-        <MobileWorkList :name="currentUserName"></MobileWorkList>
+        <MobileWorkList :name="currentUserName" :openId="currentUserOpenId"></MobileWorkList>
       </div>
       <div class="mobileMenuArea" v-show="showMobileKnowledge&&screenWidth<768">
         <MobileKnowledge></MobileKnowledge>

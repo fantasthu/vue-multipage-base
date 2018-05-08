@@ -190,8 +190,6 @@ export default {
             params.whichProgramme === 'vip' ? 1 : 0,
             params.openId
           )
-          // 获取订单信息
-          this.$root.eventBus.$emit('getUserFirstOrder', params.openId)
         }
       })
       this.$root.eventBus.$on('toSession', params => {

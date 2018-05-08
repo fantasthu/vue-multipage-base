@@ -12,7 +12,7 @@
           </div>
           <div class="order-info order-status">订单状态：{{item.statusDes}}</div>
           <div class="order-info">订单编号：{{item.orderNo}}</div>
-          <div class="order-info flex-h flex-bc"><div>物流编号：{{item.mailNo}}</div><div class="check-mail" @click.stop="checkMail({mailNo:item.mailNo,mailName:item.mailName,mailCom:item.mailCom})">查询</div></div>
+          <div class="order-info flex-h flex-bc"><div>物流编号：{{item.mailNo||'无'}}</div><div v-if="item.mailNo" class="check-mail" @click.stop="checkMail({mailNo:item.mailNo,mailName:item.mailName,mailCom:item.mailCom})">查询</div></div>
           <div class="order-info">商品名称：{{item.productName}}</div>
           <div class="order-info">实付金额：￥{{item.realPrice/100}}</div>
         </div>

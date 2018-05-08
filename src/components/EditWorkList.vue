@@ -68,6 +68,10 @@ export default {
     orderNo: {
       type: String,
       default: ''
+    },
+    openId: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -77,7 +81,7 @@ export default {
       typeList: ['建议', '客诉'],
       statusList: ['未解决', '已解决'],
       upImgs: [],
-      status: 0,
+      status: '未解决',
       choice: '请选择',
       showType: false,
       workDes: '',
@@ -131,7 +135,7 @@ export default {
         this.type = ''
         this.ordernum = ''
         this.identity = ''
-        this.status = 0
+        this.status = '未解决'
         this.customer = '客服'
       }
       this.choice = this.type || '请选择'
@@ -146,7 +150,11 @@ export default {
         this.$root.eventBus.$emit('hideworkFromOrder')
       } else {
         // 隐藏移动端用户信息
-        this.$root.eventBus.$emit('hideEditWorkList', refresh)
+        this.$root.eventBus.$emit(
+          'hideEditWorkList',
+          refresh,
+          this.$root.eventBus.showWidth < 768 ? 'mobile' : 'pc'
+        )
       }
     },
 
@@ -239,7 +247,8 @@ export default {
         ordertype: this.type, // '客诉/建议'
         title: '',
         describe: this.workDes,
-        imgurls: JSON.stringify(this.upImgs)
+        imgurls: JSON.stringify(this.upImgs),
+        openid: this.openId
       }
       if (this.isUpdate) {
         url = 'http://cs.velo.top/customerService/csapi/updateWorkOrder'

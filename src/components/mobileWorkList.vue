@@ -32,7 +32,7 @@
       <div class="noList" v-show="workList.length==0">无工单</div>
     </div>
   </div>
-  <editWorkList v-show="showEditWorkList" :name="name" :needTop='needTop'></editWorkList>
+  <editWorkList v-show="showEditWorkList" :name="name" :needTop='needTop' :openId='openId'></editWorkList>
 </div>
 </template>
 
@@ -49,6 +49,10 @@ export default {
   components: { ServiceHeader, editWorkList },
   props: {
     name: {
+      type: String,
+      default: ''
+    },
+    openId: {
       type: String,
       default: ''
     }
@@ -69,9 +73,9 @@ export default {
     /**
      * 隐藏工单详情
      */
-    this.$root.eventBus.$on('hideEditWorkList', refresh => {
+    this.$root.eventBus.$on('hideEditWorkList', (refresh, platForm) => {
       this.showEditWorkList = false
-      if (refresh) {
+      if (refresh && platForm === 'mobile') {
         // 刷新页面
         this.refreshData()
       }
@@ -131,9 +135,10 @@ export default {
         return
       }
       axios
-        .post('http://cs.velo.top/customerService/csapi/selectWorkOrder', {
+        .post('http://cs.velo.top/customerService/csapi/searchWorkOrder', {
           pageSize: this.pageSize,
-          startPage: this.page
+          startPage: this.page,
+          openid: this.openId
         })
         .then(res => {
           if (res.data.status === 0) {
@@ -338,7 +343,7 @@ img {
       letter-spacing: 3.23px;
       text-align: center;
       position: absolute;
-      top: 400%;
+      top: 40%;
       right: 0;
       bottom: 0;
       left: 0;
@@ -453,6 +458,12 @@ img {
       font-size: 24px;
       color: #888888;
       letter-spacing: 0;
+      text-align: center;
+      position: absolute;
+      top: 40%;
+      right: 0;
+      bottom: 0;
+      left: 0;
     }
     .btns-hide {
       display: none;

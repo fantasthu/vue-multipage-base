@@ -1,7 +1,7 @@
 <template>
   <div id="right-knowledge-wrap">
     <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='pageTitle' :more="false"></service-header>
-    <search v-model="searchKnowledge" @focus="focus"></search>
+    <search v-model="searchKnowledge" @focus="focus" placeholder="请搜索"></search>
     <div class="typeList" v-show="!showSearchResult">
       <div class="typeTitle">类别</div>
       <div class="flex-h list">
@@ -65,7 +65,6 @@ export default {
       this.showSearchResult = false
       this.search = ''
       this.searchCategory()
-      // this.checkKnowledgeList()
     })
   },
   mounted() {
@@ -117,8 +116,6 @@ export default {
           if (_.data.status === 0) {
             this.categories = _.data.data
           }
-
-          console.log('LeftKnowledgeAddCategory=>searchCategory', _)
         })
     },
     /**
@@ -128,16 +125,12 @@ export default {
       axios
         .post('http://cs.velo.top/customerService/csapi/searchKnowledge', {
           problem: this.search,
+          category: this.category,
           startPage: this.page,
           pageSize: this.pageSize
         })
         .then(res => {
-          console.log('res', res)
           if (res.data.status === 0) {
-            // if (res.data.data.list.length === 0) {
-            //   this.over = true
-            //   return false
-            // }
             this.knowledgeList = this.knowledgeList.concat(res.data.data.list)
             if (res.data.data.total <= this.page * this.pageSize) {
               this.over = true
@@ -158,7 +151,8 @@ export default {
       // 调用搜索接口
       this.page = 1
       this.over = false
-      this.search = type
+      this.search = ''
+      this.category = type
       this.showSearchResult = true
       this.knowledgeList = []
       this.checkKnowledgeList()
@@ -207,8 +201,6 @@ export default {
   watch: {
     searchKnowledge(val, oldVal) {
       this.doSearchKnowledge(val)
-
-      // this.selectType(val)
     }
   }
 }

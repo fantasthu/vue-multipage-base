@@ -1,7 +1,7 @@
 <template>
   <div id="right-knowledge-wrap">
     <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='pageTitle' :more="false"></service-header>
-    <search v-model="searchKnowledge" @focus="focus"></search>
+    <search v-model="searchKnowledge" @focus="focus" placeholder="请搜索"></search>
     <div class="typeList" v-show="!showSearchResult">
       <div class="typeTitle">类别</div>
       <div class="flex-h list">
@@ -128,6 +128,7 @@ export default {
       axios
         .post('http://cs.velo.top/customerService/csapi/searchKnowledge', {
           problem: this.search,
+          category: this.category,
           startPage: this.page,
           pageSize: this.pageSize
         })
@@ -158,7 +159,8 @@ export default {
       // 调用搜索接口
       this.page = 1
       this.over = false
-      this.search = type
+      this.search = ''
+      this.category = type
       this.showSearchResult = true
       this.knowledgeList = []
       this.checkKnowledgeList()
@@ -168,6 +170,7 @@ export default {
      */
     focus() {
       this.showSearchResult = false
+      this.category = ''
     },
     /**
      * 返回
