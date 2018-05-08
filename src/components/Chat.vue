@@ -246,8 +246,13 @@ export default {
       bucket: 'velo-bucket',
       secure: true
     })
-    this.$root.eventBus.$on('toChat', () => {
+    this.$root.eventBus.$on('toChat', obj => {
       this.reloadMessageScroll()
+      console.log('toChat', obj)
+      this.currentChatTitle = obj.name + '的聊天'
+      this.currentUserOpenId = obj.openId
+      this.currentUserName = obj.name
+      this.currentUserWhichProgramme = obj.whichProgramme === 'vip'
     })
     this.$root.eventBus.$on('pcChatHandler', () => {
       this.reloadMessageScroll()
@@ -258,17 +263,18 @@ export default {
     })
     // 获取用户所以消息
     this.$root.eventBus.$on('userAllMsg', obj => {
+      if (obj.userAllMsg[0].openId !== this.currentUserOpenId) return
       this.currentUserAllMsg = obj.userAllMsg.map(item => {
         if (item.msg) {
           item.msg = this.filterMsg(item.msg)
         }
         return item
       })
-      this.currentChatTitle = obj.userAllMsg[0].name + '的聊天'
-      this.currentUserOpenId = obj.openId
-      this.currentUserName = obj.userAllMsg[0].name
-      this.currentUserWhichProgramme =
-        obj.userAllMsg[0].whichProgramme === 'vip'
+      // this.currentChatTitle = obj.userAllMsg[0].name + '的聊天'
+      // this.currentUserOpenId = obj.openId
+      // this.currentUserName = obj.userAllMsg[0].name
+      // this.currentUserWhichProgramme =
+      //   obj.userAllMsg[0].whichProgramme === 'vip'
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
       }, 200)
@@ -276,12 +282,12 @@ export default {
 
     // 获取用户每条发送的消息
     this.$root.eventBus.$on('userMsg', arr => {
-      console.log('arr', arr)
+      console.log('---9999---', arr[0].openId, this.currentUserOpenId)
+      if (arr[0].openId !== this.currentUserOpenId) return
       arr[0].formatTime = formatTime(arr[0].msgTime, 6)
       arr[0].headImg = arr[0].headImg
         ? arr[0].headImg
         : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
-
       // 过滤信息,也许带有表情
       arr[0].msg = this.filterMsg(arr[0].msg)
       this.currentUserAllMsg.push(arr[0])
@@ -337,7 +343,7 @@ export default {
   },
   methods: {
     getLightBoxImgs(img) {
-      console.log('img', img)
+      // console.log('img', img)
       if (/\.(jpg|jpeg|png|bmp)$/.test(img)) {
         return [{ src: `${img}` }]
       } else {
@@ -393,9 +399,9 @@ export default {
       )
       reg.compile(reg)
       newMsg = msg.replace(reg, (p1, p2, matches) => {
-        console.log('p1', p1)
-        console.log('p2', p2)
-        console.log('matches', matches)
+        // console.log('p1', p1)
+        // console.log('p2', p2)
+        // console.log('matches', matches)
         // 过滤相应的图片
         return this.filterCodeToImg(p1)
       })
@@ -405,11 +411,11 @@ export default {
      * 把表情代码过滤成表情图片
      */
     filterCodeToImg(code) {
-      console.log('code', code)
+      // console.log('code', code)
       let emoji = ''
       this.emojiMsgAlias.forEach((item, index) => {
         if (item === code) {
-          console.log('this.emojiAlias', item)
+          // console.log('this.emojiAlias', item)
           emoji = this.emojiMsgs[index]
         }
       })
