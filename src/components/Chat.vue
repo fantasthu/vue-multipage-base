@@ -254,7 +254,6 @@ export default {
     })
     this.$root.eventBus.$on('toChat', obj => {
       this.reloadMessageScroll()
-      console.log('toChat', obj)
       this.currentChatTitle = obj.name + '的聊天'
       this.currentUserOpenId = obj.openId
       this.currentUserName = obj.name
@@ -283,7 +282,6 @@ export default {
 
     // 获取用户每条发送的消息
     this.$root.eventBus.$on('userMsg', arr => {
-      console.log('---9999---', arr[0].openId, this.currentUserOpenId)
       if (arr[0].openId !== this.currentUserOpenId) return
       arr[0].formatTime = formatTime(arr[0].msgTime, 6)
       arr[0].headImg = arr[0].headImg
