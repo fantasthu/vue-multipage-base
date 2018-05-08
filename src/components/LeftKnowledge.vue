@@ -424,6 +424,11 @@ export default {
      */
     initCategory(categories) {
       this.knowledgeForm.category = categories[0].name
+      this.knowledgeForm.creator = this.getWaiterName()
+    },
+    getWaiterName() {
+      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      return waiterInfo.name || ''
     },
     /**
      * 添加分类确认按钮
