@@ -269,6 +269,7 @@ export default {
      */
     createFromPcOrder(orderNo) {
       this.orderForm.ordernum = orderNo
+      this.orderForm.identity = this.name
       this.showCreateWorkOrder = true
     },
     /**

@@ -183,6 +183,8 @@ export default {
       // 移动端
       if (this.$root.eventBus.showWidth >= 768) {
         this.showCreateWorkOrder = true
+        this.orderForm.identity = this.name
+        this.orderForm.customer = ''
       }
     },
     /**

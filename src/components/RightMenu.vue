@@ -2,7 +2,7 @@
   <div class="right-menu flex-v">
     <right-menu-tabs></right-menu-tabs>
     <right-user-info v-show="tab == 0" :tab="tab" :name="name" :whichProgramme="whichProgramme" :openId="openId"></right-user-info>
-    <rightUserWorkList v-show="tab == 1" :tab="tab" :openId="openId"></rightUserWorkList>
+    <rightUserWorkList v-show="tab == 1" :tab="tab" :openId="openId" :name="name" ></rightUserWorkList>
     <rightKnowledge v-show="tab == 2"></rightKnowledge>
   </div>
 </template>

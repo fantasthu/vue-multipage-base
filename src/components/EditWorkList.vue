@@ -10,7 +10,8 @@
         </div>
       </div>
       <div class="list">用户昵称/微信ID：<span>{{identity||name}}</span></div>
-      <div class="list">订单号：<span>{{ordernum||orderNo||'无'}}</span></div>
+      <!-- <div class="list" v-if="ordernum">订单号：<span>{{ordernum||'无'}}</span></div> -->
+      <div class="list flex-h"><div>订单号：</div><input class="flex-1" type="text" v-model="ordernum" placeholder="订单号"></div>
       <div class="list flex-h flex-bc choice-type" @click.stop="toChoice">
         <div>类型：<span>{{choice}}</span></div>
         <img v-show='showType' src="../assets/img/up.png" alt="">
@@ -64,10 +65,6 @@ export default {
       type: Boolean,
       default: false
     },
-    orderNo: {
-      type: String,
-      default: ''
-    },
     openId: {
       type: String,
       default: ''
@@ -106,6 +103,9 @@ export default {
       console.log(info, index)
       this.initworkData(info)
       console.log('this.isUpdate', this.isUpdate)
+    })
+    this.$root.eventBus.$on('openEditWork', orderNo => {
+      this.ordernum = orderNo
     })
   },
   mounted() {},
@@ -274,7 +274,7 @@ export default {
         customer: '客服人员',
         status: this.status,
         identity: this.identity || this.name,
-        ordernum: this.ordernum || this.orderNo,
+        ordernum: this.ordernum,
         ordertype: this.type, // '客诉/建议'
         title: '',
         describe: this.workDes,
@@ -338,6 +338,11 @@ export default {
         letter-spacing: 3px;
         span {
           color: #888888;
+        }
+        input {
+          color: #888888;
+          font-size: 28px;
+          letter-spacing: 3px;
         }
       }
       .work-status {

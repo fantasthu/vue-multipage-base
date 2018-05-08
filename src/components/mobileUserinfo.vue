@@ -7,7 +7,7 @@
         <div class="identity">用户身份： {{whichProgramme?'VIP':'小白'}}</div>
       </div>
       <right-order :over="over" :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
-      <editWorkList v-show="showEditWorkList" :name="name" :orderNo="orderNo" from="order" :needTop='needTop'></editWorkList>
+      <editWorkList v-show="showEditWorkList" :name="name" from="order" :needTop='needTop'></editWorkList>
     </div>
   </div>
 </template>
@@ -73,6 +73,7 @@ export default {
     this.$root.eventBus.$on('createFromOrder', orderNo => {
       this.showEditWorkList = true
       this.orderNo = orderNo
+      this.$root.eventBus.$emit('openEditWork', orderNo)
     })
 
     // 隐藏工单页面
