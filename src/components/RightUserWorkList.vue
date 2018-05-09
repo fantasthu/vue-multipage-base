@@ -176,6 +176,10 @@ export default {
       this.over = false
       this.getWorkList()
     },
+    getWaiterName() {
+      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      return waiterInfo.name || ''
+    },
     /**
      * 新建工单
      */
@@ -185,6 +189,8 @@ export default {
         this.showCreateWorkOrder = true
         this.orderForm.identity = this.name
         this.orderForm.customer = ''
+        this.orderForm.status = '未解决'
+        this.orderForm.customer = this.getWaiterName()
       }
     },
     /**

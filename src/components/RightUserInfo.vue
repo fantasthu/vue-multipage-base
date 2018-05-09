@@ -269,7 +269,13 @@ export default {
     createFromPcOrder(orderNo) {
       this.orderForm.ordernum = orderNo
       this.orderForm.identity = this.name
+      this.orderForm.customer = this.getWaiterName()
+      this.orderForm.status = '未解决'
       this.showCreateWorkOrder = true
+    },
+    getWaiterName() {
+      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      return waiterInfo.name || ''
     },
     /**
      * 删除图片
