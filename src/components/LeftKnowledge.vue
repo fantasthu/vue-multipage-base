@@ -217,13 +217,13 @@ export default {
               .then(_ => {
                 if (_.data.status === 0) {
                   this.$message({
-                    message: '删除成功成功',
+                    message: '删除成功',
                     type: 'success'
                   })
                   this.addKnowledgeShow = false
                 } else {
                   this.$message({
-                    message: '删除失败失败',
+                    message: '删除失败',
                     type: 'error'
                   })
                 }
@@ -358,31 +358,33 @@ export default {
      */
     deleteKnowledgeClick(index, row) {
       console.log('LeftKnowledgeAddCategory=>deleteKnowledgeClick', index, row)
-      axios
-        .post('http://cs.velo.top/customerService/csapi/delknowledge', {
-          id: row.id
-        })
-        .then(_ => {
-          if (_.data.status === 0) {
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
+      this.$confirm('确认删除？').then(_ => {
+        axios
+          .post('http://cs.velo.top/customerService/csapi/delknowledge', {
+            id: row.id
+          })
+          .then(_ => {
+            if (_.data.status === 0) {
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
 
-            // 更新一遍所有知识
-            this.searchKnowledge()
+              // 更新一遍所有知识
+              this.searchKnowledge()
 
-            // 更新一遍分类
-            this.searchCategory()
-          } else {
-            this.$message({
-              message: '删除失败',
-              type: 'error'
-            })
-          }
+              // 更新一遍分类
+              this.searchCategory()
+            } else {
+              this.$message({
+                message: '删除失败',
+                type: 'error'
+              })
+            }
 
-          console.log('LeftKnowledgeAddCategory=>updateKnowledgeShow=>_', _)
-        })
+            console.log('LeftKnowledgeAddCategory=>updateKnowledgeShow=>_', _)
+          })
+      })
     },
 
     /**
