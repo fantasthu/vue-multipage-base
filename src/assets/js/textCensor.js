@@ -1,4 +1,4 @@
-const bl = ['习近平', '袭击', '攻击', '共产党', '傻比', '傻逼', '草泥马', '草你妈', '草你', '干', 'fuck', 'caonima', 'cao']
+const bl = ['毛泽东', '习近平', '江泽民', '胡锦涛', '共产党', '法轮功', '袭击', '攻击', '傻比', '傻逼', '煞笔', '沙比', '草泥马', '草你妈', '草你', '干', '日你', 'fuck', 'caonima', 'cao']
 const strategyStr = '***'
 export default function textCensor(news) {
   let blacklist = bl
