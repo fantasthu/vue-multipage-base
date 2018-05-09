@@ -172,6 +172,7 @@ import MobileKnowledge from './MobileKnowledge'
 import api from '../service/api'
 import $ from 'jquery'
 import Lightbox from 'vue-simple-lightbox'
+import textCensorInstance from '../assets/js/textCensor'
 
 export default {
   name: 'chat',
@@ -256,6 +257,7 @@ export default {
       this.currentUserAllMsg = obj.userAllMsg.map(item => {
         if (item.msg) {
           item.msg = this.filterMsg(item.msg)
+          item.msg = this.textCensor(item.msg)
         }
         return item
       })
@@ -273,6 +275,7 @@ export default {
         : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
       // 过滤信息,也许带有表情
       arr[0].msg = this.filterMsg(arr[0].msg)
+      arr[0].msg = this.textCensor(arr[0].msg)
       this.currentUserAllMsg.push(arr[0])
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
@@ -325,6 +328,12 @@ export default {
     })
   },
   methods: {
+    /**
+     * 过滤敏感词汇
+     */
+    textCensor(str) {
+      return textCensorInstance(str) || str
+    },
     getLightBoxImgs(img) {
       // console.log('img', img)
       if (/\.(jpg|jpeg|png|bmp)$/.test(img)) {
@@ -644,6 +653,11 @@ export default {
         waiterOpenId: this.waiterInfo.openId,
         whichProgramme: this.currentUserAllMsg[0].whichProgramme
       }
+      const tc = this.textCensor(this.inputData || '')
+      if (tc && tc.trim().indexOf('***') >= 0) {
+        this.$message('发送的消息不合法!')
+        return
+      }
       this.$emit('sendWaiterMsgToUser', obj)
     },
     /**
@@ -737,6 +751,11 @@ export default {
     },
     mobileSendMsg() {
       if (this.inputData) {
+        const tc = this.textCensor(this.inputData || '')
+        if (tc && tc.trim().indexOf('***') >= 0) {
+          this.$toast('发送的消息不合法!')
+          return
+        }
         this.sendWaiterMsg(this.inputData)
         setTimeout(() => {
           this.inputData = ''
