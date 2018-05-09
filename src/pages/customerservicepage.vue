@@ -584,6 +584,7 @@ body {
   width: 100%;
   height: 100%;
   user-select: text;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 body {
   padding-top: constant(safe-area-inset-top);
@@ -592,6 +593,7 @@ body {
   padding-bottom: constant(safe-area-inset-bottom);
   user-select: text;
 }
+
 // pc端预览图片样式
 .simple-lightbox {
   .sl-counter,
