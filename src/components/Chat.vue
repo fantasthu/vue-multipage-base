@@ -83,7 +83,7 @@
           <div class="weixin-public flex-h flex-cc" @click.stop="setWaiterIsOnLine"><span :class="{'public-on': !isWaiterOnLine, 'public-off': isWaiterOnLine}">{{isWaiterOnLine?'公众号消息提醒已关闭':'公众号消息提醒已开启'}}</span></div>
         </div>
         <form action="javascrpt:;">
-          <textarea contenteditable="true" id="editor" @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
+          <textarea contenteditable="true" ref="pcTextArea" id="editor" @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
         </form>
         <div class="enter-hint">按下Enter发送</div>
       </div>
@@ -413,6 +413,9 @@ export default {
         return i === index
       })
       this.inputData = `${this.inputData} ${indexAlias}`
+      this.$nextTick(() => {
+        this.$refs.pcTextArea.focus()
+      })
       this.showEmoji = false
     },
     /**
