@@ -27,7 +27,8 @@ export default {
       name: '',
       whichProgramme: 0,
       openId: '',
-      width: 0
+      width: 0,
+      remarkId: ''
     }
   },
   created() {
