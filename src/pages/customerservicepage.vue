@@ -614,6 +614,9 @@ body {
 .el-select-dropdown {
   z-index: 999998 !important;
 }
+.el-message-box__wrapper {
+  z-index: 999997 !important;
+}
 
 .customer-service {
   .showFullImgBox {

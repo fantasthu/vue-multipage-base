@@ -76,7 +76,10 @@
           <div class="name">所有知识库</div>
           <div class="number">({{totalCategory}})</div>
         </div>
-        <div class="item flex-h flex-cc" v-for="(item,index) in categories" :class="{'active': categoryItemIndex===(index+1)}"  @click="categoryItemClick(item,index+1)">
+        <div class="item flex-h flex-cc" v-for="(item,index) in categories" :class="{'active': categoryItemIndex===(index+1)}"  @click.stop="categoryItemClick(item,index+1)">
+          <div class="del-icon" @click.stop="categoryItemDel(item.name,item.cnum)">
+            <i class="el-icon-delete"></i>
+          </div>
           <div class="name">{{item.name}}</div>
           <div class="number">({{item.cnum}})</div>
         </div>
@@ -199,6 +202,42 @@ export default {
   },
   mounted() {},
   methods: {
+    categoryItemDel(name, num) {
+      console.log('num', num, name)
+      if (+num === 0) {
+        this.$confirm('确认删除？')
+          .then(_ => {
+            axios
+              .post(
+                'http://cs.velo.top/customerService/csapi/delknowledgecategory',
+                {
+                  name
+                }
+              )
+              .then(_ => {
+                if (_.data.status === 0) {
+                  this.$message({
+                    message: '删除成功成功',
+                    type: 'success'
+                  })
+                  this.addKnowledgeShow = false
+                } else {
+                  this.$message({
+                    message: '删除失败失败',
+                    type: 'error'
+                  })
+                }
+
+                // 更新所有分类
+                this.searchCategory()
+                console.log('LeftKnowledgeAddCategory=>addKnowledge', _)
+              })
+          })
+          .catch(_ => {})
+      } else {
+        this.$message('此分类不能删除')
+      }
+    },
     /**
      * 分页页码改变
      */
@@ -513,6 +552,7 @@ export default {
         bottom: 0;
         overflow: scroll;
         .item {
+          position: relative;
           height: 116px;
           font-family: PingFang-SC-Medium;
           font-size: 30px;
@@ -520,10 +560,21 @@ export default {
           letter-spacing: 0;
           text-align: center;
           border-bottom: 1px solid #e5e5e5;
-          cursor: pointer;
           .name {
           }
           .number {
+          }
+          .del-icon {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0;
+            cursor: pointer;
+          }
+        }
+        .item:hover {
+          .del-icon {
+            display: block;
           }
         }
         .active {
