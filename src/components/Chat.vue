@@ -5,11 +5,11 @@
       <div class="name">{{currentChatTitle}}</div>
       <div class="singOut" @click.stop="singOut">退出</div>
     </div>
-    <div class="message" ref="wrapper" @click.stop="messageContainerClick">
+    <div class="message" ref="wrapper">
       <ul class="message-list">
 
         <template v-for="(item,index) in currentUserAllMsg">
-          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" >
+          <li class="item item-left flex-h" @click.stop="messageContainerClick" v-if="item.isWaiter !== 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -30,7 +30,7 @@
             </div>
           </li>
 
-          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" >
+          <li class="item item-right flex-h" @click.stop="messageContainerClick" v-if="item.isWaiter == 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -748,6 +748,7 @@ export default {
       this.showMobileWorkList = false
       this.showMobileKnowledge = false
       this.isShowToolBox = false
+      this.toolIndex = 0
       // 重置message显示框的高度
       // this.resetMessageBox()
       this.$root.eventBus.$emit('toSession', {
@@ -1022,7 +1023,6 @@ export default {
           .more-tools {
             width: 70px;
             height: 70px;
-            padding-left: 8px;
             margin-right: 16px;
             > img {
               width: 100%;
