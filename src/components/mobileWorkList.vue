@@ -7,7 +7,7 @@
     <div ref="workWrapper" class="wrapper">
       <div v-show="workList.length>0">
         <div style="padding-bottom:40px;">
-          <div class="work-list flex-h" v-for="item,index in workList">
+          <div class="work-list flex-h" v-for="item,index in workList" @click.stop="toEditWork(item,index)">
             <div class="left-dot"></div>
             <div class="right-wrap flex-1 flex-v">
               <div class="content">{{item.des}}</div>
@@ -64,16 +64,17 @@ export default {
       pageTitle: '用户工单',
       showEditWorkList: false,
       needTop: false,
-      pageSize: 10
+      pageSize: 10,
+      hideHead: true
     }
   },
   created() {
     /**
      * 隐藏工单详情
      */
-    this.$root.eventBus.$on('hideEditWorkList', (refresh, platForm) => {
+    this.$root.eventBus.$on('hideEditWorkList', refresh => {
       this.showEditWorkList = false
-      if (refresh && platForm === 'mobile') {
+      if (refresh) {
         // 刷新页面
         this.refreshData()
       }
@@ -104,6 +105,7 @@ export default {
       // 移动端
       if (this.$root.eventBus.showWidth < 768) {
         this.showEditWorkList = true
+        this.pageTitle = '编辑工单'
         this.$root.eventBus.$emit('updateWorkList')
       }
     },
@@ -113,6 +115,7 @@ export default {
     toEditWork(item, index) {
       if (this.$root.eventBus.showWidth < 768) {
         this.showEditWorkList = true
+        this.pageTitle = '编辑工单'
         this.$root.eventBus.$emit('updateWorkList', item, index)
       }
     },
@@ -120,7 +123,13 @@ export default {
      * 移动端返回
      */
     chatBack() {
-      this.$root.eventBus.$emit('hideMobileMenu', { from: 'workList' })
+      if (this.showEditWorkList) {
+        this.showEditWorkList = false
+        this.pageTitle = '用户工单'
+      } else {
+        this.showEditWorkList = false
+        this.$root.eventBus.$emit('hideMobileMenu', { from: 'workList' })
+      }
     },
     /**
      * 获取工单列表

@@ -37,7 +37,7 @@ import Bscroll from 'better-scroll'
 import _ from 'lodash'
 
 export default {
-  name: 'rightUserWorkList',
+  name: 'mobileKnowledge',
   components: { Search, ServiceHeader },
   props: {},
   data() {

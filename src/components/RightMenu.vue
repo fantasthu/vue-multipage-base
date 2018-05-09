@@ -1,7 +1,7 @@
 <template>
   <div class="right-menu flex-v">
     <right-menu-tabs></right-menu-tabs>
-    <right-user-info v-show="tab == 0" :tab="tab" :name="name" :whichProgramme="whichProgramme" :openId="openId" :remarkId="remarkId"></right-user-info>
+    <right-user-info v-show="tab == 0" :tab="tab" :name="name" :shortname="shortname" :whichProgramme="whichProgramme" :openId="openId" :remarkId="remarkId" :isPush="isPush"></right-user-info>
     <rightUserWorkList v-show="tab == 1" :tab="tab" :openId="openId" :name="name" ></rightUserWorkList>
     <rightKnowledge v-show="tab == 2"></rightKnowledge>
   </div>
@@ -25,10 +25,12 @@ export default {
     return {
       tab: 0,
       name: '',
+      shortname: '',
       whichProgramme: 0,
       openId: '',
       width: 0,
-      remarkId: ''
+      remarkId: '',
+      isPush: 0
     }
   },
   created() {
@@ -51,16 +53,17 @@ export default {
      */
     this.$root.eventBus.$on(
       'getCurrentUsrInfo',
-      (name, whichProgramme, openId, remarkId) => {
-        // this.name = name.substr(0, 3) + '...'
+      (name, whichProgramme, openId, remarkId, isPush) => {
+        this.name = name
         if (name.length > 6) {
-          this.name = name.substr(0, 6) + '...'
+          this.shortname = name.substr(0, 6) + '...'
         } else {
-          this.name = name
+          this.shortname = name
         }
         this.whichProgramme = whichProgramme
         this.openId = openId
         this.remarkId = remarkId
+        this.isPush = isPush
         this.$root.eventBus.$emit('getList', this.tab, openId)
       }
     )

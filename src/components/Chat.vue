@@ -1,12 +1,12 @@
 <template>
   <div class="chat flex-1">
-    <service-header  @chatBack="chatBack" @showRightMenu="showRightMenu" :back="true" class="service-header" :title='currentChatTitle'></service-header>
+    <service-header  @chatBack="chatBack" @showRightMenu="showRightMenu" :back="true" class="service-header" :title='currentChatTitle' :more="more"></service-header>
     <div class="pc-header flex-h">
       <div class="name">{{currentChatTitle}}</div>
       <div class="singOut" @click.stop="singOut">退出</div>
     </div>
     <div class="message" ref="wrapper" @click.stop="messageContainerClick">
-      <ul class="message-list">
+      <ul class="message-list" @click.stop="tomessage">
 
         <template v-for="(item,index) in currentUserAllMsg">
           <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" >
@@ -16,7 +16,7 @@
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth<768">
-                  <img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)">
+                  <img :src="item.msgPicUrl" alt="" @touchstart="fullImgTouchStart" @touchend="fullImgTouchStartEnd">
                 </div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
                    <lightbox
@@ -147,7 +147,7 @@
     </div>
     <div class="mobileMenu">
       <div class="mobileMenuArea" v-show="showMobileUserinfo&&screenWidth<768">
-        <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme" :remarkId="remarkId"></MobileUserinfo>
+        <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme" :remarkId="remarkId" :isPush="isPush"></MobileUserinfo>
       </div>
       <div class="mobileMenuArea" v-show="showMobileWorkList&&screenWidth<768">
         <MobileWorkList :name="currentUserName" :openId="currentUserOpenId"></MobileWorkList>
@@ -201,6 +201,7 @@ export default {
       currentChatTitle: '',
       currentUserWhichProgramme: false,
       remarkId: '',
+      isPush: 0,
       scroll: null,
       rows: 1,
       lineHeight: '',
@@ -221,7 +222,8 @@ export default {
       showMobileUserinfo: false,
       showMobileWorkList: false,
       showMobileKnowledge: false,
-      screenWidth: ''
+      screenWidth: '',
+      more: true
     }
   },
   async created() {
@@ -242,6 +244,7 @@ export default {
       this.currentUserName = obj.name
       this.currentUserWhichProgramme = obj.whichProgramme === 'vip'
       this.remarkId = obj.remarkId
+      this.isPush = obj.isPush
     })
     this.$root.eventBus.$on('pcChatHandler', () => {
       this.reloadMessageScroll()
@@ -289,9 +292,11 @@ export default {
       if (res.from === 'workList') {
         this.showMobileWorkList = false
       }
-      // 隐藏移动端用户工单
+      // 隐藏移动端知识库
       if (res.from === 'knowledge') {
         this.showMobileKnowledge = false
+        this.currentChatTitle = this.currentUserName + '的聊天'
+        this.more = true
       }
     })
     // 发送知识库答案
@@ -829,7 +834,20 @@ export default {
     },
     toKnowledge() {
       this.showMobileKnowledge = true
+      this.currentChatTitle = '知识库'
+      this.more = false
       this.$root.eventBus.$emit('getMobileKnowledgeList')
+    },
+    fullImgTouchStart(e) {
+      this.timeStamp = e.timeStamp
+    },
+    fullImgTouchStartEnd(e) {
+      if (e.timeStamp - this.timeStamp < 500) {
+        this.showMsgPic(e.target.src)
+      }
+    },
+    tomessage() {
+      // alert(1)
     }
   },
   watch: {
@@ -1019,7 +1037,7 @@ export default {
           .more-tools {
             width: 70px;
             height: 70px;
-            padding-left: 8px;
+            margin-left: 8px;
             margin-right: 16px;
             > img {
               width: 100%;

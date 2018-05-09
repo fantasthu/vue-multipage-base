@@ -1,13 +1,17 @@
 <template>
   <div class="userinfo">
-    <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='currentTitle' :more="false"></service-header>
+    <service-header @chatBack="chatBack" :back="true" class="service-header" :title='currentTitle' :more="false"></service-header>
     <div class="userinfo-content">
       <div class="flex-v right-user-info">
-        <div class="name flex-h flex-bc"><div>昵称：{{name}} <span v-if="remarkId">({{remarkId}})</span></div><div class="copyname" :data-clipboard-text="openId">复制ID</div></div>
-        <div class="identity">用户身份： {{whichProgramme?'VIP':'小白'}}</div>
+        <input id="foo" :value="remarkId" style="opacity:0">
+        <div class="name flex-h flex-bc">
+          <div>昵称：{{name}} <span v-if="remarkId">({{remarkId}})</span></div>
+          <button class="copyname" data-clipboard-target="#foo">复制ID</button>
+        </div>
+        <div class="identity">用户身份： {{isPush?'VIP':'普通用户'}}</div>
       </div>
       <right-order :over="over" :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
-      <editWorkList v-show="showEditWorkList" :name="name" from="order" :needTop='needTop'></editWorkList>
+      <editWorkList v-show="showEditWorkList" :name="name" from="order" :needTop='needTop' :hideHead="hideHead" :openId="openId"></editWorkList>
     </div>
   </div>
 </template>
@@ -40,6 +44,10 @@ export default {
     remarkId: {
       type: String,
       default: ''
+    },
+    isPush: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -53,7 +61,9 @@ export default {
       showMoreBtn: true,
       showEditWorkList: false,
       needTop: true,
-      orderNo: ''
+      orderNo: '',
+      hideHead: true,
+      pageSize: 5
     }
   },
   created() {
@@ -78,12 +88,14 @@ export default {
     this.$root.eventBus.$on('createFromOrder', orderNo => {
       this.showEditWorkList = true
       this.orderNo = orderNo
+      this.currentTitle = '编辑工单'
       this.$root.eventBus.$emit('openEditWork', orderNo)
     })
 
     // 隐藏工单页面
     this.$root.eventBus.$on('hideworkFromOrder', () => {
       this.showEditWorkList = false
+      this.currentTitle = '用户信息'
     })
 
     // 复制id
@@ -101,7 +113,12 @@ export default {
      * 返回
      */
     chatBack() {
-      this.$root.eventBus.$emit('hideMobileMenu', { from: 'mobileUserinfo' })
+      if (this.showEditWorkList) {
+        // 隐藏工单
+        this.$root.eventBus.$emit('hideworkFromOrder')
+      } else {
+        this.$root.eventBus.$emit('hideMobileMenu', { from: 'mobileUserinfo' })
+      }
     },
     /**
      * 获取订单列表
@@ -118,7 +135,7 @@ export default {
       var data = {
         openid,
         startPage: this.page,
-        pageSize: 5
+        pageSize: this.pageSize
       }
       // axios
       instance
@@ -127,20 +144,24 @@ export default {
         })
         .then(res => {
           if (res.data.code === 0) {
-            if (res.data.obj.orderList.length === 0) {
+            const obj = res.data.obj
+            if (obj.orderList.length === 0) {
               this.over = true
               this.showMoreBtn = false
               this.$root.eventBus.$emit('refresh')
               return false
             }
-            res.data.obj.orderList.forEach(item => {
+            if (obj.orderList.length < this.pageSize) {
+              this.over = true
+            }
+            obj.orderList.forEach(item => {
               item.createTime = formatTime(item.createTime / 1000)
             })
             if (flag) {
-              if (res.data.obj.orderList.length === 1) {
+              if (obj.orderList.length === 1) {
                 this.showMoreBtn = false
               }
-              res.data.obj.orderList.map(el => {
+              obj.orderList.map(el => {
                 // el.statusDes=
                 var statusDes = ''
                 switch (el.status) {
@@ -175,11 +196,11 @@ export default {
                 }
                 el.statusDes = statusDes
               })
-              this.temOrderList = res.data.obj.orderList
-              this.orderList.push(res.data.obj.orderList[0])
+              this.temOrderList = obj.orderList
+              this.orderList.push(obj.orderList[0])
             } else {
               // 请求多个order数据
-              this.orderList = this.orderList.concat(res.data.obj.orderList)
+              this.orderList = this.orderList.concat(obj.orderList)
             }
             this.page++
             this.$root.eventBus.$emit('refresh')
@@ -198,7 +219,7 @@ export default {
      * 查看更多
      */
     checkMoreOrder() {
-      if (this.preventRepeat && !this.over) {
+      if (this.preventRepeat) {
         this.preventRepeat = false
         this.showMoreBtn = false
 
@@ -278,6 +299,7 @@ body {
             font-size: 22px;
             color: #888;
             letter-spacing: 0;
+            background: transparent;
           }
         }
         .identity {
