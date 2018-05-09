@@ -1094,8 +1094,8 @@ export default {
           width: 100%;
           height: 100%;
           .emoji-item {
-            width: 60px;
-            height: 60px;
+            width: 75px;
+            height: 75px;
             padding: 10px 10px;
           }
         }
