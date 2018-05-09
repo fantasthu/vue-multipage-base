@@ -39,6 +39,7 @@
 <script>
 import Bscroll from 'better-scroll'
 import { formatterDateTime } from '../service/tools'
+import config from '../service/config.js'
 
 export default {
   name: 'rightorder',
@@ -141,7 +142,7 @@ export default {
      */
     _getJyMailInfo(nu) {
       $.post(
-        'http://192.168.1.44:9000/order-service/order/getJyMailInfo',
+        `${config.serverUrl}/order-service/order/getJyMailInfo`,
         {
           mailNo: nu
         },

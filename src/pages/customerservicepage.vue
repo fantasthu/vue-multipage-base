@@ -8,7 +8,7 @@
     <!-- 此处是聊天界面 -->
     <div class="s-container flex-h">
       <left-menu v-show="showLeftMenu"></left-menu>
-      <session v-if="showSession" :userList.sync="userList"></session>
+      <session v-show="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" :showLeftMenu="showLeftMenu" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
       <right-menu v-show="showRightMenu"></right-menu>
       <mt-popup

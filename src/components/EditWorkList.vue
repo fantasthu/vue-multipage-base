@@ -3,14 +3,15 @@
   <div id="right-work-list-wrap" :class="{'top0':needTop}">
     <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='pageTitle' :more="false"></service-header>
     <div class="edit-wrapper ">
-      <div class="list">所属客服：<span>客服人员</span></div>
+      <div class="list">所属客服：<span>{{customer}}</span></div>
       <div class="work-status list flex-h">处理状态：
         <div class="flex-h">
           <div v-for="item,index in statusList" :class="['tag flex-h flex-cc' ,{'statusActive':status==item} ] " @click.stop="choiceStatus(item)">{{item}}</div>
         </div>
       </div>
       <div class="list">用户昵称/微信ID：<span>{{identity||name}}</span></div>
-      <div class="list">订单号：<span>{{ordernum||orderNo||'无'}}</span></div>
+      <!-- <div class="list" v-if="ordernum">订单号：<span>{{ordernum||'无'}}</span></div> -->
+      <div class="list flex-h"><div>订单号：</div><input class="flex-1" type="text" v-model="ordernum" placeholder="订单号"></div>
       <div class="list flex-h flex-bc choice-type" @click.stop="toChoice">
         <div>类型：<span>{{choice}}</span></div>
         <img v-show='showType' src="../assets/img/up.png" alt="">
@@ -64,10 +65,6 @@ export default {
       type: Boolean,
       default: false
     },
-    orderNo: {
-      type: String,
-      default: ''
-    },
     openId: {
       type: String,
       default: ''
@@ -107,6 +104,10 @@ export default {
       this.initworkData(info)
       console.log('this.isUpdate', this.isUpdate)
     })
+    this.$root.eventBus.$on('openEditWork', orderNo => {
+      this.ordernum = orderNo
+      this.customer = this.getWaiterName()
+    })
   },
   mounted() {},
   methods: {
@@ -123,7 +124,7 @@ export default {
         this.ordernum = info.ordernum
         this.identity = info.identity
         this.status = info.status
-        this.customer = info.customer
+        // this.customer = info.customer
         this.id = info.id
       } else {
         // 创建工单
@@ -136,9 +137,15 @@ export default {
         this.ordernum = ''
         this.identity = ''
         this.status = '未解决'
-        this.customer = '客服'
+        // this.customer = '客服'
       }
       this.choice = this.type || '请选择'
+      // 添加默认的所属客服
+      this.customer = this.getWaiterName()
+    },
+    getWaiterName() {
+      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      return waiterInfo.name || ''
     },
 
     /**
@@ -271,10 +278,10 @@ export default {
       }
       let url = ''
       let data = {
-        customer: '客服人员',
+        customer: this.customer,
         status: this.status,
         identity: this.identity || this.name,
-        ordernum: this.ordernum || this.orderNo,
+        ordernum: this.ordernum,
         ordertype: this.type, // '客诉/建议'
         title: '',
         describe: this.workDes,
@@ -338,6 +345,11 @@ export default {
         letter-spacing: 3px;
         span {
           color: #888888;
+        }
+        input {
+          color: #888888;
+          font-size: 28px;
+          letter-spacing: 3px;
         }
       }
       .work-status {
