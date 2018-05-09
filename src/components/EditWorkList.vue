@@ -3,7 +3,7 @@
   <div id="right-work-list-wrap" :class="{'top0':needTop}">
     <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='pageTitle' :more="false"></service-header>
     <div class="edit-wrapper ">
-      <div class="list">所属客服：<span>客服人员</span></div>
+      <div class="list">所属客服：<span>{{customer}}</span></div>
       <div class="work-status list flex-h">处理状态：
         <div class="flex-h">
           <div v-for="item,index in statusList" :class="['tag flex-h flex-cc' ,{'statusActive':status==item} ] " @click.stop="choiceStatus(item)">{{item}}</div>
@@ -106,6 +106,7 @@ export default {
     })
     this.$root.eventBus.$on('openEditWork', orderNo => {
       this.ordernum = orderNo
+      this.customer = this.getWaiterName()
     })
   },
   mounted() {},
@@ -123,7 +124,7 @@ export default {
         this.ordernum = info.ordernum
         this.identity = info.identity
         this.status = info.status
-        this.customer = info.customer
+        // this.customer = info.customer
         this.id = info.id
       } else {
         // 创建工单
@@ -136,9 +137,15 @@ export default {
         this.ordernum = ''
         this.identity = ''
         this.status = '未解决'
-        this.customer = '客服'
+        // this.customer = '客服'
       }
       this.choice = this.type || '请选择'
+      // 添加默认的所属客服
+      this.customer = this.getWaiterName()
+    },
+    getWaiterName() {
+      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      return waiterInfo.name || ''
     },
 
     /**
@@ -271,7 +278,7 @@ export default {
       }
       let url = ''
       let data = {
-        customer: '客服人员',
+        customer: this.customer,
         status: this.status,
         identity: this.identity || this.name,
         ordernum: this.ordernum,

@@ -19,6 +19,7 @@ import RightOrder from '../components/RightOrder.vue'
 import { formatTime } from '../service/tools'
 import ClipboardJS from 'clipboard'
 import editWorkList from './EditWorkList'
+import config from '../service/config.js'
 
 export default {
   name: 'mobileUserinfo',
@@ -117,12 +118,9 @@ export default {
       }
       // axios
       instance
-        .get(
-          'http://192.168.1.44:9000/repair-service/repair/getOrderByOrderNo',
-          {
-            params: data
-          }
-        )
+        .get(`${config.serverUrl}/repair-service/repair/getOrderByOrderNo`, {
+          params: data
+        })
         .then(res => {
           if (res.data.code === 0) {
             if (res.data.obj.orderList.length === 0) {

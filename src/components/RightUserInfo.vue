@@ -78,6 +78,7 @@ import axios from 'axios'
 import { formatTime } from '../service/tools'
 import ClipboardJS from 'clipboard'
 import { Loading } from 'element-ui'
+import config from '../service/config.js'
 
 export default {
   name: 'rightUserInfo',
@@ -133,6 +134,7 @@ export default {
         this.orderList = []
         this.showMoreBtn = true
         this.page = 1
+        this.over = false
         // 获取订单列表
         this.getOrderList(openId || this.openId, 'first')
       }
@@ -172,12 +174,9 @@ export default {
       }
       // axios
       instance
-        .get(
-          'http://192.168.1.44:9000/repair-service/repair/getOrderByOrderNo',
-          {
-            params: data
-          }
-        )
+        .get(`${config.serverUrl}/repair-service/repair/getOrderByOrderNo`, {
+          params: data
+        })
         .then(res => {
           if (res.data.code === 0) {
             if (res.data.obj.orderList.length === 0) {
