@@ -152,7 +152,9 @@ export default {
     userList(val, oval) {
       // 保存当前组件列表值
       this.sessions = JSON.parse(JSON.stringify(val || []))
-      this.searchSessions = JSON.parse(JSON.stringify(val || []))
+      if (!this.searchName) {
+        this.searchSessions = JSON.parse(JSON.stringify(val || []))
+      }
     },
     searchName(val, oVal) {
       this.doSearchSession(val)

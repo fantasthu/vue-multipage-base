@@ -88,8 +88,12 @@
             </el-form-item>
           </div>
         </div>
+
         <el-form-item label="类型" :label-width="formLabelWidth">
-          <el-input v-model="orderForm.ordertype" auto-complete="off"></el-input>
+          <el-select v-model="orderForm.ordertype" placeholder="请选择">
+                <el-option label="客诉" value="客诉"></el-option>
+                <el-option label="建议" value="建议"></el-option>
+              </el-select>
         </el-form-item>
 
         <el-form-item label="标题" :label-width="formLabelWidth">

@@ -579,13 +579,24 @@ export default {
     reloadMessageScroll() {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.scroll = new Bscroll(this.$refs.wrapper, {
-          mouseWheel: true,
-          click: true,
-          tap: true,
-          preventDefault: true,
-          preventDefaultException: { className: /(^|\s)text(\s|$)/ }
-        })
+        this.scroll = null
+        if (this.getScreenWidth() > 768) {
+          this.scroll = new Bscroll(this.$refs.wrapper, {
+            mouseWheel: true,
+            click: true,
+            tap: true,
+            preventDefault: false
+          })
+        } else {
+          this.scroll = new Bscroll(this.$refs.wrapper, {
+            mouseWheel: true,
+            click: true,
+            tap: true,
+            preventDefault: true,
+            preventDefaultException: { className: /(^|\s)text(\s|$)/ }
+          })
+        }
+
         clearTimeout(this.timer)
         console.log('scroll', scroll)
       }, 100)
@@ -791,8 +802,11 @@ export default {
       }, 500)
       this.isShowToolBox = false
     },
+    getScreenWidth() {
+      return window.document.documentElement.clientWidth
+    },
     currentPlatform() {
-      let width = window.document.documentElement.clientWidth
+      let width = this.getScreenWidth()
       if (width > 768) {
         this.platForm = 'pc'
         return 'pc'
