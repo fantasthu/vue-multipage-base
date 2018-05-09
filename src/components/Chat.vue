@@ -1240,7 +1240,6 @@ export default {
               }
               .image {
                 width: 256px;
-                height: 256px;
                 overflow: hidden;
                 > img {
                   width: 100%;
