@@ -5,11 +5,10 @@
       <div class="name">{{currentChatTitle}}</div>
       <div class="singOut" @click.stop="singOut">退出</div>
     </div>
-    <div class="message" ref="wrapper" @click.stop="messageContainerClick">
-      <ul class="message-list" @click.stop="tomessage">
-
+    <div class="message" ref="wrapper">
+      <ul class="message-list">
         <template v-for="(item,index) in currentUserAllMsg">
-          <li class="item item-left flex-h"  v-if="item.isWaiter !== 'yes'" >
+          <li class="item item-left flex-h" @click.stop="messageContainerClick" v-if="item.isWaiter !== 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -30,7 +29,7 @@
             </div>
           </li>
 
-          <li class="item item-right flex-h" v-if="item.isWaiter == 'yes'" >
+          <li class="item item-right flex-h" @click.stop="messageContainerClick" v-if="item.isWaiter == 'yes'" >
             <div class="avatar"><img :src="item.headImg" alt=""></div>
             <div class="info">
               <div class="time">{{item.formatTime}}</div>
@@ -83,7 +82,7 @@
           <div class="weixin-public flex-h flex-cc" @click.stop="setWaiterIsOnLine"><span :class="{'public-on': !isWaiterOnLine, 'public-off': isWaiterOnLine}">{{isWaiterOnLine?'公众号消息提醒已关闭':'公众号消息提醒已开启'}}</span></div>
         </div>
         <form action="javascrpt:;">
-          <textarea contenteditable="true" id="editor" @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
+          <textarea contenteditable="true" ref="pcTextArea" id="editor" @keypress="enterHandler" v-model="inputData" type="text" class="text-input" ></textarea>
         </form>
         <div class="enter-hint">按下Enter发送</div>
       </div>
@@ -172,6 +171,7 @@ import MobileKnowledge from './MobileKnowledge'
 import api from '../service/api'
 import $ from 'jquery'
 import Lightbox from 'vue-simple-lightbox'
+import textCensorInstance from '../assets/js/textCensor'
 
 export default {
   name: 'chat',
@@ -259,6 +259,7 @@ export default {
       this.currentUserAllMsg = obj.userAllMsg.map(item => {
         if (item.msg) {
           item.msg = this.filterMsg(item.msg)
+          item.msg = this.textCensor(item.msg)
         }
         return item
       })
@@ -276,6 +277,7 @@ export default {
         : 'http://cs.velo.top/customerService/commonAccount/noHeadImg.jpeg'
       // 过滤信息,也许带有表情
       arr[0].msg = this.filterMsg(arr[0].msg)
+      arr[0].msg = this.textCensor(arr[0].msg)
       this.currentUserAllMsg.push(arr[0])
       setTimeout(() => {
         this.scroll.scrollTo(0, this.scroll.maxScrollY)
@@ -330,6 +332,12 @@ export default {
     })
   },
   methods: {
+    /**
+     * 过滤敏感词汇
+     */
+    textCensor(str) {
+      return textCensorInstance(str) || str
+    },
     getLightBoxImgs(img) {
       // console.log('img', img)
       if (/\.(jpg|jpeg|png|bmp)$/.test(img)) {
@@ -418,6 +426,9 @@ export default {
         return i === index
       })
       this.inputData = `${this.inputData} ${indexAlias}`
+      this.$nextTick(() => {
+        this.$refs.pcTextArea.focus()
+      })
       this.showEmoji = false
     },
     /**
@@ -581,13 +592,24 @@ export default {
     reloadMessageScroll() {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.scroll = new Bscroll(this.$refs.wrapper, {
-          mouseWheel: true,
-          click: true,
-          tap: true,
-          preventDefault: true,
-          preventDefaultException: { className: /(^|\s)text(\s|$)/ }
-        })
+        this.scroll = null
+        if (this.getScreenWidth() > 768) {
+          this.scroll = new Bscroll(this.$refs.wrapper, {
+            mouseWheel: true,
+            click: true,
+            tap: true,
+            preventDefault: false
+          })
+        } else {
+          this.scroll = new Bscroll(this.$refs.wrapper, {
+            mouseWheel: true,
+            click: true,
+            tap: true,
+            preventDefault: true,
+            preventDefaultException: { className: /(^|\s)text(\s|$)/ }
+          })
+        }
+
         clearTimeout(this.timer)
         console.log('scroll', scroll)
       }, 100)
@@ -634,6 +656,11 @@ export default {
         isWaiter: 'yes',
         waiterOpenId: this.waiterInfo.openId,
         whichProgramme: this.currentUserAllMsg[0].whichProgramme
+      }
+      const tc = this.textCensor(this.inputData || '')
+      if (tc && tc.trim().indexOf('***') >= 0) {
+        this.$message('发送的消息不合法!')
+        return
       }
       this.$emit('sendWaiterMsgToUser', obj)
     },
@@ -728,6 +755,11 @@ export default {
     },
     mobileSendMsg() {
       if (this.inputData) {
+        const tc = this.textCensor(this.inputData || '')
+        if (tc && tc.trim().indexOf('***') >= 0) {
+          this.$toast('发送的消息不合法!')
+          return
+        }
         this.sendWaiterMsg(this.inputData)
         setTimeout(() => {
           this.inputData = ''
@@ -750,6 +782,7 @@ export default {
       this.showMobileWorkList = false
       this.showMobileKnowledge = false
       this.isShowToolBox = false
+      this.toolIndex = 0
       // 重置message显示框的高度
       // this.resetMessageBox()
       this.$root.eventBus.$emit('toSession', {
@@ -792,8 +825,11 @@ export default {
       }, 500)
       this.isShowToolBox = false
     },
+    getScreenWidth() {
+      return window.document.documentElement.clientWidth
+    },
     currentPlatform() {
-      let width = window.document.documentElement.clientWidth
+      let width = this.getScreenWidth()
       if (width > 768) {
         this.platForm = 'pc'
         return 'pc'
@@ -845,9 +881,6 @@ export default {
       if (e.timeStamp - this.timeStamp < 500) {
         this.showMsgPic(e.target.src)
       }
-    },
-    tomessage() {
-      // alert(1)
     }
   },
   watch: {

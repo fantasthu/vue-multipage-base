@@ -8,7 +8,7 @@
     <!-- 此处是聊天界面 -->
     <div class="s-container flex-h">
       <left-menu v-show="showLeftMenu"></left-menu>
-      <session v-show="showSession" :userList.sync="userList"></session>
+      <session v-if="showSession" :userList.sync="userList"></session>
       <chat v-show="showChat" :showLeftMenu="showLeftMenu" @sendWaiterMsgToUser="sendWaiterMsgToUser"></chat>
       <right-menu v-show="showRightMenu"></right-menu>
       <mt-popup
@@ -616,6 +616,9 @@ body {
 }
 .el-select-dropdown {
   z-index: 999998 !important;
+}
+.el-message-box__wrapper {
+  z-index: 999997 !important;
 }
 
 .customer-service {

@@ -6,7 +6,7 @@
         <input id="foo" :value="remarkId" style="opacity:0">
         <div class="name flex-h flex-bc">
           <div>昵称：{{name}} <span v-if="remarkId">({{remarkId}})</span></div>
-          <button class="copyname" data-clipboard-target="#foo">复制ID</button>
+          <button v-if="remarkId" class="copyname" data-clipboard-target="#foo">复制ID</button>
         </div>
         <div class="identity">用户身份： {{isPush?'VIP':'普通用户'}}</div>
       </div>
