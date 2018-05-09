@@ -1,7 +1,7 @@
 <template>
   <div class="right-menu flex-v">
     <right-menu-tabs></right-menu-tabs>
-    <right-user-info v-show="tab == 0" :tab="tab" :name="name" :whichProgramme="whichProgramme" :openId="openId"></right-user-info>
+    <right-user-info v-show="tab == 0" :tab="tab" :name="name" :whichProgramme="whichProgramme" :openId="openId" :remarkId="remarkId"></right-user-info>
     <rightUserWorkList v-show="tab == 1" :tab="tab" :openId="openId" :name="name" ></rightUserWorkList>
     <rightKnowledge v-show="tab == 2"></rightKnowledge>
   </div>
@@ -50,7 +50,7 @@ export default {
      */
     this.$root.eventBus.$on(
       'getCurrentUsrInfo',
-      (name, whichProgramme, openId) => {
+      (name, whichProgramme, openId, remarkId) => {
         // this.name = name.substr(0, 3) + '...'
         if (name.length > 6) {
           this.name = name.substr(0, 6) + '...'
@@ -59,6 +59,7 @@ export default {
         }
         this.whichProgramme = whichProgramme
         this.openId = openId
+        this.remarkId = remarkId
         this.$root.eventBus.$emit('getList', this.tab, openId)
       }
     )

@@ -249,11 +249,14 @@ export default {
     }
   },
   created() {
+    // 刷新数据
+    // this.$root.eventBus.$on('updatePcWorkOrder', () => {
     // 查询工单的分类,现阶段暂时,客诉和建议
     this.searchOrderCategory()
 
     // 查询所有工单
     this.searchWorkOrder()
+    // })
 
     // 监听eventbus事件
     this.initEvent()
@@ -369,7 +372,7 @@ export default {
       this.orderForm = {
         customer: '',
         ordertype: '',
-        status: '',
+        status: '未解决',
         identity: '',
         ordernum: '',
         describe: '',
@@ -390,7 +393,6 @@ export default {
       this.orderPics = JSON.parse(item.imgurls || '[]')
       item.describe = item.des
       this.orderForm = item
-      // this.orderForm.describe = item.des
     },
     updateOrderSubmit() {
       this.orderForm.imgurls = JSON.stringify(this.orderPics || '')

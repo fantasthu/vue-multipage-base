@@ -296,7 +296,8 @@ export default {
             'getCurrentUsrInfo',
             params.name,
             params.whichProgramme === 'vip' ? 1 : 0,
-            params.openId
+            params.openId,
+            params.remarkId
           )
         }
       })

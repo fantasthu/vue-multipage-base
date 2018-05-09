@@ -3,7 +3,7 @@
     <!--  新增知识库 -->
     <el-dialog title="新增知识库" :visible.sync="addKnowledgeShow">
       <el-form :model="knowledgeForm">
-         <el-form-item label="关键字">
+         <el-form-item label="分类">
           <el-select v-model="knowledgeForm.category" placeholder="请选择关键字">
             <el-option v-for="(item,index) in categories" :key="item.id" :label="item.name" :value="item.name"></el-option>
           </el-select>
@@ -189,11 +189,13 @@ export default {
     }
   },
   created() {
+    // this.$root.eventBus.$on('updatePcKnowledge', () => {
     // 查询知识
     this.searchCategory()
 
     // 查询知识
     this.searchKnowledge()
+    // })
   },
   mounted() {},
   methods: {
@@ -424,6 +426,11 @@ export default {
      */
     initCategory(categories) {
       this.knowledgeForm.category = categories[0].name
+      this.knowledgeForm.creator = this.getWaiterName()
+    },
+    getWaiterName() {
+      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      return waiterInfo.name || ''
     },
     /**
      * 添加分类确认按钮

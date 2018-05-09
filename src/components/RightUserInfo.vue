@@ -1,7 +1,7 @@
 <template>
   <div id="right-userinfo-wrap">
      <div class="flex-v right-user-info">
-      <div class="name ">昵称：{{name}} <span>({{openId.slice(0, 5)}})</span><div class="copyname" :data-clipboard-text="openId">复制ID</div></div>
+      <div class="name ">昵称：{{name}} <span v-if="remarkId">({{remarkId}})</span><div class="copyname" :data-clipboard-text="openId">复制ID</div></div>
       <div class="identity">用户身份： {{whichProgramme?'VIP':'普通用户'}}</div>
     </div>
     <right-order :over="over" @createFromPcOrder="createFromPcOrder"  :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
@@ -99,6 +99,10 @@ export default {
     tab: {
       type: Number,
       default: 0
+    },
+    remarkId: {
+      type: String,
+      default: ''
     }
   },
   data() {

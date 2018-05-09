@@ -20,6 +20,7 @@
       <div v-show="showType" :class="['type',{'typeSelect':type==item}]" v-for="item,index in typeList" @click.stop="choiceType(item)">{{item}}</div>
       
       <!-- <div class="list input-title"><input type="text" v-model="workTitle" placeholder="标题"></div> -->
+      <div class="list flex-h"><div>标题：</div><input class="flex-1" type="text" v-model="workTitle" placeholder="标题"></div>
       
       <div class="des">
         <textarea name="" id="" v-model="workDes"  placeholder="请描述"></textarea>
@@ -73,7 +74,7 @@ export default {
   data() {
     return {
       pageTitle: '编辑工单',
-      // workTitle: '',
+      workTitle: '',
       typeList: ['建议', '客诉'],
       statusList: ['未解决', '已解决'],
       upImgs: [],
@@ -119,7 +120,7 @@ export default {
 
         this.upImgs = JSON.parse(info.imgurls || '[]')
         this.workDes = info.des
-        // this.workTitle = info.title
+        this.workTitle = info.title
         this.type = info.ordertype
         this.ordernum = info.ordernum
         this.identity = info.identity
@@ -132,7 +133,7 @@ export default {
 
         this.upImgs = []
         this.workDes = ''
-        // this.workTitle = ''
+        this.workTitle = ''
         this.type = ''
         this.ordernum = ''
         this.identity = ''
@@ -268,10 +269,10 @@ export default {
         this.$toast('请选择类型')
         return
       }
-      // if (!this.workTitle.trim()) {
-      //   this.$toast('请输入标题')
-      //   return
-      // }
+      if (!this.workTitle.trim()) {
+        this.$toast('请输入标题')
+        return
+      }
       if (!this.workDes.trim()) {
         this.$toast('请输入描述')
         return
@@ -283,7 +284,7 @@ export default {
         identity: this.identity || this.name,
         ordernum: this.ordernum,
         ordertype: this.type, // '客诉/建议'
-        title: '',
+        title: this.workTitle,
         describe: this.workDes,
         imgurls: this.upImgs.length > 0 ? JSON.stringify(this.upImgs) : '[]',
         openid: this.openId

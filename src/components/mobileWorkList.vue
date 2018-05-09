@@ -169,7 +169,7 @@ export default {
         .then(res => {
           if (res.data.status === 0) {
             this.workList.splice(index, 1)
-            this.$toast(res.data.message)
+            this.$toast('删除成功')
           } else {
             this.$toast(res.data.message)
           }

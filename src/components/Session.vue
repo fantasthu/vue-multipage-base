@@ -3,7 +3,7 @@
     <search v-model="searchName" placeholder="请输入昵称"></search>
     <div class="session-wrapper" ref="wrapper">
       <div class="list">
-        <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId, item.name, item.whichProgramme)">
+        <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId, item.name, item.whichProgramme,item.remarkId)">
         <!-- <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId)"> -->
           <div class="avatar">
             <img :src="item.headImg" alt="">
@@ -19,7 +19,6 @@
             </div>
             <div class="hint">{{item.msg}}</div>
           </div>
-          <div class="line"></div>
         </div>
       </div>
       <div class="search-empty flex-h" v-show="!searchSessions||searchSessions.length===0">
@@ -82,7 +81,8 @@ export default {
           0,
           userList[0].openId,
           userList[0].name,
-          userList[0].whichProgramme
+          userList[0].whichProgramme,
+          userList[0].remarkId
         )
       }
       // 注销事件
@@ -112,14 +112,15 @@ export default {
     /**
      * 列表中item点击
      */
-    sessionItemClick(index, openId, name, whichProgramme) {
+    sessionItemClick(index, openId, name, whichProgramme, remarkId) {
       if (this.$root.eventBus.showWidth < 768) {
         // 手机
         this.$root.eventBus.$emit('toChat', {
           openId: openId,
           from: 'm-session',
           name: name,
-          whichProgramme: whichProgramme
+          whichProgramme: whichProgramme,
+          remarkId: remarkId
         })
         console.log('index, openId', index, openId)
       } else {
@@ -206,7 +207,9 @@ export default {
         overflow: auto;
         .item {
           position: relative;
-          padding: 30px 42px;
+          padding: 30px 0;
+          margin: 0 42px;
+          border-bottom: 1px solid #e4e4e4;
           .avatar {
             position: relative;
             width: 100px;
@@ -275,14 +278,6 @@ export default {
               -webkit-line-clamp: 1;
               margin-top: 4px;
             }
-          }
-          .line {
-            position: absolute;
-            left: 42px;
-            right: 42px;
-            bottom: 0;
-            height: 1px;
-            background: #e4e4e4;
           }
         }
       }
@@ -355,6 +350,9 @@ export default {
         .item {
           position: relative;
           padding: 24px;
+          border-bottom: 1px solid #e4e4e4;
+          // margin: 0 24px;
+          // border-bottom: 1px solid #e4e4e4;
           .avatar {
             position: relative;
             width: 70px;
@@ -424,15 +422,6 @@ export default {
               -webkit-line-clamp: 1;
               margin-top: 4px;
             }
-          }
-          .line {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 2px;
-            transform: scaleY(0.5);
-            background: #e5e5e5;
           }
         }
         .item.active {

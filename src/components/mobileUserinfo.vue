@@ -3,7 +3,7 @@
     <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='currentTitle' :more="false"></service-header>
     <div class="userinfo-content">
       <div class="flex-v right-user-info">
-        <div class="name flex-h flex-bc"><div>昵称：{{name}} <span>({{openId.slice(0,5)}})</span></div><div class="copyname" :data-clipboard-text="openId">复制ID</div></div>
+        <div class="name flex-h flex-bc"><div>昵称：{{name}} <span v-if="remarkId">({{remarkId}})</span></div><div class="copyname" :data-clipboard-text="openId">复制ID</div></div>
         <div class="identity">用户身份： {{whichProgramme?'VIP':'小白'}}</div>
       </div>
       <right-order :over="over" :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
@@ -36,6 +36,10 @@ export default {
     whichProgramme: {
       type: Boolean,
       defautl: false
+    },
+    remarkId: {
+      type: String,
+      default: ''
     }
   },
   data() {

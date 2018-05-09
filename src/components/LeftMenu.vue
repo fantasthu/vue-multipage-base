@@ -40,6 +40,13 @@ export default {
   mounted() {},
   methods: {
     menuClick(index) {
+      // alert(typeof index)
+      // if (index === 2 && this.chooseIndex !== index) {
+      //   this.$root.eventBus.$emit('updatePcWorkOrder')
+      // }
+      // if (index === 3 && this.chooseIndex !== index) {
+      //   this.$root.eventBus.$emit('updatePcKnowledge')
+      // }
       this.chooseIndex = index
     }
   }

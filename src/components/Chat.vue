@@ -145,9 +145,9 @@
         </div>
       </div>
     </div>
-    <div  class="mobileMenu">
+    <div class="mobileMenu">
       <div class="mobileMenuArea" v-show="showMobileUserinfo&&screenWidth<768">
-        <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme"></MobileUserinfo>
+        <MobileUserinfo :openId="currentUserOpenId" :name="currentUserName" :whichProgramme="currentUserWhichProgramme" :remarkId="remarkId"></MobileUserinfo>
       </div>
       <div class="mobileMenuArea" v-show="showMobileWorkList&&screenWidth<768">
         <MobileWorkList :name="currentUserName" :openId="currentUserOpenId"></MobileWorkList>
@@ -194,30 +194,13 @@ export default {
       timerId: null,
       inputData: '',
       back: require('../assets/img/icon_oneway.png'),
-      currentUserAllMsg: [
-        // {
-        //   formatTime: '2018-04-13 17:19:59',
-        //   hasBeenRead: 0,
-        //   headImg:
-        //     'https://wx.qlogo.cn/mmopen/vi_32/K3vFfda4OibhdoOOPFnJcvl8TSt6YkUNQiaV6w3RQNCKKZk5WcxqrOscm3K1G0NKBbpAWqnZicic5JzmcueKqIvZAQ/0',
-        //   idx: '3',
-        //   isWaiter: 'no',
-        //   msg: 'asdfasdfasasdfasdf',
-        //   msgPicUrl: null,
-        //   msgType: 'text',
-        //   msgTime: '',
-        //   name: '政',
-        //   openId: '',
-        //   sessionId: '',
-        //   waiterOpenId: '',
-        //   whichProgramme: ''
-        // }
-      ],
+      currentUserAllMsg: [],
       currentUserOpenId: '',
       waiterInfo: {},
       currentUserName: '',
       currentChatTitle: '',
       currentUserWhichProgramme: false,
+      remarkId: '',
       scroll: null,
       rows: 1,
       lineHeight: '',
@@ -258,6 +241,7 @@ export default {
       this.currentUserOpenId = obj.openId
       this.currentUserName = obj.name
       this.currentUserWhichProgramme = obj.whichProgramme === 'vip'
+      this.remarkId = obj.remarkId
     })
     this.$root.eventBus.$on('pcChatHandler', () => {
       this.reloadMessageScroll()
