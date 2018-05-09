@@ -314,28 +314,30 @@ export default {
      * 删除工单
      */
     deleteWorkOrder(index, data) {
-      const id = data.id
-      axios
-        .post('http://cs.velo.top/customerService/csapi/delworkorder', {
-          id
-        })
-        .then(_ => {
-          if (_.data.status === 0) {
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-            this.searchWorkOrder()
-            this.searchOrderCategory()
-          } else {
-            this.$message({
-              message: '删除失败',
-              type: 'error'
-            })
-          }
+      this.$confirm('确认删除？').then(_ => {
+        const id = data.id
+        axios
+          .post('http://cs.velo.top/customerService/csapi/delworkorder', {
+            id
+          })
+          .then(_ => {
+            if (_.data.status === 0) {
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
+              this.searchWorkOrder()
+              this.searchOrderCategory()
+            } else {
+              this.$message({
+                message: '删除失败',
+                type: 'error'
+              })
+            }
 
-          console.log('LeftWorkOrder=>searchWorkOrder', _)
-        })
+            console.log('LeftWorkOrder=>searchWorkOrder', _)
+          })
+      })
     },
     /**
      * 查询左侧工单分类列表
