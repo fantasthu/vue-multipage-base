@@ -60,7 +60,7 @@
     <el-dialog title="新增类别" :visible.sync="addCategoryShow">
       <el-form :model="categoryForm">
         <el-form-item label="关键字" :label-width="formLabelWidth">
-          <el-input v-model="categoryForm.name" auto-complete="off"></el-input>
+          <el-input v-model="categoryForm.name" auto-complete="off" maxlength="5"></el-input>
         </el-form-item>
         
       </el-form>

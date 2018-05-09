@@ -3,7 +3,7 @@
     <search v-model="searchName" placeholder="请输入昵称"></search>
     <div class="session-wrapper" ref="wrapper">
       <div class="list">
-        <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId, item.name, item.whichProgramme,item.remarkId)">
+        <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId, item.name, item.whichProgramme, item.remarkId, item.isPush)">
         <!-- <div class="item flex-h" v-for="(item,index) in searchSessions" :key="index" v-if="item.isWaiter !== 'yes'" :class="{'active':itemActiveOpenId==item.openId}" @click="sessionItemClick(index, item.openId)"> -->
           <div class="avatar">
             <img :src="item.headImg" alt="">
@@ -13,7 +13,7 @@
             <div class="title flex-h flex-bc">
               <div class="name flex-h flex-cc">
                 <span class="text">{{item.name}}</span>
-                <span class="whichProgramme" v-if="item.whichProgramme == 'vip'">VIP</span>
+                <span class="whichProgramme" v-if="item.isPush">VIP</span>
               </div>
               <div class="time">{{item.formatTime}}</div>
             </div>
@@ -82,7 +82,8 @@ export default {
           userList[0].openId,
           userList[0].name,
           userList[0].whichProgramme,
-          userList[0].remarkId
+          userList[0].remarkId,
+          userList[0].isPush
         )
       }
       // 注销事件
@@ -112,7 +113,7 @@ export default {
     /**
      * 列表中item点击
      */
-    sessionItemClick(index, openId, name, whichProgramme, remarkId) {
+    sessionItemClick(index, openId, name, whichProgramme, remarkId, isPush) {
       if (this.$root.eventBus.showWidth < 768) {
         // 手机
         this.$root.eventBus.$emit('toChat', {
@@ -120,7 +121,8 @@ export default {
           from: 'm-session',
           name: name,
           whichProgramme: whichProgramme,
-          remarkId: remarkId
+          remarkId: remarkId,
+          isPush: isPush
         })
         console.log('index, openId', index, openId)
       } else {
@@ -139,7 +141,9 @@ export default {
     doSearchSession: _.debounce(function(val) {
       this.searchSessions = []
       this.sessions.map(item => {
-        if (item.name.indexOf(val) >= 0) {
+        if (
+          item.name.toLocaleLowerCase().indexOf(val.toLocaleLowerCase()) >= 0
+        ) {
           this.searchSessions.push(item)
         }
       })

@@ -1,7 +1,6 @@
 <template>
 <div>
   <div id="right-work-list-wrap" :class="{'top0':needTop}">
-    <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='pageTitle' :more="false"></service-header>
     <div class="edit-wrapper ">
       <div class="list">所属客服：<span>{{customer}}</span></div>
       <div class="work-status list flex-h">处理状态：
@@ -47,12 +46,11 @@
 
 <script>
 import axios from 'axios'
-import ServiceHeader from './ServiceHeader'
 import { Loading } from 'element-ui'
 
 export default {
   name: 'editWorkList',
-  components: { ServiceHeader },
+  components: {},
   props: {
     name: {
       type: String,
@@ -69,6 +67,10 @@ export default {
     openId: {
       type: String,
       default: ''
+    },
+    hideHead: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -106,7 +108,15 @@ export default {
       console.log('this.isUpdate', this.isUpdate)
     })
     this.$root.eventBus.$on('openEditWork', orderNo => {
+      this.isUpdate = false
+
       this.ordernum = orderNo
+      this.upImgs = []
+      this.workDes = ''
+      this.workTitle = ''
+      this.type = ''
+      this.identity = ''
+      this.status = '未解决'
       this.customer = this.getWaiterName()
     })
   },
@@ -158,11 +168,7 @@ export default {
         this.$root.eventBus.$emit('hideworkFromOrder')
       } else {
         // 隐藏移动端用户信息
-        this.$root.eventBus.$emit(
-          'hideEditWorkList',
-          refresh,
-          this.$root.eventBus.showWidth < 768 ? 'mobile' : 'pc'
-        )
+        this.$root.eventBus.$emit('hideEditWorkList', refresh)
       }
     },
 
@@ -265,16 +271,33 @@ export default {
      * 保存工单
      */
     toSaveWorkList() {
+      var reg = /^[0-9a-zA-Z]*$/g
+      if (this.ordernum !== '' && !reg.test(this.ordernum)) {
+        this.$message({
+          message: '订单号请输入字母或数字',
+          center: true
+        })
+        return
+      }
       if (!this.type.trim()) {
-        this.$toast('请选择类型')
+        this.$message({
+          message: '请选择类型',
+          center: true
+        })
         return
       }
       if (!this.workTitle.trim()) {
-        this.$toast('请输入标题')
+        this.$message({
+          message: '请输入标题',
+          center: true
+        })
         return
       }
       if (!this.workDes.trim()) {
-        this.$toast('请输入描述')
+        this.$message({
+          message: '请输入描述',
+          center: true
+        })
         return
       }
       let url = ''
@@ -334,6 +357,7 @@ export default {
     box-sizing: border-box;
     background: #fff;
     -webkit-overflow-scrolling: touch;
+    z-index: 9999;
 
     .edit-wrapper {
       padding: 0 42px 40px;

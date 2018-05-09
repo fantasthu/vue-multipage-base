@@ -1,9 +1,9 @@
 <template>
   <div class="customer-service">
     <!-- 此处是图片lightBox -->
-    <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl" @click.stop="closeFullImg">
-      <img class="fingerImg" :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-if="isIOS" @click.stop="fullImgClick" @touchstart="fullImgTouchStart" @touchend="fullImgTouchStartEnd">    
-      <img class="fingerImg" :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-else>    
+    <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl">
+      <!-- <img class="fingerImg" :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-if="isIOS">     -->
+      <img class="fingerImg" :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;">    
     </div>
     <!-- 此处是聊天界面 -->
     <div class="s-container flex-h">
@@ -125,6 +125,7 @@ export default {
      */
     addImgFinger() {
       var topPx
+      var that = this
       imageLoaded('.showFullImgUrl', function(w, h) {
         document.querySelector('.showFullImgBox').style.display = 'block'
         topPx = window.innerHeight / 2 - h * window.innerWidth / w / 2
@@ -184,6 +185,7 @@ export default {
         tap: function(evt) {
           // console.log(el.scaleX + "_" + el.scaleY + "_" + el.rotateZ + "_" + el.translateX + "_" + el.translateY);
           // console.log("tap");
+          that.closeFullImg()
         },
         doubleTap: function(evt) {
           To.stopAll()
@@ -297,7 +299,8 @@ export default {
             params.name,
             params.whichProgramme === 'vip' ? 1 : 0,
             params.openId,
-            params.remarkId
+            params.remarkId,
+            params.isPush
           )
         }
       })

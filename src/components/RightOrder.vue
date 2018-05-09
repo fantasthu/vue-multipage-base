@@ -17,7 +17,7 @@
           <div class="order-info">实付金额：￥{{item.realPrice/100}}</div>
         </div>
 
-        <div class="nomore" v-show="over&&orderList.length>0">没有更多订单了</div>
+        <div class="nomore" v-show="over&&orderList.length>0&&!showMoreBtn">没有更多订单了</div>
         <div class="noList" v-show="orderList.length==0">暂无订单</div>
         <div class="more" @click="checkMoreOrder" v-show="showMoreBtn">查看历史订单</div>
         <div class="slot"></div>

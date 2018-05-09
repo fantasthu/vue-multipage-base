@@ -1,8 +1,8 @@
 <template>
   <div id="right-userinfo-wrap">
      <div class="flex-v right-user-info">
-      <div class="name ">昵称：{{name}} <span v-if="remarkId">({{remarkId}})</span><div class="copyname" :data-clipboard-text="openId">复制ID</div></div>
-      <div class="identity">用户身份： {{whichProgramme?'VIP':'普通用户'}}</div>
+      <div class="name ">昵称：{{shortname}} <span v-if="remarkId">({{remarkId}})</span><div v-if="remarkId" class="copyname" :data-clipboard-text="remarkId">复制ID</div></div>
+      <div class="identity">用户身份： {{isPush?'VIP':'普通用户'}}</div>
     </div>
     <right-order :over="over" @createFromPcOrder="createFromPcOrder"  :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
 
@@ -55,7 +55,7 @@
                 <img :src="item" alt="">
               </div>
             </div>
-            <div class="pic-add flex-h flex-cc" @click="picAddClick">
+            <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length<5">
                 <input type="file" filetype="image/*" ref="addfileinput" class="pic-file" style="display:none" @change="handleFiles">  
                 <i class="el-icon-plus"></i>
             </div>
@@ -88,6 +88,10 @@ export default {
       type: String,
       default: ''
     },
+    shortname: {
+      type: String,
+      default: ''
+    },
     whichProgramme: {
       type: Number,
       default: 0
@@ -103,6 +107,10 @@ export default {
     remarkId: {
       type: String,
       default: ''
+    },
+    isPush: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -110,6 +118,7 @@ export default {
       temOrderList: [],
       orderList: [],
       page: 1,
+      pageSize: 5,
       preventRepeat: true,
       over: false,
       showMoreBtn: true,
@@ -166,6 +175,9 @@ export default {
      * 获取订单列表
      */
     getOrderList(openid, flag) {
+      if (this.over) {
+        return
+      }
       var instance = axios.create({
         headers: {
           velo_admin: 'nRF9L8ZaOKlE2lew'
@@ -174,7 +186,7 @@ export default {
       var data = {
         openid,
         startPage: this.page,
-        pageSize: 5
+        pageSize: this.pageSize
       }
       // axios
       instance
@@ -183,19 +195,23 @@ export default {
         })
         .then(res => {
           if (res.data.code === 0) {
-            if (res.data.obj.orderList.length === 0) {
+            let obj = res.data.obj
+            if (obj.orderList.length === 0) {
               this.over = true
               this.showMoreBtn = false
               return false
             }
+            if (obj.orderList.length < this.pageSize) {
+              this.over = true
+            }
             if (flag) {
-              res.data.obj.orderList.forEach(item => {
+              obj.orderList.forEach(item => {
                 item.createTime = formatTime(item.createTime / 1000)
               })
-              if (res.data.obj.orderList.length === 1) {
+              if (obj.orderList.length === 1) {
                 this.showMoreBtn = false
               }
-              res.data.obj.orderList.map(el => {
+              obj.orderList.map(el => {
                 // el.statusDes=
                 var statusDes = ''
                 switch (el.status) {
@@ -230,11 +246,11 @@ export default {
                 }
                 el.statusDes = statusDes
               })
-              this.temOrderList = res.data.obj.orderList
-              this.orderList.push(res.data.obj.orderList[0])
+              this.temOrderList = obj.orderList
+              this.orderList.push(obj.orderList[0])
             } else {
               // 请求多个order数据
-              this.orderList = this.orderList.concat(res.data.obj.orderList)
+              this.orderList = this.orderList.concat(obj.orderList)
             }
             this.page++
           } else {
@@ -251,7 +267,7 @@ export default {
      * 查看更多订单
      */
     checkMoreOrder() {
-      if (this.preventRepeat && !this.over) {
+      if (this.preventRepeat) {
         this.preventRepeat = false
         this.showMoreBtn = false
 
@@ -275,6 +291,11 @@ export default {
       this.orderForm.identity = this.name
       this.orderForm.customer = this.getWaiterName()
       this.orderForm.status = '未解决'
+      this.orderForm.ordertype = ''
+      this.orderForm.title = ''
+      this.orderForm.describe = ''
+      this.orderPics = []
+
       this.showCreateWorkOrder = true
     },
     getWaiterName() {
@@ -303,6 +324,15 @@ export default {
         this.$message({
           type: 'error',
           message: '请填写处理状态'
+        })
+        return
+      }
+      var reg = /^[0-9a-zA-Z]*$/g
+      let ordernum = this.orderForm.ordernum.trim()
+      if (ordernum !== '' && !reg.test(ordernum)) {
+        this.$message({
+          message: '订单号请输入字母或数字',
+          type: 'error'
         })
         return
       }
@@ -476,6 +506,106 @@ export default {
       color: #888888;
       letter-spacing: 0;
       margin-top: 24px;
+    }
+  }
+  .left-work-order {
+    background: #fff;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.25);
+    .add-card {
+      .pic-upload {
+        flex-wrap: wrap;
+        .pics {
+          flex-wrap: wrap;
+          .item {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            .el-icon-error {
+              position: absolute;
+              right: 8px;
+              top: 8px;
+            }
+            img {
+              border-radius: 10px;
+              width: 100%;
+              height: 100%;
+            }
+          }
+        }
+        .pic-add {
+          width: 160px;
+          height: 160px;
+          border: 1px dashed #eee;
+          border-radius: 10px;
+        }
+      }
+    }
+    .menu {
+      width: 460px;
+      border-right: 2px solid #e5e5e5;
+      .list {
+        .item {
+          height: 116px;
+          font-family: PingFang-SC-Medium;
+          font-size: 30px;
+          color: #b2b2b2;
+          letter-spacing: 0;
+          text-align: center;
+          border-bottom: 1px solid #e5e5e5;
+          .name {
+          }
+          .number {
+          }
+        }
+        .active {
+          background: #eee;
+          color: #353535;
+        }
+      }
+    }
+    .content {
+      position: relative;
+      .head {
+        height: 116px;
+        border-bottom: 2px solid #e5e5e5;
+        padding-left: 36px;
+        .name {
+          font-family: PingFangSC-Medium;
+          font-size: 30px;
+          color: #353535;
+          letter-spacing: 0;
+        }
+        .addorder {
+          width: 168px;
+          height: 62px;
+          line-height: 62px;
+          background: #ffe654;
+          border-radius: 100px;
+          text-align: center;
+          margin-right: 60px;
+        }
+      }
+      .table-con {
+        position: absolute;
+        left: 36px;
+        right: 36px;
+        top: 118px;
+        bottom: 100px;
+        overflow: scroll;
+      }
+      .pagination {
+        position: absolute;
+        bottom: 0;
+        margin: 20px 0;
+      }
     }
   }
 }

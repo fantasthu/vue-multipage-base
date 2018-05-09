@@ -1,13 +1,12 @@
 <template>
 <div>
   <div id="right-work-list-wrap">
-    <service-header  @chatBack="chatBack" :back="true" class="service-header" :title='pageTitle' :more="false"></service-header>
     <div class="create-work flex-h flex-cc" @click.stop="toCreateWorkList"><img src="../assets/img/add.png" alt="">新建工单</div>
     
     <div ref="workWrapper" class="wrapper">
       <div v-show="workList.length>0">
         <div style="padding-bottom:40px;">
-          <div class="work-list flex-h" v-for="item,index in workList">
+          <div class="work-list flex-h" v-for="item,index in workList" @click.stop="toCreateWorkList(item)">
             <div class="left-dot"></div>
             <div class="right-wrap flex-1 flex-v">
               <div class="content">{{item.des}}</div>
@@ -18,10 +17,6 @@
                   <div class="solved tag" v-if="item.status==='已解决'">已解决</div>
                   <div class="suggest tag flex-h flex-cc" v-if="item.ordertype==='建议'"><img src="../assets/img/face-happy.png" alt="">建议</div>
                   <div class="suggest tag flex-h flex-cc" v-if="item.ordertype==='客诉'"><img src="../assets/img/face-sad.png" alt="">客诉</div>
-                </div>
-                <div class="btns-hide">
-                  <img src="../assets/img/edit.png" alt="" class="edit" @click.stop="toEditWork(item,index)">
-                  <img src="../assets/img/delete-icon.png" alt="" class="delete" @click.stop="deleteWork(item.id,index)">
                 </div>
               </div>
             </div>
@@ -34,7 +29,7 @@
 
     <div class="flex-h left-work-order" v-show="showCreateWorkOrder" >
       <!--  新增工单 -->
-      <el-dialog title="新增工单" :visible.sync="showCreateWorkOrder" class="add-card">
+      <el-dialog :title="checkDetail?'查看工单':'新增工单'" :visible.sync="showCreateWorkOrder" class="add-card">
         <el-form :model="orderForm">
           <div class="top flex-v">
             <div class="column flex-h">
@@ -81,7 +76,7 @@
                 <img :src="item" alt="">
               </div>
             </div>
-            <div class="pic-add flex-h flex-cc" @click="picAddClick">
+            <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length<5">
                 <input type="file" filetype="image/*" ref="addfileinput" class="pic-file" style="display:none" @change="handleFiles">  
                 <i class="el-icon-plus"></i>
             </div>
@@ -90,7 +85,7 @@
         
         <div slot="footer" class="dialog-footer">
           <el-button @click="showCreateWorkOrder = false">取 消</el-button>
-          <el-button type="primary" @click="addOrderSubmit">确 定</el-button>
+          <el-button v-if="!checkDetail" type="primary" @click="addOrderSubmit">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -102,12 +97,11 @@
 <script>
 import Bscroll from 'better-scroll'
 import axios from 'axios'
-import ServiceHeader from './ServiceHeader'
 import { Loading } from 'element-ui'
 
 export default {
   name: 'rightUserWorkList',
-  components: { ServiceHeader },
+  components: {},
   props: {
     name: {
       type: String,
@@ -129,7 +123,6 @@ export default {
       over: false,
       workList: [],
       pageTitle: '用户工单',
-      showEditWorkList: false,
       pageSize: 10,
       showCreateWorkOrder: false, // pc端创建工单的显示隐藏
       orderPics: [],
@@ -142,20 +135,11 @@ export default {
         identity: '',
         ordernum: '',
         describe: ''
-      }
+      },
+      checkDetail: false
     }
   },
   created() {
-    /**
-     * 隐藏工单详情
-     */
-    this.$root.eventBus.$on('hideEditWorkList', (refresh, platForm) => {
-      this.showEditWorkList = false
-      if (refresh && platForm === 'pc') {
-        // 刷新页面
-        this.refreshData()
-      }
-    })
     /**
      * 获取工单列表
      */
@@ -183,30 +167,30 @@ export default {
     /**
      * 新建工单
      */
-    toCreateWorkList() {
-      // 移动端
-      if (this.$root.eventBus.showWidth >= 768) {
-        this.showCreateWorkOrder = true
+    toCreateWorkList(obj) {
+      this.showCreateWorkOrder = true
+
+      if (obj.status) {
+        this.checkDetail = true
+        this.orderForm.identity = obj.identity
+        this.orderForm.customer = obj.customer
+        this.orderForm.status = obj.status
+        this.orderForm.ordertype = obj.ordertype
+        this.orderForm.title = obj.title
+        this.orderForm.describe = obj.des
+        this.orderPics = JSON.parse(obj.imgurls)
+        // this.orderForm.customer = this.getWaiterName()
+      } else {
+        this.checkDetail = false
         this.orderForm.identity = this.name
         this.orderForm.customer = ''
         this.orderForm.status = '未解决'
+        this.orderForm.ordertype = ''
+        this.orderForm.title = ''
+        this.orderForm.describe = ''
+        this.orderPics = []
         this.orderForm.customer = this.getWaiterName()
       }
-    },
-    /**
-     * 修改工单
-     */
-    toEditWork(item, index) {
-      if (this.$root.eventBus.showWidth < 768) {
-        this.showEditWorkList = true
-        this.$root.eventBus.$emit('updateWorkList', item, index)
-      }
-    },
-    /**
-     * 移动端返回
-     */
-    chatBack() {
-      this.$root.eventBus.$emit('hideMobileMenu', { from: 'workList' })
     },
     /**
      * 获取工单列表
@@ -237,26 +221,6 @@ export default {
             this.$toast(res.data.message)
           }
           console.log('this.workList', this.workList)
-        })
-        .catch(() => {
-          this.$toast('网络错误')
-        })
-    },
-    /**
-     * 删除工单
-     */
-    deleteWork(id, index) {
-      axios
-        .post('http://cs.velo.top/customerService/csapi/delWorkOrder', {
-          id
-        })
-        .then(res => {
-          if (res.data.status === 0) {
-            this.workList.splice(index, 1)
-            this.$toast(res.data.message)
-          } else {
-            this.$toast(res.data.message)
-          }
         })
         .catch(() => {
           this.$toast('网络错误')
@@ -322,6 +286,15 @@ export default {
         this.$message({
           type: 'error',
           message: '请填写处理状态'
+        })
+        return
+      }
+      var reg = /^[0-9a-zA-Z]*$/g
+      let ordernum = this.orderForm.ordernum.trim()
+      if (ordernum !== '' && !reg.test(ordernum)) {
+        this.$message({
+          message: '订单号请输入字母或数字',
+          type: 'error'
         })
         return
       }
@@ -595,9 +568,6 @@ img {
     left: 0;
     right: 0;
     overflow: hidden;
-    .service-header {
-      display: none;
-    }
     .create-work {
       background: #f4f4f4;
       border: 2px solid #ededed;
@@ -700,9 +670,6 @@ img {
       bottom: 0;
       left: 0;
     }
-    .btns-hide {
-      display: none;
-    }
   }
 }
 .left-work-order {
@@ -718,11 +685,13 @@ img {
     .pic-upload {
       flex-wrap: wrap;
       .pics {
+        flex-wrap: wrap;
         .item {
           position: relative;
           width: 160px;
           height: 160px;
           margin-right: 20px;
+          margin-bottom: 20px;
           .el-icon-error {
             position: absolute;
             right: 8px;

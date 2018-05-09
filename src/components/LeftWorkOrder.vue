@@ -48,7 +48,7 @@
               <img :src="item" alt="">
             </div>
           </div>
-          <div class="pic-add flex-h flex-cc" @click="picAddClick">
+          <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length<5">
               <input type="file" filetype="image/*" ref="addfileinput" class="pic-file" style="display:none" @change="handleFiles">  
               <i class="el-icon-plus"></i>
           </div>
@@ -111,7 +111,7 @@
               <img :src="item" alt="">
             </div>
           </div>
-          <div class="pic-add flex-h flex-cc" @click="picAddClick">
+          <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length<5">
               <input type="file" filetype="image/*" ref="addfileinput" class="pic-file" style="display:none" @change="handleFiles">  
               <i class="el-icon-plus"></i>
           </div>
@@ -594,11 +594,13 @@ export default {
       .pic-upload {
         flex-wrap: wrap;
         .pics {
+          flex-wrap: wrap;
           .item {
             position: relative;
             width: 160px;
             height: 160px;
             margin-right: 20px;
+            margin-bottom: 20px;
             .el-icon-error {
               position: absolute;
               right: 8px;
