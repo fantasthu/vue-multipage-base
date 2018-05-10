@@ -245,6 +245,7 @@ export default {
       this.currentUserWhichProgramme = obj.whichProgramme === 'vip'
       this.remarkId = obj.remarkId || ''
       this.isPush = obj.isPush
+      this.rows = 1
     })
     this.$root.eventBus.$on('pcChatHandler', () => {
       this.reloadMessageScroll()
