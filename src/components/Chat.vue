@@ -243,7 +243,7 @@ export default {
       this.currentUserOpenId = obj.openId
       this.currentUserName = obj.name
       this.currentUserWhichProgramme = obj.whichProgramme === 'vip'
-      this.remarkId = obj.remarkId
+      this.remarkId = obj.remarkId || ''
       this.isPush = obj.isPush
     })
     this.$root.eventBus.$on('pcChatHandler', () => {

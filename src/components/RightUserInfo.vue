@@ -237,11 +237,12 @@ export default {
                     statusDes = '评团失败'
                     break
                   case 50:
-                  case 51:
+                    statusDes = '已完成'
+                    break
                   case 52:
                   case 53:
                   case 54:
-                    statusDes = '已完成'
+                    statusDes = '已关闭'
                     break
                 }
                 el.statusDes = statusDes

@@ -137,7 +137,9 @@ export default {
           openId: openId,
           from: 'p-session',
           name: name,
-          whichProgramme: whichProgramme
+          whichProgramme: whichProgramme,
+          remarkId: remarkId,
+          isPush: isPush
         })
         console.log('index, openId', index, openId)
       }
