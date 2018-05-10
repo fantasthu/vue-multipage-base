@@ -512,6 +512,10 @@ export default {
     },
     addKnowledgeClick() {
       this.addKnowledgeShow = true
+      this.knowledgeForm.category = ''
+      this.knowledgeForm.problem = ''
+      this.knowledgeForm.answer = ''
+      this.knowledgeForm.creator = ''
     },
     /**
      * 搜索知识输入
