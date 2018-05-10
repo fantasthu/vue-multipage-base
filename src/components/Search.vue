@@ -1,7 +1,8 @@
 <template>
   <div class="flex-h flex-cc search">
       <img src="../assets/img/icon_search.png" alt="">
-      <input type="text" class="search flex-1" @input="searchInput" @focus="searchFocus" :placeholder="placeholder">
+      <input type="text" class="pos"/> 
+      <input type="text" class="search flex-1" @input="searchInput" @focus="searchFocus" :placeholder="placeholder"/>
   </div>
 </template>
 
@@ -76,6 +77,10 @@ export default {
       width: 26px;
       height: 26px;
       z-index: 10;
+    }
+    .pos {
+      position: absolute;
+      top: -900px;
     }
     input {
       height: 60px;

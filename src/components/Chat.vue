@@ -329,6 +329,8 @@ export default {
 
       // 获取屏幕宽度
       this.screenWidth = window.document.documentElement.clientWidth
+
+      // 处理textarea 自适应高度
     })
   },
   methods: {
