@@ -108,7 +108,6 @@
            <mt-swipe :auto="0">
             <mt-swipe-item>
               <img v-for ="(item,index) in emojis" @click="mobileEmojiItemClick(index)" class="emoji-item" :src="item" alt="">
-              <span class="delete" @click="emojiBackDel">回删</span>
             </mt-swipe-item>
           </mt-swipe>
         </div>
@@ -165,6 +164,7 @@ import Bscroll from 'better-scroll'
 import { formatTime } from '../service/tools'
 import EmojiObj from '../assets/js/mapEmoji.js'
 import EmojiMsgObj from '../assets/js/mapEmojiMsg.js'
+import VeloEmoji from '../assets/js/mapVeloEmoji.js'
 import MobileUserinfo from './mobileUserinfo'
 import MobileWorkList from './mobileWorkList'
 import MobileKnowledge from './MobileKnowledge'
@@ -349,18 +349,9 @@ export default {
     messageContainerClick() {
       if (this.$root.eventBus.showWidth && this.isShowToolBox) {
         this.isShowToolBox = false
-
+        this.mobileEmojiHandled = false
         // 重置消息框
         this.resetMessageBox()
-      }
-    },
-    /**
-     * mobile 表情字符回删键
-     */
-    emojiBackDel() {
-      if (this.inputData) {
-        this.inputData = this.inputData.substr(0, this.inputData.length - 1)
-        this.$refs.mobileTextArea.innerText = this.inputData
       }
     },
     /**
@@ -417,18 +408,27 @@ export default {
       })
       return `<img class="text-img" src='${emoji}'/>`
     },
+    sendVeloEmoji(index) {
+      const img = VeloEmoji.alias[index]
+      const image = new Image()
+      image.crossOrigin = ''
+      image.src = img
+      image.onload = () => {
+        const base64Img = this.getBase64Image(image)
+        console.log(base64Img)
+        this.uploadImgToUser(
+          base64Img.dataURL,
+          this.currentUserAllMsg[0].openId,
+          img
+        )
+      }
+    },
     /**
      * 每个表情的点击事件
      */
     emojiItemClick(index) {
-      // append数据到textarea中
-      const indexAlias = this.emojiAlias.filter((item, i) => {
-        return i === index
-      })
-      this.inputData = `${this.inputData} ${indexAlias}`
-      this.$nextTick(() => {
-        this.$refs.pcTextArea.focus()
-      })
+      // 发送图片表情
+      this.sendVeloEmoji(index)
       this.showEmoji = false
     },
     /**
@@ -436,13 +436,13 @@ export default {
      */
     mobileEmojiItemClick(index) {
       // append数据到textarea中
-      const indexAlias = this.emojiAlias.filter((item, i) => {
-        return i === index
-      })
-      this.inputData = `${this.inputData} ${indexAlias}`
+      this.sendVeloEmoji(index)
+      this.isShowToolBox = false
+      this.mobileEmojiHandled = false
+      this.resetMessageBox()
     },
     loadEmojis() {
-      this.emojis = EmojiObj.imgs.slice(0, 38)
+      this.emojis = VeloEmoji.imgs
       this.emojiAlias = EmojiObj.alias
       // 可以接收的表情
       this.emojiMsgs = EmojiMsgObj.imgs
@@ -468,8 +468,10 @@ export default {
     },
     bindMobileInputNewLine() {
       const that = this
-      this.$refs.mobileTextArea.onscroll = function(e) {
-        if (that.onTextScroll) {
+      this.$refs.mobileTextArea.onscroll = e => {
+        console.log('this.inputData', this.inputData)
+        console.log('this.mobileSendShow', this.mobileSendShow)
+        if (that.onTextScroll && this.inputData && this.inputData.length > 0) {
           that.mobileInputChange()
           that.onTextScroll = false
         }
@@ -706,6 +708,19 @@ export default {
         $('#fleH5').val('')
       }
     },
+    getBase64Image(img) {
+      var canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      var ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, img.width, img.height)
+      var ext = img.src.substring(img.src.lastIndexOf('.') + 1).toLowerCase()
+      var dataURL = canvas.toDataURL('image/' + ext)
+      return {
+        dataURL: dataURL,
+        type: 'image/' + ext
+      }
+    },
     uploadImgToUser(img, openId, ossUrl) {
       // 执行上传操作
       let waiterInfo = {
@@ -763,7 +778,6 @@ export default {
         }
         // 发送客服消息
         this.sendWaiterMsg(this.inputData)
-        this.onTextScroll = false
 
         setTimeout(() => {
           this.$refs.mobileTextArea.innerHTML = ''
@@ -1098,8 +1112,8 @@ export default {
           width: 100%;
           height: 100%;
           .emoji-item {
-            width: 55px;
-            height: 55px;
+            width: 73px;
+            height: 73px;
             padding: 10px 10px;
           }
         }
@@ -1402,7 +1416,7 @@ export default {
             .face-container {
               position: absolute;
               top: -40px;
-              width: 480px;
+              width: 288px;
               background: rgba(0, 0, 0, 0.7);
               border-radius: 6px 4px;
               flex-wrap: wrap;

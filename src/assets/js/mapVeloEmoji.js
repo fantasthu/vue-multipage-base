@@ -1,0 +1,47 @@
+const module = {
+  imgs: [
+    './static/emoji/velo/emoji-01.png',
+    './static/emoji/velo/emoji-02.png',
+    './static/emoji/velo/emoji-03.png',
+    './static/emoji/velo/emoji-04.png',
+    './static/emoji/velo/emoji-05.png',
+    './static/emoji/velo/emoji-06.png',
+    './static/emoji/velo/emoji-07.png',
+    './static/emoji/velo/emoji-08.png',
+    './static/emoji/velo/emoji-09.png',
+    './static/emoji/velo/emoji-10.png',
+    './static/emoji/velo/emoji-11.png',
+    './static/emoji/velo/emoji-12.png',
+    './static/emoji/velo/emoji-13.png',
+    './static/emoji/velo/emoji-14.png',
+    './static/emoji/velo/emoji-15.png',
+    './static/emoji/velo/emoji-16.png',
+    './static/emoji/velo/emoji-17.png',
+    './static/emoji/velo/emoji-18.png',
+    './static/emoji/velo/emoji-19.png',
+    './static/emoji/velo/emoji-20.png'
+  ],
+  alias: [
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-01.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-02.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-03.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-04.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-05.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-06.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-07.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-08.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-09.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-10.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-11.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-12.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-13.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-14.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-15.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-16.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-17.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-18.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-19.png',
+    'https://velo-bucket.oss-cn-beijing.aliyuncs.com/Emoji/emoji-20.png'
+  ]
+}
+export default module
