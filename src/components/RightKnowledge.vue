@@ -37,7 +37,7 @@ import Bscroll from 'better-scroll'
 import _ from 'lodash'
 
 export default {
-  name: 'rightUserWorkList',
+  name: 'rightKnowledge',
   components: { Search, ServiceHeader },
   props: {},
   data() {
@@ -214,120 +214,7 @@ export default {
 // 手机端
 @media (max-width: 768px) {
   #right-knowledge-wrap {
-    position: absolute;
-    top: 88px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    z-index: 99999;
-    background: #fff;
-    .typeList {
-      margin-left: 42px;
-      .typeTitle {
-        font-size: 28px;
-        color: #353535;
-        letter-spacing: 0;
-        margin-top: 30px;
-        margin-bottom: 42px;
-      }
-      .list {
-        flex-wrap: wrap;
-
-        .type {
-          height: 54px;
-          line-height: 54px;
-          font-size: 26px;
-          color: rgba(0, 0, 0, 0.87);
-          letter-spacing: 3px;
-          padding: 0 32px;
-          border-radius: 100px;
-          margin-right: 24px;
-          margin-bottom: 24px;
-          box-sizing: border-box;
-          border: 1px solid #dddddd;
-        }
-        .active {
-          background: #ffe654;
-          color: #000;
-          border: 0;
-        }
-      }
-    }
-    .result {
-      position: absolute;
-      top: 110px;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      overflow: scroll;
-      -webkit-overflow-scrolling: touch;
-
-      .work-list:nth-child(1) {
-        margin-top: 16px;
-      }
-      // margin: 0 24;
-      .work-list {
-        padding: 0 42px 24px;
-        margin-top: 36px;
-        border-bottom: 2px solid #e5e5e5;
-        .left-dot {
-          width: 8px;
-          height: 8px;
-          background: #ff5b21;
-          margin-right: 30px;
-          margin-top: 18px;
-        }
-        .right-wrap {
-          .question {
-            color: #353535;
-            line-height: 48px;
-            font-size: 28px;
-            letter-spacing: 3px;
-            text-align: justify;
-          }
-          .answer {
-            font-size: 26px;
-            color: #888888;
-            letter-spacing: 3px;
-            line-height: 48px;
-            text-align: justify;
-            margin-top: 32px;
-          }
-          .sendBtn {
-            margin-top: 12px;
-            justify-content: flex-end;
-            .sendAnswer {
-              width: 168px;
-              height: 56px;
-              background: #ffe654;
-              border-radius: 100px;
-              font-size: 24px;
-              color: #000000;
-              letter-spacing: 3px;
-              text-align: center;
-              line-height: 56px;
-            }
-          }
-        }
-      }
-      .nomore {
-        font-size: 24px;
-        color: #888888;
-        letter-spacing: 2px;
-        margin: 36px auto 0;
-        text-align: center;
-      }
-      .noList {
-        font-size: 24px;
-        color: #888888;
-        letter-spacing: 0;
-        position: absolute;
-        top: 40%;
-        width: 100%;
-        text-align: center;
-      }
-    }
+    display: none;
   }
 }
 
@@ -337,33 +224,34 @@ export default {
     position: absolute;
     top: 115px;
     bottom: 0;
-    left: 24px;
-    right: 24px;
+    left: 0;
+    right: 0;
     overflow: hidden;
     .service-header {
       display: none;
     }
     .typeList {
+      padding: 0 24px;
       .typeTitle {
-        font-size: 28px;
+        font-size: 22px;
         color: #353535;
         letter-spacing: 0;
-        margin-top: 16px;
-        margin-bottom: 42px;
+        margin-top: 12px;
+        margin-bottom: 30px;
       }
       .list {
         flex-wrap: wrap;
         .type {
-          height: 54px;
-          line-height: 54px;
-          font-size: 24px;
+          height: 42px;
+          line-height: 42px;
+          font-size: 18px;
           color: #353535;
           letter-spacing: 3px;
-          padding: 0 32px;
+          padding: 0 18px;
           border: 2px solid #dddddd;
           border-radius: 100px;
-          margin-right: 24px;
-          margin-bottom: 24px;
+          margin-right: 18px;
+          margin-bottom: 18px;
           box-sizing: border-box;
         }
         .active {
@@ -387,57 +275,57 @@ export default {
     }
     // margin: 0 24;
     .work-list {
-      padding: 0 18px 24px;
-      margin-top: 36px;
+      padding: 0 24px 24px;
+      margin-top: 30px;
       border-bottom: 2px solid #e5e5e5;
       .left-dot {
         width: 8px;
         height: 8px;
         background: #ff5b21;
-        margin-right: 22px;
+        margin-right: 16px;
         margin-top: 12px;
       }
       .right-wrap {
         .question {
           color: #353535;
-          line-height: 33px;
-          font-size: 24px;
+          line-height: 28px;
+          font-size: 18px;
           letter-spacing: 2px;
           text-align: justify;
         }
         .answer {
-          font-size: 24px;
+          font-size: 18px;
           color: #888888;
           letter-spacing: 2px;
           text-align: justify;
-          margin-top: 36px;
+          margin-top: 20px;
         }
         .sendBtn {
-          margin-top: 24px;
+          margin-top: 18px;
           justify-content: flex-end;
           .sendAnswer {
-            width: 168px;
-            height: 56px;
+            width: 132px;
+            height: 42px;
             background: #ffe654;
             border-radius: 100px;
-            font-size: 24px;
+            font-size: 18px;
             color: #000000;
             letter-spacing: 3px;
             text-align: center;
-            line-height: 56px;
+            line-height: 42px;
           }
         }
       }
     }
     .nomore {
-      font-size: 24px;
+      font-size: 18px;
       color: #888888;
       letter-spacing: 2px;
-      margin: 36px auto 0;
+      margin: 30px auto 0;
       text-align: center;
     }
     .noList {
-      font-size: 24px;
+      font-size: 18px;
       color: #888888;
       letter-spacing: 0;
       position: absolute;

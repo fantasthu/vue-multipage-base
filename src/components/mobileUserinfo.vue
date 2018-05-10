@@ -3,10 +3,9 @@
     <service-header @chatBack="chatBack" :back="true" class="service-header" :title='currentTitle' :more="false"></service-header>
     <div class="userinfo-content">
       <div class="flex-v right-user-info">
-        <input id="foo" :value="remarkId" style="opacity:0">
         <div class="name flex-h flex-bc">
           <div>昵称：{{name}} <span v-if="remarkId">({{remarkId}})</span></div>
-          <button v-if="remarkId" class="copyname" data-clipboard-target="#foo">复制ID</button>
+          <button v-if="remarkId" class="copyname" :data-clipboard-text="remarkId">复制ID</button>
         </div>
         <div class="identity">用户身份： {{isPush?'VIP':'普通用户'}}</div>
       </div>
@@ -117,6 +116,7 @@ export default {
         // 隐藏工单
         this.$root.eventBus.$emit('hideworkFromOrder')
       } else {
+        // 隐藏用户信息
         this.$root.eventBus.$emit('hideMobileMenu', { from: 'mobileUserinfo' })
       }
     },
@@ -241,31 +241,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
-html,
-body {
-  width: 100%;
-  height: 100%;
-  user-select: text;
-}
-body {
-  padding-top: constant(safe-area-inset-top);
-  padding-left: constant(safe-area-inset-left);
-  padding-right: constant(safe-area-inset-right);
-  padding-bottom: constant(safe-area-inset-bottom);
-  user-select: text;
-}
-* {
-  box-sizing: border-box;
-}
 // 手机端
 @media (max-width: 768px) {
   .userinfo {
     position: relative;
-    // width: 100%;
-    // top: 0;
-    // bottom: 0;
-    // left: 0;
-    // right: 0;
     height: 100%;
     background: #fff;
     .userinfo-content {
@@ -303,7 +282,7 @@ body {
           }
         }
         .identity {
-          font-size: 24px;
+          font-size: 28px;
           color: #888888;
           letter-spacing: 0;
           margin-top: 20px;

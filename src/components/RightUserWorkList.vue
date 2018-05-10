@@ -439,123 +439,7 @@ img {
 // 手机端
 @media (max-width: 768px) {
   #right-work-list-wrap {
-    position: absolute;
-    top: 88px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    box-sizing: border-box;
-    .create-work {
-      height: 72px;
-      margin: 20px 42px 0;
-      // text-align: center;
-      // line-height: 72px;
-      font-size: 24px;
-      color: #353535;
-      letter-spacing: 3px;
-      border: 1px solid #b2b2b2;
-      border-radius: 100px;
-      img {
-        width: 22px;
-        height: 22px;
-        margin-right: 6px;
-      }
-    }
-    .wrapper {
-      position: absolute;
-      top: 92px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-    }
-    .work-list {
-      padding-bottom: 36px;
-      margin: 36px 42px 0;
-      border-bottom: 2px solid #e5e5e5;
-      .left-dot {
-        width: 12px;
-        height: 12px;
-        background: #353535;
-        margin-right: 22px;
-        margin-top: 12px;
-      }
-      .right-wrap {
-        .content {
-          color: #353535;
-          line-height: 48px;
-          font-size: 28px;
-          letter-spacing: 2px;
-          text-align: justify;
-        }
-        .time {
-          font-size: 24px;
-          color: #bbb;
-          letter-spacing: 0;
-          margin-top: 18px;
-        }
-        .btns-wrap {
-          margin-top: 18px;
-          justify-content: space-between;
-          .tag {
-            border-radius: 100px;
-            width: 104px;
-            height: 40px;
-            text-align: center;
-            line-height: 40px;
-            font-size: 20px;
-            letter-spacing: 2.5px;
-          }
-          .unsolved {
-            color: #ffffff;
-            background: #ff7e5a;
-          }
-          .solved {
-            color: #ffffff;
-            background: #7ed7b5;
-          }
-          .suggest {
-            color: #353535;
-            border: 1px solid #9e9e9e;
-            margin-left: 36px;
-            img {
-              width: 24px;
-              height: 24px;
-              margin-right: 6px;
-            }
-          }
-          .edit {
-            width: 44px;
-            height: 44px;
-          }
-          .delete {
-            width: 44px;
-            height: 44px;
-            margin-left: 48px;
-          }
-        }
-      }
-    }
-    .nomore {
-      font-size: 24px;
-      color: #bbbbbb;
-      letter-spacing: 2px;
-      margin: 36px auto 0;
-      text-align: center;
-    }
-    .noList {
-      font-size: 28px;
-      color: #bbbbbb;
-      letter-spacing: 3.23px;
-      text-align: center;
-      position: absolute;
-      top: 40%;
-      right: 0;
-      bottom: 0;
-      left: 0;
-    }
+    display: none;
   }
 }
 
@@ -572,17 +456,14 @@ img {
       background: #f4f4f4;
       border: 2px solid #ededed;
       border-radius: 100px;
-      height: 65px;
-      width: 515px;
-      margin: 24px auto 0;
-      // text-align: center;
-      // line-height: 65px;
-      font-size: 24px;
+      height: 48px;
+      margin: 24px 24px 0;
+      font-size: 20px;
       color: #353535;
       letter-spacing: 0;
       img {
-        width: 22px;
-        height: 22px;
+        width: 16px;
+        height: 16px;
         margin-right: 6px;
       }
     }
@@ -596,8 +477,8 @@ img {
       -webkit-overflow-scrolling: touch;
     }
     .work-list {
-      padding-bottom: 36px;
-      margin: 36px 42px 0;
+      padding-bottom: 24px;
+      margin: 30px 24px 0;
       border-bottom: 2px solid #e5e5e5;
       .left-dot {
         width: 8px;
@@ -609,26 +490,26 @@ img {
       .right-wrap {
         .content {
           color: #353535;
-          line-height: 33px;
-          font-size: 24px;
+          line-height: 28px;
+          font-size: 18px;
           letter-spacing: 2px;
           text-align: justify;
         }
         .time {
-          font-size: 18px;
+          font-size: 12px;
           color: #888;
           letter-spacing: 0;
           margin-top: 8px;
         }
         .btns-wrap {
-          margin-top: 12px;
+          margin-top: 8px;
           .tag {
             border-radius: 100px;
             width: 80px;
-            height: 36px;
+            height: 30px;
             text-align: center;
-            line-height: 36px;
-            font-size: 18px;
+            line-height: 30px;
+            font-size: 16px;
             letter-spacing: 1px;
           }
           .unsolved {
@@ -644,8 +525,8 @@ img {
             border: 1px solid #9e9e9e;
             margin-left: 18px;
             img {
-              width: 23px;
-              height: 23px;
+              width: 18px;
+              height: 18px;
               margin-right: 6px;
             }
           }
@@ -653,14 +534,14 @@ img {
       }
     }
     .nomore {
-      font-size: 24px;
+      font-size: 18px;
       color: #888888;
       letter-spacing: 2px;
-      margin: 36px auto 0;
+      margin: 30px auto 0;
       text-align: center;
     }
     .noList {
-      font-size: 24px;
+      font-size: 18px;
       color: #888888;
       letter-spacing: 0;
       text-align: center;

@@ -32,7 +32,8 @@ export default {
 <style scoped lang="scss">
 // 手机端
 @media (max-width: 768px) {
-  .right-menu {
+  .tabs {
+    display: none;
   }
 }
 
@@ -45,7 +46,7 @@ export default {
     border-bottom: 2px solid #e5e5ee;
     justify-content: space-between;
     .tab {
-      font-size: 30px;
+      font-size: 28px;
       color: #b2b2b2;
       letter-spacing: 0;
     }

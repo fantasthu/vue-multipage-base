@@ -43,7 +43,7 @@ import ServiceHeader from './ServiceHeader'
 import editWorkList from './EditWorkList'
 
 export default {
-  name: 'rightUserWorkList',
+  name: 'mobileWorkList',
   components: { ServiceHeader, editWorkList },
   props: {
     name: {
@@ -247,8 +247,6 @@ img {
     .create-work {
       height: 72px;
       margin: 20px 42px 0;
-      // text-align: center;
-      // line-height: 72px;
       font-size: 24px;
       color: #353535;
       letter-spacing: 3px;
@@ -360,120 +358,7 @@ img {
 //pc端
 @media screen and (min-width: 768px) {
   #right-work-list-wrap {
-    position: absolute;
-    top: 115px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    .service-header {
-      display: none;
-    }
-    .create-work {
-      background: #f4f4f4;
-      border: 2px solid #ededed;
-      border-radius: 100px;
-      height: 65px;
-      width: 515px;
-      margin: 24px auto 0;
-      // text-align: center;
-      // line-height: 65px;
-      font-size: 24px;
-      color: #353535;
-      letter-spacing: 0;
-      img {
-        width: 22px;
-        height: 22px;
-        margin-right: 6px;
-      }
-    }
-    .wrapper {
-      position: absolute;
-      top: 92px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      overflow-y: scroll;
-      -webkit-overflow-scrolling: touch;
-    }
-    .work-list {
-      padding-bottom: 36px;
-      margin: 36px 42px 0;
-      border-bottom: 2px solid #e5e5e5;
-      .left-dot {
-        width: 8px;
-        height: 8px;
-        background: #353535;
-        margin-right: 30px;
-        margin-top: 18px;
-      }
-      .right-wrap {
-        .content {
-          color: #353535;
-          line-height: 33px;
-          font-size: 24px;
-          letter-spacing: 2px;
-          text-align: justify;
-        }
-        .time {
-          font-size: 18px;
-          color: #888;
-          letter-spacing: 0;
-          margin-top: 8px;
-        }
-        .btns-wrap {
-          margin-top: 12px;
-          .tag {
-            border-radius: 100px;
-            width: 80px;
-            height: 36px;
-            text-align: center;
-            line-height: 36px;
-            font-size: 18px;
-            letter-spacing: 1px;
-          }
-          .unsolved {
-            color: #ffffff;
-            background: #ff7e5a;
-          }
-          .solved {
-            color: #ffffff;
-            background: #7ed7b5;
-          }
-          .suggest {
-            color: #353535;
-            border: 1px solid #9e9e9e;
-            margin-left: 18px;
-            img {
-              width: 23px;
-              height: 23px;
-              margin-right: 6px;
-            }
-          }
-        }
-      }
-    }
-    .nomore {
-      font-size: 24px;
-      color: #888888;
-      letter-spacing: 2px;
-      margin: 36px auto 0;
-      text-align: center;
-    }
-    .noList {
-      font-size: 24px;
-      color: #888888;
-      letter-spacing: 0;
-      text-align: center;
-      position: absolute;
-      top: 40%;
-      right: 0;
-      bottom: 0;
-      left: 0;
-    }
-    .btns-hide {
-      display: none;
-    }
+    display: none;
   }
 }
 </style>

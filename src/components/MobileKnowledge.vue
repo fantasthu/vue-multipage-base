@@ -5,7 +5,6 @@
     <div class="typeList" v-show="!showSearchResult">
       <div class="typeTitle">类别</div>
       <div class="flex-h list">
-        <!-- active类待定 -->
         <div class="type" v-for="item,index in categories" @click.stop="selectType(item.name,index)">{{item.name}}</div>
       </div>
     </div>
@@ -116,8 +115,6 @@ export default {
           if (_.data.status === 0) {
             this.categories = _.data.data
           }
-
-          console.log('LeftKnowledgeAddCategory=>searchCategory', _)
         })
     },
     /**
@@ -132,7 +129,6 @@ export default {
           pageSize: this.pageSize
         })
         .then(res => {
-          console.log('res', res)
           if (res.data.status === 0) {
             this.knowledgeList = this.knowledgeList.concat(res.data.data.list)
             if (res.data.data.total <= this.page * this.pageSize) {
@@ -339,117 +335,7 @@ export default {
 //pc端
 @media screen and (min-width: 768px) {
   #right-knowledge-wrap {
-    position: absolute;
-    top: 115px;
-    bottom: 0;
-    left: 24px;
-    right: 24px;
-    overflow: hidden;
-    .service-header {
-      display: none;
-    }
-    .typeList {
-      .typeTitle {
-        font-size: 28px;
-        color: #353535;
-        letter-spacing: 0;
-        margin-top: 16px;
-        margin-bottom: 42px;
-      }
-      .list {
-        flex-wrap: wrap;
-        .type {
-          height: 54px;
-          line-height: 54px;
-          font-size: 24px;
-          color: #353535;
-          letter-spacing: 3px;
-          padding: 0 32px;
-          border: 2px solid #dddddd;
-          border-radius: 100px;
-          margin-right: 24px;
-          margin-bottom: 24px;
-          box-sizing: border-box;
-        }
-        .active {
-          background: #ffe654;
-          color: #000;
-          border: 0;
-        }
-      }
-    }
-    .result {
-      position: absolute;
-      top: 110px;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      overflow: scroll;
-      -webkit-overflow-scrolling: touch;
-    }
-    .work-list:nth-child(1) {
-      margin-top: 16px;
-    }
-    // margin: 0 24;
-    .work-list {
-      padding: 0 18px 24px;
-      margin-top: 36px;
-      border-bottom: 2px solid #e5e5e5;
-      .left-dot {
-        width: 8px;
-        height: 8px;
-        background: #ff5b21;
-        margin-right: 30px;
-        margin-top: 18px;
-      }
-      .right-wrap {
-        .question {
-          color: #353535;
-          line-height: 33px;
-          font-size: 24px;
-          letter-spacing: 2px;
-          text-align: justify;
-        }
-        .answer {
-          font-size: 24px;
-          color: #888888;
-          letter-spacing: 2px;
-          text-align: justify;
-          margin-top: 36px;
-        }
-        .sendBtn {
-          margin-top: 24px;
-          justify-content: flex-end;
-          .sendAnswer {
-            width: 168px;
-            height: 56px;
-            background: #ffe654;
-            border-radius: 100px;
-            font-size: 24px;
-            color: #000000;
-            letter-spacing: 3px;
-            text-align: center;
-            line-height: 56px;
-          }
-        }
-      }
-    }
-    .nomore {
-      font-size: 24px;
-      color: #888888;
-      letter-spacing: 2px;
-      margin: 36px auto 0;
-      text-align: center;
-    }
-    .noList {
-      font-size: 24px;
-      color: #888888;
-      letter-spacing: 0;
-      position: absolute;
-      top: 40%;
-      width: 100%;
-      text-align: center;
-    }
+    display: none;
   }
 }
 </style>

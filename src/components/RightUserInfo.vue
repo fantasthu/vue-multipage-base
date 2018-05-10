@@ -1,8 +1,8 @@
 <template>
   <div id="right-userinfo-wrap">
      <div class="flex-v right-user-info">
-      <div class="name ">昵称：{{shortname}} <span v-if="remarkId">({{remarkId}})</span><div v-if="remarkId" class="copyname" :data-clipboard-text="remarkId">复制ID</div></div>
-      <div class="identity">用户身份： {{isPush?'VIP':'普通用户'}}</div>
+      <div class="name ">昵称：{{shortname}} <span v-if="remarkId">({{remarkId}})</span><button v-if="remarkId" class="copyname" :data-clipboard-text="remarkId">复制ID</button></div>
+      <div class="identity">用户身份：{{isPush?'VIP':'普通用户'}}</div>
     </div>
     <right-order :over="over" @createFromPcOrder="createFromPcOrder"  :openId = "openId" :orderList="orderList" :showMoreBtn="showMoreBtn"></right-order>
 
@@ -475,34 +475,35 @@ export default {
   #right-userinfo-wrap {
   }
   .right-user-info {
-    padding: 36px 42px;
+    padding: 36px 24px;
     background: #f1f1f1;
 
     .name {
-      font-size: 30px;
+      font-size: 20px;
       color: #353535;
       letter-spacing: 0;
       span {
-        font-size: 22px;
+        font-size: 20px;
         color: #888888;
         letter-spacing: 2px;
-        margin-left: 18px;
+        margin-left: 8px;
       }
       .copyname {
         border: 2px solid #b2b2b2;
         display: inline-block;
-        margin-left: 24px;
-        width: 90px;
-        height: 32px;
-        font-size: 22px;
-        line-height: 32px;
+        margin-left: 18px;
+        width: 66px;
+        height: 28px;
+        font-size: 16px;
+        line-height: 24px;
         text-align: center;
         color: #888;
         vertical-align: middle;
+        background: transparent;
       }
     }
     .identity {
-      font-size: 24px;
+      font-size: 20px;
       color: #888888;
       letter-spacing: 0;
       margin-top: 24px;

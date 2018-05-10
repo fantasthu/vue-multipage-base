@@ -269,11 +269,11 @@ export default {
       .create-work {
         background: #ffe654;
         border-radius: 100px;
-        width: 130px;
-        height: 50px;
-        line-height: 50px;
+        width: 168px;
+        height: 56px;
+        line-height: 56px;
         text-align: center;
-        font-size: 22px;
+        font-size: 24px;
         color: #000000;
         letter-spacing: 2px;
       }
@@ -386,26 +386,25 @@ export default {
 //pc端
 @media screen and (min-width: 768px) {
   .right-order-wrap {
-    padding: 0 42px;
     position: absolute;
     top: 288px;
     bottom: 0;
     left: 0;
     right: 0;
     overflow: hidden;
-    padding: 36px 42px 0 42px;
+    padding: 36px 24px 0 24px;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
   }
   .right-order {
     position: relative;
     .order-title {
-      font-size: 30px;
+      font-size: 24px;
       color: #353535;
       letter-spacing: 2px;
     }
     .order-list {
-      padding: 38px 0;
+      padding: 24px 0;
       border-bottom: 2px solid #e5e5e5;
       .justify {
         justify-content: space-between;
@@ -413,9 +412,9 @@ export default {
       .order-time {
         background: #f4f4f4;
         border-radius: 100px;
-        height: 36px;
-        line-height: 36px;
-        font-size: 24px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 18px;
         color: #888888;
         letter-spacing: 0;
         display: inline-block;
@@ -424,19 +423,19 @@ export default {
       .create-work {
         background: #ffe654;
         border-radius: 100px;
-        width: 130px;
-        height: 50px;
-        line-height: 50px;
+        width: 114px;
+        height: 42px;
+        line-height: 42px;
         text-align: center;
-        font-size: 22px;
+        font-size: 18px;
         color: #000000;
         letter-spacing: 2px;
       }
       .order-info {
-        font-size: 24px;
+        font-size: 18px;
         color: #888888;
         letter-spacing: 2px;
-        margin-top: 24px;
+        margin-top: 18px;
       }
       .order-status {
         margin-top: 20px;
@@ -444,25 +443,25 @@ export default {
       .check-mail {
         border: 2px solid #b2b2b2;
         border-radius: 100px;
-        height: 32px;
-        line-height: 32px;
+        height: 24px;
+        line-height: 24px;
         width: 64px;
         text-align: center;
         display: inline-block;
-        margin-left: 24px;
-        font-size: 22px;
+        margin-left: 18px;
+        font-size: 18px;
       }
     }
     .nomore {
-      font-size: 24px;
+      font-size: 20px;
       color: #888888;
       letter-spacing: 2px;
-      margin: 30px auto 0;
+      margin: 20px auto 0;
     }
     .noList {
-      font-size: 28px;
+      font-size: 22px;
       color: #bbbbbb;
-      letter-spacing: 3.23px;
+      letter-spacing: 3px;
       text-align: center;
       position: absolute;
       top: 400%;
@@ -471,16 +470,16 @@ export default {
       left: 0;
     }
     .more {
-      font-size: 24px;
+      font-size: 20px;
       color: #888888;
       letter-spacing: 2px;
-      margin: 36px auto;
-      height: 56px;
-      line-height: 56px;
+      margin: 30px auto;
+      height: 48px;
+      line-height: 48px;
       text-align: center;
-      width: 200px;
+      width: 168px;
       border: 2px solid #b2b2b2;
-      margin-top: 36px;
+      margin-top: 30px;
     }
   }
   .mail-info {
@@ -490,15 +489,15 @@ export default {
     bottom: 100px;
     // height: 500px;
     overflow: hidden;
-    left: 42px;
-    right: 42px;
+    left: 24px;
+    right: 24px;
     background: #fff;
     z-index: 999;
     .mail-header {
       // height: 156px;
-      padding: 36px;
+      padding: 20px;
       background: #f1f1f1;
-      font-size: 24px;
+      font-size: 18px;
       letter-spacing: 2px;
       p {
         color: #353535;
@@ -507,19 +506,19 @@ export default {
         }
       }
       .mail-no {
-        margin-top: 18px;
+        margin-top: 12px;
       }
     }
     .mail-list {
-      height: 300px;
-      font-size: 24px;
+      height: 240px;
+      font-size: 18px;
       color: #888888;
       letter-spacing: 2px;
-      padding: 36px;
+      padding: 24px;
+      line-height: 28px;
       overflow: scroll;
       p {
-        // height: 33px;
-        padding-bottom: 33px;
+        padding-bottom: 28px;
       }
     }
   }
