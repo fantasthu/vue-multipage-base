@@ -211,7 +211,7 @@ export default {
         })
         .catch(e => {
           console.log('请求失败:', e)
-          this.$toast('网络异常,请重试~')
+          this.$toast('用户信息请求失败~')
           // Indicator.close()
         })
     },

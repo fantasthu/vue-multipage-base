@@ -17,7 +17,7 @@
               </div>
               <div class="time">{{item.formatTime}}</div>
             </div>
-            <div class="hint">{{item.msg}}</div>
+            <div class="hint">{{textCensor(item.msg)}}</div>
           </div>
         </div>
       </div>
@@ -37,6 +37,7 @@ import ServiceHeader from './ServiceHeader'
 import Bscroll from 'better-scroll'
 import _ from 'lodash'
 import Search from './Search'
+import textCensorInstance from '../assets/js/textCensor'
 
 export default {
   name: 'session',
@@ -99,6 +100,9 @@ export default {
     })
   },
   methods: {
+    textCensor(str) {
+      return textCensorInstance(str) || str
+    },
     /**
      * session列表载入scroll
      */
