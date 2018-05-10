@@ -77,36 +77,48 @@ export default {
     })
   },
   mounted() {
-    this.scroll = new Bscroll(this.$refs.orderWrapper, {
-      mouseWheel: true,
-      click: true,
-      tap: true,
-      preventDefault: true,
-      preventDefaultException: { className: /(^|\s)text(\s|$)/ },
-      pullUpLoad: {
-        threshold: 100
+    this.$nextTick(() => {
+      let scrollPrevent = true
+      if (this.getScreenWidth() > 768) {
+        scrollPrevent = false
       }
-    })
-
-    this.scroll.on('scrollStart', res => {
-      this.$nextTick(function() {
-        this.startY = this.scroll.y
-        console.log('开始滚动', this.scroll.y)
-      })
-    })
-
-    this.scroll.on('scroll', res => {
-      this.$nextTick(function() {
-        if (res.y - this.scroll.maxScrollY < 100 && res.y < this.startY - 50) {
-          this.$root.eventBus.$emit(
-            'checkMoreOrder',
-            this.$root.eventBus.showWidth
-          )
+      this.scroll = new Bscroll(this.$refs.orderWrapper, {
+        mouseWheel: true,
+        click: true,
+        tap: true,
+        preventDefault: scrollPrevent,
+        preventDefaultException: { className: /(^|\s)text(\s|$)/ },
+        pullUpLoad: {
+          threshold: 100
         }
+      })
+
+      this.scroll.on('scrollStart', res => {
+        this.$nextTick(function() {
+          this.startY = this.scroll.y
+          console.log('开始滚动', this.scroll.y)
+        })
+      })
+
+      this.scroll.on('scroll', res => {
+        this.$nextTick(function() {
+          if (
+            res.y - this.scroll.maxScrollY < 100 &&
+            res.y < this.startY - 50
+          ) {
+            this.$root.eventBus.$emit(
+              'checkMoreOrder',
+              this.$root.eventBus.showWidth
+            )
+          }
+        })
       })
     })
   },
   methods: {
+    getScreenWidth() {
+      return window.document.documentElement.clientWidth
+    },
     /**
      * 查询物流
      */

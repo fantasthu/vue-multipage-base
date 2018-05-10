@@ -755,18 +755,22 @@ export default {
     },
     mobileSendMsg() {
       if (this.inputData) {
+        // 处理 不合法字符
         const tc = this.textCensor(this.inputData || '')
         if (tc && tc.trim().indexOf('***') >= 0) {
           this.$toast('发送的消息不合法!')
           return
         }
+        // 发送客服消息
         this.sendWaiterMsg(this.inputData)
-        setTimeout(() => {
-          this.inputData = ''
-          this.rows = 1
-          this.lineHeight = ''
+        this.onTextScroll = false
 
+        setTimeout(() => {
           this.$refs.mobileTextArea.innerHTML = ''
+          this.inputData = ''
+          this.lineHeight = '1'
+          this.rows = 1
+
           // 重置message显示框的高度
           this.resetMessageBox()
         }, 100)
@@ -1094,8 +1098,8 @@ export default {
           width: 100%;
           height: 100%;
           .emoji-item {
-            width: 75px;
-            height: 75px;
+            width: 55px;
+            height: 55px;
             padding: 10px 10px;
           }
         }
