@@ -4,7 +4,7 @@
     <div class="userinfo-content">
       <div class="flex-v right-user-info">
         <div class="name flex-h flex-bc">
-          <div>昵称：{{name}} <span v-if="remarkId">({{remarkId}})</span></div>
+          <div>昵称：{{name.length > 6 ?name.slice(0,6)+'...' :name}} <span v-if="remarkId">({{remarkId}})</span></div>
           <button v-if="remarkId" class="copyname" :data-clipboard-text="remarkId">复制ID</button>
         </div>
         <div class="identity">用户身份： {{isPush?'VIP':'普通用户'}}</div>
@@ -187,11 +187,12 @@ export default {
                     statusDes = '评团失败'
                     break
                   case 50:
-                  case 51:
+                    statusDes = '已完成'
+                    break
                   case 52:
                   case 53:
                   case 54:
-                    statusDes = '已完成'
+                    statusDes = '已关闭'
                     break
                 }
                 el.statusDes = statusDes

@@ -62,7 +62,7 @@ export default {
         }
         this.whichProgramme = whichProgramme
         this.openId = openId
-        this.remarkId = remarkId
+        this.remarkId = remarkId || ''
         this.isPush = isPush
         this.$root.eventBus.$emit('getList', this.tab, openId)
       }

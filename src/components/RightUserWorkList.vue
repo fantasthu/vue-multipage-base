@@ -29,7 +29,7 @@
 
     <div class="flex-h left-work-order" v-show="showCreateWorkOrder" >
       <!--  新增工单 -->
-      <el-dialog :title="checkDetail?'查看工单':'新增工单'" :visible.sync="showCreateWorkOrder" class="add-card">
+      <el-dialog :title="checkDetail?'编辑工单':'新增工单'" :visible.sync="showCreateWorkOrder" class="add-card">
         <el-form :model="orderForm">
           <div class="top flex-v">
             <div class="column flex-h">
@@ -68,6 +68,8 @@
           <el-form-item label="描述" :label-width="formLabelWidth">
             <el-input v-model="orderForm.describe" auto-complete="off"></el-input>
           </el-form-item>
+
+          <div class="orderPicsNum flex-h">{{orderPics.length}}/{{picsLimit}}</div>
             <!-- 图片上传 -->
           <div class="pic-upload flex-h">
             <div class="pics flex-h">
@@ -76,7 +78,7 @@
                 <img :src="item" alt="">
               </div>
             </div>
-            <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length<5">
+            <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length < picsLimit">
                 <input type="file" filetype="image/*" ref="addfileinput" class="pic-file" style="display:none" @change="handleFiles">  
                 <i class="el-icon-plus"></i>
             </div>
@@ -85,7 +87,7 @@
         
         <div slot="footer" class="dialog-footer">
           <el-button @click="showCreateWorkOrder = false">取 消</el-button>
-          <el-button v-if="!checkDetail" type="primary" @click="addOrderSubmit">确 定</el-button>
+          <el-button type="primary" @click="submit">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -136,7 +138,9 @@ export default {
         ordernum: '',
         describe: ''
       },
-      checkDetail: false
+      checkDetail: false,
+      updateUserId: '',
+      picsLimit: 5
     }
   },
   created() {
@@ -165,12 +169,13 @@ export default {
       return waiterInfo.name || ''
     },
     /**
-     * 新建工单
+     * 新建工单/修改工单
      */
     toCreateWorkList(obj) {
       this.showCreateWorkOrder = true
 
       if (obj.status) {
+        // 修改工单
         this.checkDetail = true
         this.orderForm.identity = obj.identity
         this.orderForm.customer = obj.customer
@@ -179,8 +184,10 @@ export default {
         this.orderForm.title = obj.title
         this.orderForm.describe = obj.des
         this.orderPics = JSON.parse(obj.imgurls)
+        this.updateUserId = obj.id
         // this.orderForm.customer = this.getWaiterName()
       } else {
+        // 新建工单
         this.checkDetail = false
         this.orderForm.identity = this.name
         this.orderForm.customer = ''
@@ -271,9 +278,12 @@ export default {
       this.orderPics.splice(index, 1)
     },
     /**
-     * 确认生成工单
+     * 添加/修改工单
+     * checkDetail：
+     * true 修改
+     * false 添加
      */
-    addOrderSubmit() {
+    submit() {
       this.orderForm.imgurls = JSON.stringify(this.orderPics || '')
       if (this.orderForm.customer.trim() === '') {
         this.$message({
@@ -319,33 +329,39 @@ export default {
         })
         return
       }
-      axios
-        .post('http://cs.velo.top/customerService/csapi/addworkorder', {
-          customer: this.orderForm.customer,
-          status: this.orderForm.status,
-          identity: this.orderForm.identity,
-          ordernum: this.orderForm.ordernum,
-          ordertype: this.orderForm.ordertype,
-          title: this.orderForm.title,
-          describe: this.orderForm.describe,
-          imgurls: this.orderForm.imgurls,
-          openid: this.openId
-        })
-        .then(_ => {
-          if (_.data.status === 0) {
-            this.$message({
-              message: '添加成功',
-              type: 'success'
-            })
-            this.showCreateWorkOrder = false
-            this.refreshData()
-          } else {
-            this.$message({
-              message: '添加失败',
-              type: 'error'
-            })
-          }
-        })
+
+      let url = this.checkDetail
+        ? 'http://cs.velo.top/customerService/csapi/updateworkorder'
+        : 'http://cs.velo.top/customerService/csapi/addworkorder'
+      let data = {
+        customer: this.orderForm.customer,
+        status: this.orderForm.status,
+        identity: this.orderForm.identity,
+        ordernum: this.orderForm.ordernum,
+        ordertype: this.orderForm.ordertype,
+        title: this.orderForm.title,
+        describe: this.orderForm.describe,
+        imgurls: this.orderForm.imgurls,
+        openid: this.openId
+      }
+      if (this.checkDetail) {
+        data.id = this.updateUserId
+      }
+      axios.post(url, data).then(_ => {
+        if (_.data.status === 0) {
+          this.$message({
+            message: this.checkDetail ? '更新成功' : '添加成功',
+            type: 'success'
+          })
+          this.showCreateWorkOrder = false
+          this.refreshData()
+        } else {
+          this.$message({
+            message: this.checkDetail ? '更新失败' : '添加失败',
+            type: 'error'
+          })
+        }
+      })
     },
     /**
      * 选择图片
@@ -563,6 +579,10 @@ img {
   right: 0;
   background: rgba(0, 0, 0, 0.25);
   .add-card {
+    .orderPicsNum {
+      height: 40px;
+      justify-content: flex-end;
+    }
     .pic-upload {
       flex-wrap: wrap;
       .pics {

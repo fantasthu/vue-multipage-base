@@ -40,6 +40,7 @@
         <el-form-item label="描述" :label-width="formLabelWidth">
           <el-input v-model="orderForm.describe" auto-complete="off"></el-input>
         </el-form-item>
+        <div class="orderPicsNum flex-h">{{orderPics.length}}/{{picsLimit}}</div>
           <!-- 图片上传 -->
         <div class="pic-upload flex-h">
           <div class="pics flex-h">
@@ -48,7 +49,7 @@
               <img :src="item" alt="">
             </div>
           </div>
-          <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length<5">
+          <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length < picsLimit">
               <input type="file" filetype="image/*" ref="addfileinput" class="pic-file" style="display:none" @change="handleFiles">  
               <i class="el-icon-plus"></i>
           </div>
@@ -103,6 +104,8 @@
         <el-form-item label="描述" :label-width="formLabelWidth">
           <el-input v-model="orderForm.describe" auto-complete="off"></el-input>
         </el-form-item>
+        
+        <div class="orderPicsNum flex-h">{{orderPics.length}}/{{picsLimit}}</div>
           <!-- 图片上传 -->
         <div class="pic-upload flex-h">
           <div class="pics flex-h">
@@ -111,7 +114,7 @@
               <img :src="item" alt="">
             </div>
           </div>
-          <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length<5">
+          <div class="pic-add flex-h flex-cc" @click="picAddClick" v-show="orderPics.length < picsLimit">
               <input type="file" filetype="image/*" ref="addfileinput" class="pic-file" style="display:none" @change="handleFiles">  
               <i class="el-icon-plus"></i>
           </div>
@@ -249,7 +252,8 @@ export default {
       // 工单分类index,默认为所有
       orderCategoryIndex: 0,
       // 所有工单数量
-      allOrderCategories: 0
+      allOrderCategories: 0,
+      picsLimit: 5
     }
   },
   created() {
@@ -591,6 +595,10 @@ export default {
     background: #fff;
     height: 100%;
     .add-card {
+      .orderPicsNum {
+        height: 40px;
+        justify-content: flex-end;
+      }
       .pic-upload {
         flex-wrap: wrap;
         .pics {
