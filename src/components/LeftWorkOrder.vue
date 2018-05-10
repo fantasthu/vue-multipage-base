@@ -16,7 +16,7 @@
               </el-select>
             </el-form-item>
           </div>
-          <div class="column flex-h">
+          <!-- <div class="column flex-h">
             <el-form-item class="flex-1" label="用户昵称/微信ID:" :label-width="formLabelWidth">
               <el-input v-model="orderForm.identity" auto-complete="off"></el-input>
             </el-form-item>
@@ -24,7 +24,7 @@
             <el-form-item class="flex-1" label="订单号" :label-width="formLabelWidth">
               <el-input v-model="orderForm.ordernum" auto-complete="off"></el-input>
             </el-form-item>
-          </div>
+          </div> -->
         </div>
         <el-form-item label="类型" :label-width="formLabelWidth">
           <el-select v-model="orderForm.ordertype" placeholder="请选择">
