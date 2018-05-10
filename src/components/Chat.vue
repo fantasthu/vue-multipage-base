@@ -329,7 +329,6 @@ export default {
 
       // 获取屏幕宽度
       this.screenWidth = window.document.documentElement.clientWidth
-      console.log('this.screenWidth', this.screenWidth)
     })
   },
   methods: {
