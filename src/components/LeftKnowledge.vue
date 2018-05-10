@@ -348,6 +348,9 @@ export default {
             })
           }
 
+          // 更新下分类
+          this.searchCategory()
+
           // 更新一遍所有知识
           this.searchKnowledge()
           console.log('LeftKnowledgeAddCategory=>updateKnowledgeShow=>_', _)
@@ -512,10 +515,13 @@ export default {
     },
     addKnowledgeClick() {
       this.addKnowledgeShow = true
-      this.knowledgeForm.category = ''
-      this.knowledgeForm.problem = ''
-      this.knowledgeForm.answer = ''
-      this.knowledgeForm.creator = ''
+      this.knowledgeForm = {
+        category: '',
+        problem: '',
+        answer: '',
+        creator: '',
+        region: ''
+      }
     },
     /**
      * 搜索知识输入
