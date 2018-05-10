@@ -3,8 +3,8 @@
     <!--  新增知识库 -->
     <el-dialog title="新增知识库" :visible.sync="addKnowledgeShow">
       <el-form :model="knowledgeForm">
-         <el-form-item label="分类">
-          <el-select v-model="knowledgeForm.category" placeholder="请选择关键字">
+         <el-form-item label="类型">
+          <el-select v-model="knowledgeForm.category" placeholder="请选择类型">
             <el-option v-for="(item,index) in categories" :key="item.id" :label="item.name" :value="item.name"></el-option>
           </el-select>
         </el-form-item>
@@ -31,8 +31,8 @@
     <!--  编辑知识库 -->
     <el-dialog title="编辑知识库" :visible.sync="updateKnowledgeShow">
       <el-form :model="knowledgeForm">
-         <el-form-item label="关键字">
-          <el-select v-model="knowledgeForm.category" placeholder="请选择关键字">
+         <el-form-item label="类型">
+          <el-select v-model="knowledgeForm.category" placeholder="请选择类型">
             <el-option v-for="(item,index) in categories" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -59,7 +59,7 @@
     <!--  新增分类 -->
     <el-dialog title="新增类别" :visible.sync="addCategoryShow">
       <el-form :model="categoryForm">
-        <el-form-item label="关键字" :label-width="formLabelWidth">
+        <el-form-item label="类型" :label-width="formLabelWidth">
           <el-input v-model="categoryForm.name" auto-complete="off" maxlength="5"></el-input>
         </el-form-item>
         
@@ -107,7 +107,7 @@
           </el-table-column>
           <el-table-column
             prop="category"
-            label="分类"
+            label="类型"
             
             width="180">
           </el-table-column>
@@ -480,7 +480,7 @@ export default {
       if (this.categoryForm.name.trim() === '') {
         this.$message({
           type: 'error',
-          message: '请填写关键字'
+          message: '请填写类型'
         })
         return
       }
