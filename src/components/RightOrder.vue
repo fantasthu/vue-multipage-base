@@ -23,9 +23,9 @@
         <div class="slot"></div>
       </div>
     </div>
-    <div class="modal" v-show="showMail" @click.stop="closeMail"></div>
+    <div class="modal" v-show="showMail" @click.stop="closeMail" @touchmove.stop="move"></div>
     <div class="mail-info" v-show="showMail">
-      <div class="mail-header">
+      <div class="mail-header" @touchmove.stop="move">
         <p>物流公司：<span>{{mailName}}</span></p>
         <p class="mail-no">物流单号：<span>{{mailNo}}</span></p>
       </div>
@@ -231,6 +231,9 @@ export default {
       } else {
         this.$emit('createFromPcOrder', orderNo)
       }
+    },
+    move(e) {
+      e.preventDefault()
     }
   }
 }

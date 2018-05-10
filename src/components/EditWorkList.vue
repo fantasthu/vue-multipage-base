@@ -8,7 +8,7 @@
           <div v-for="item,index in statusList" :class="['tag flex-h flex-cc' ,{'statusActive':status==item} ] " @click.stop="choiceStatus(item)">{{item}}</div>
         </div>
       </div>
-      <div class="list">用户昵称/微信ID：<span>{{identity||name}}</span></div>
+      <div class="list flex-h">用户昵称/微信ID：<span class="flex-1 name">{{identity||name}}</span></div>
       <!-- <div class="list" v-if="ordernum">订单号：<span>{{ordernum||'无'}}</span></div> -->
       <div class="list flex-h"><div>订单号：</div><input class="flex-1" type="text" v-model="ordernum" placeholder="订单号"></div>
       <div class="list flex-h flex-bc choice-type" @click.stop="toChoice">
@@ -370,6 +370,15 @@ export default {
         letter-spacing: 3px;
         span {
           color: #888888;
+        }
+        .name {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          white-space: normal;
+          text-overflow: ellipsis;
+          word-wrap: break-word;
         }
         input {
           color: #888888;
