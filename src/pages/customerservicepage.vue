@@ -348,6 +348,7 @@ export default {
       })
       // 如果发送超过五条toast提示
       this.socket.on('waiterMsgIsOver', obj => {
+        console.log('===============================>', obj)
         this.$toast('您发的消息超过5条, 请等待用户回复之后再发送 !')
       })
       // 接收到当前用户的所有msg
