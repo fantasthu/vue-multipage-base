@@ -1228,7 +1228,7 @@ export default {
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 225px;
+      bottom: 295px;
       top: 117px;
       overflow-y: hidden;
       .message-list {
