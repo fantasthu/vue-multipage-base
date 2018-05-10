@@ -474,12 +474,13 @@ export default {
       color: #888888;
       letter-spacing: 2px;
       margin: 30px auto;
-      height: 48px;
-      line-height: 48px;
+      height: 36px;
+      line-height: 36px;
       text-align: center;
       width: 168px;
       border: 2px solid #b2b2b2;
       margin-top: 30px;
+      box-sizing: content-box;
     }
   }
   .mail-info {
