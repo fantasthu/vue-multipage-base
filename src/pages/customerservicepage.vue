@@ -1,8 +1,7 @@
 <template>
   <div class="customer-service">
     <!-- 此处是图片lightBox -->
-    <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl">
-      <!-- <img class="fingerImg" :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;" v-if="isIOS">     -->
+    <div :class="{'showFullImgBox': showFullImgUrl!==''}" v-show="showFullImgUrl" @touchstart="fullImgTouchStart" @touchend="fullImgTouchEnd">
       <img class="fingerImg" :class="{showFullImgUrl: showFullImgUrl}" :src="showFullImgUrl" alt="" style="-webkit-touch-callout:none;">    
     </div>
     <!-- 此处是聊天界面 -->
@@ -125,7 +124,7 @@ export default {
      */
     addImgFinger() {
       var topPx
-      var that = this
+      // var that = this
       imageLoaded('.showFullImgUrl', function(w, h) {
         document.querySelector('.showFullImgBox').style.display = 'block'
         topPx = window.innerHeight / 2 - h * window.innerWidth / w / 2
@@ -146,6 +145,7 @@ export default {
         },
         rotate: function(evt) {
           el.rotateZ += evt.angle
+          evt.preventDefault()
         },
         pinch: function(evt) {
           el.scaleX = el.scaleY = initScale * evt.zoom
@@ -185,7 +185,6 @@ export default {
         tap: function(evt) {
           // console.log(el.scaleX + "_" + el.scaleY + "_" + el.rotateZ + "_" + el.translateX + "_" + el.translateY);
           // console.log("tap");
-          that.closeFullImg()
         },
         doubleTap: function(evt) {
           To.stopAll()
@@ -249,21 +248,11 @@ export default {
         }
       }
     },
-    /**
-     * 关闭全屏预览图片
-     */
-    closeFullImg() {
-      this.showFullImgUrl = ''
-    },
-    fullImgClick(e) {
-      // 阻止事件冒泡
-      console.log('e', e)
-    },
     fullImgTouchStart(e) {
       this.timeStamp = e.timeStamp
     },
-    fullImgTouchStartEnd(e) {
-      if (e.timeStamp - this.timeStamp < 500) {
+    fullImgTouchEnd(e) {
+      if (e.timeStamp - this.timeStamp < 100) {
         this.showFullImgUrl = ''
       }
     },

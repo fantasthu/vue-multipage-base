@@ -340,7 +340,7 @@ export default {
               message: '修改成功',
               type: 'success'
             })
-            this.updateCategoryShow = false
+            this.updateKnowledgeShow = false
           } else {
             this.$message({
               message: '修改失败',

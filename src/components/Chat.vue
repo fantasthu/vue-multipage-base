@@ -36,7 +36,7 @@
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth<768">
-                  <img :src="item.msgPicUrl" alt="" @click.stop="showMsgPic(item.msgPicUrl)">
+                  <img :src="item.msgPicUrl" alt="" @touchstart="fullImgTouchStart" @touchend="fullImgTouchStartEnd">
                 </div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
                   <lightbox
@@ -878,7 +878,7 @@ export default {
       this.timeStamp = e.timeStamp
     },
     fullImgTouchStartEnd(e) {
-      if (e.timeStamp - this.timeStamp < 500) {
+      if (e.timeStamp - this.timeStamp < 100) {
         this.showMsgPic(e.target.src)
       }
     }
