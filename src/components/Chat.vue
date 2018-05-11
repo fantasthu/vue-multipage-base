@@ -845,8 +845,6 @@ export default {
       this.mobileEmojiHandled = false
       this.isShowToolBox = false
       this.toolIndex = 0
-      this.resetMessageBox()
-
       var version
       if (agent.indexOf('like mac os x') > 0) {
         // ios
@@ -859,9 +857,6 @@ export default {
       }
       // 重置message显示框的高度
       setTimeout(() => {
-        this.mobileEmojiHandled = false
-        this.isShowToolBox = false
-        this.toolIndex = 0
         this.resetMessageBox()
       }, 500)
     },
@@ -1309,7 +1304,7 @@ export default {
               font-size: 18px;
               color: #bbbbbb;
               letter-spacing: 0;
-              min-width: 300px;
+              min-width: 250px;
             }
             .content {
               .text {
