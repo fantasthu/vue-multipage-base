@@ -17,11 +17,11 @@
           <div class="order-info">实付金额：￥{{item.realPrice/100}}</div>
         </div>
 
-        <div class="nomore" v-show="over&&orderList.length>0&&!showMoreBtn">没有更多订单了</div>
-        <div class="noList" v-show="orderList.length==0">暂无订单</div>
-        <div class="more" @click="checkMoreOrder" v-show="showMoreBtn">查看历史订单</div>
+        <div class="nomore" v-show="over && orderList.length>0 && !showMoreBtn">没有更多订单了</div>
+        <div class="more" @click="checkMoreOrder" v-show="showMoreBtn && orderList.length>1">查看历史订单</div>
         <div class="slot"></div>
       </div>
+      <div class="noList" v-show="orderList.length==0">暂无订单</div>
     </div>
     <div class="modal" v-show="showMail" @click.stop="closeMail" @touchmove.stop="move"></div>
     <div class="mail-info" v-show="showMail">
@@ -321,17 +321,7 @@ export default {
       text-align: center;
       margin: 60px auto 0;
     }
-    .noList {
-      font-size: 28px;
-      color: #bbbbbb;
-      letter-spacing: 3.23px;
-      text-align: center;
-      position: absolute;
-      top: 400%;
-      right: 0;
-      bottom: 0;
-      left: 0;
-    }
+
     .more {
       margin: 60px auto;
       height: 64px;
@@ -344,6 +334,17 @@ export default {
       letter-spacing: 3px;
       text-align: center;
     }
+  }
+  .noList {
+    font-size: 28px;
+    color: #bbbbbb;
+    letter-spacing: 3.23px;
+    text-align: center;
+    position: absolute;
+    top: 40%;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
   .mail-info {
     background: #ffffff;
@@ -473,17 +474,7 @@ export default {
       letter-spacing: 2px;
       margin: 20px auto 0;
     }
-    .noList {
-      font-size: 22px;
-      color: #bbbbbb;
-      letter-spacing: 3px;
-      text-align: center;
-      position: absolute;
-      top: 400%;
-      right: 0;
-      bottom: 0;
-      left: 0;
-    }
+
     .more {
       font-size: 20px;
       color: #888888;
@@ -497,6 +488,17 @@ export default {
       margin-top: 30px;
       box-sizing: content-box;
     }
+  }
+  .noList {
+    font-size: 22px;
+    color: #bbbbbb;
+    letter-spacing: 3px;
+    text-align: center;
+    position: absolute;
+    top: 40%;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
   .mail-info {
     background: #ffffff;
