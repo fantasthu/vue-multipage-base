@@ -679,6 +679,7 @@ export default {
         return
       }
       this.$emit('sendWaiterMsgToUser', obj)
+      console.log('this.$parent.socket', this.$parent.socket)
       this.$parent.socket.emit('receiveThisUserMsg', this.currentUserOpenId)
     },
     /**
@@ -839,6 +840,11 @@ export default {
     },
     mobileInputFocus(e) {
       var agent = navigator.userAgent.toLowerCase()
+      this.mobileEmojiHandled = false
+      this.isShowToolBox = false
+      this.toolIndex = 0
+      this.resetMessageBox()
+
       var version
       if (agent.indexOf('like mac os x') > 0) {
         // ios
@@ -849,7 +855,6 @@ export default {
           return
         }
       }
-
       // 重置message显示框的高度
       setTimeout(() => {
         this.mobileEmojiHandled = false
