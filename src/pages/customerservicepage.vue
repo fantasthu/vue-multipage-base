@@ -236,6 +236,8 @@ export default {
     localWaiterInfo(waiterInfo = {}) {
       if (waiterInfo.name) {
         localStorage.setItem('waiterInfo', JSON.stringify(waiterInfo))
+      } else {
+        this.waiterInfo = JSON.parse(localStorage.getItem('waiterInfo') || '{}')
       }
     },
     /**
@@ -313,7 +315,7 @@ export default {
         this.waiterInfo = waiterInfo[0]
 
         // 把客服信息写入localstorage
-        this.localWaiterInfo(this.waiterInfo)
+        this.localWaiterInfo(waiterInfo[0])
         console.log('this.waiterInfo', this.waiterInfo)
         this.$root.eventBus.$emit('waiterInfo', waiterInfo[0])
       })
@@ -346,7 +348,7 @@ export default {
       })
       // 接收到当前用户的所有msg
       this.socket.on('userAllMsg', obj => {
-        console.log('接收到当前用户的所有msg')
+        console.log('this.socket=>userAllMsg,接收到当前用户的所有msg', obj)
         this.currentUserAllMsg = obj.userAllMsg
         obj.userAllMsg.forEach((item, index) => {
           item.headImg = item.headImg
