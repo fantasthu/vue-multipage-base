@@ -413,6 +413,7 @@ export default {
     },
     sendVeloEmoji(index) {
       const img = VeloEmoji.alias[index]
+      // const img = ''
       const image = new Image()
       image.crossOrigin = ''
       image.src = img
