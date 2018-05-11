@@ -74,8 +74,6 @@ export default {
     // })
     // 获取会话列表
     this.$root.eventBus.$on('userList', userList => {
-      console.log('userList', userList)
-
       // pc 端默认选中第一个用户
       if (this.$root.eventBus.showWidth > 768) {
         this.sessionItemClick(
@@ -92,8 +90,6 @@ export default {
     })
   },
   mounted() {
-    console.log('this=======>>', this.userList)
-
     this.$nextTick(() => {
       // 初始化会话绑定滚动
       this.loadScroll()

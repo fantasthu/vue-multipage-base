@@ -596,7 +596,7 @@ export default {
     },
     reloadMessageScroll() {
       clearTimeout(this.timer)
-      this.timer = setTimeout(() => {
+      this.$nextTick(() => {
         this.scroll = null
         if (this.getScreenWidth() > 768) {
           this.scroll = new Bscroll(this.$refs.wrapper, {
@@ -617,7 +617,7 @@ export default {
 
         clearTimeout(this.timer)
         console.log('scroll', scroll)
-      }, 100)
+      })
     },
     mobileInputChange() {
       this.lineHeight = '1.6'
