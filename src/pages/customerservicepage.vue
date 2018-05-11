@@ -234,7 +234,9 @@ export default {
       document.cookie = str
     },
     localWaiterInfo(waiterInfo = {}) {
-      localStorage.setItem('waiterInfo', JSON.stringify(waiterInfo))
+      if (waiterInfo.name) {
+        localStorage.setItem('waiterInfo', JSON.stringify(waiterInfo))
+      }
     },
     /**
      * 获取指定名称的cookie的值  this.getCookie('waiterOpenId')
@@ -312,6 +314,7 @@ export default {
 
         // 把客服信息写入localstorage
         this.localWaiterInfo(this.waiterInfo)
+        console.log('this.waiterInfo', this.waiterInfo)
         this.$root.eventBus.$emit('waiterInfo', waiterInfo[0])
       })
       // 获取左侧的用户列表
