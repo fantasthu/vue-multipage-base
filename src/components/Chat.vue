@@ -378,7 +378,6 @@ export default {
       if (!this.mobileEmojiHandled) {
         this.isShowToolBox = false
         // 重置消息盒子
-        this.resetMessageBox()
         this.focusMobileInput()
       }
     },
