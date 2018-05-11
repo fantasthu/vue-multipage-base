@@ -15,7 +15,7 @@
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth<768">
-                  <img :src="item.msgPicUrl" alt="" @touchstart="fullImgTouchStart" @touchend="fullImgTouchStartEnd">
+                  <img :src="item.msgPicUrl" alt="" @touchstart="fullImgTouchStart" @touchend="fullImgTouchEnd">
                 </div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
                    <lightbox
@@ -36,7 +36,7 @@
               <div class="content">
                 <div class="text" v-if="item.msgType == 'text'" v-html="item.msg">{{item.msg}}</div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth<768">
-                  <img :src="item.msgPicUrl" alt="" @touchstart="fullImgTouchStart" @touchend="fullImgTouchStartEnd">
+                  <img :src="item.msgPicUrl" alt="" @touchstart="fullImgTouchStart" @touchend="fullImgTouchEnd">
                 </div>
                 <div class="image" v-if="item.msgType == 'image'&&screenWidth>768">
                   <lightbox
@@ -130,7 +130,7 @@
       </div>
     </div>
     <!-- 移动端右侧菜单 -->
-    <div class="rightMenu" v-show="showMenuStatus" @click.stop="closeRightMenu">
+    <div class="rightMenu" v-show="showMenuStatus" @click.stop="closeRightMenu" @touchmove.stop="preventScroll">
       <div class="rightMenuList" @click.stop=''>
         <div class="rightMenuTitle flex-h flex-cc">用户信息</div>
         <div class="rightMenuUser flex-v flex-cc" @click.stop="toUserInfo">
@@ -899,13 +899,25 @@ export default {
       this.more = false
       this.$root.eventBus.$emit('getMobileKnowledgeList')
     },
+    /**
+     * 图片touchstart
+     */
     fullImgTouchStart(e) {
       this.timeStamp = e.timeStamp
     },
-    fullImgTouchStartEnd(e) {
+    /**
+     * 图片touchend
+     */
+    fullImgTouchEnd(e) {
       if (e.timeStamp - this.timeStamp < 100) {
         this.showMsgPic(e.target.src)
       }
+    },
+    /**
+     * 遮罩层显示时，阻止底部页面滚动
+     */
+    preventScroll(e) {
+      e.preventDefault()
     }
   },
   watch: {

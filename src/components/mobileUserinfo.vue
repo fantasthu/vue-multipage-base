@@ -1,5 +1,5 @@
 <template>
-  <div class="userinfo">
+  <div class="userinfo" ref="userInfo" @touchmove="touchmove">
     <service-header @chatBack="chatBack" :back="true" class="service-header" :title='currentTitle' :more="false"></service-header>
     <div class="userinfo-content">
       <div class="flex-v right-user-info">
@@ -23,6 +23,7 @@ import { formatTime } from '../service/tools'
 import ClipboardJS from 'clipboard'
 import editWorkList from './EditWorkList'
 import config from '../service/config.js'
+// import Bscroll from 'better-scroll'
 
 export default {
   name: 'mobileUserinfo',
@@ -62,7 +63,8 @@ export default {
       needTop: true,
       orderNo: '',
       hideHead: true,
-      pageSize: 5
+      pageSize: 5,
+      showMail: false
     }
   },
   created() {
@@ -81,6 +83,10 @@ export default {
       if (width < 768) {
         this.checkMoreOrder()
       }
+    })
+    // 是否禁止页面滚动（ios物流信息滚动时会触发页面滚动）
+    this.$root.eventBus.$on('scrollStatus', status => {
+      this.showMail = status
     })
 
     // 显示创建工单页面
@@ -105,9 +111,22 @@ export default {
     })
   },
   mounted() {
-    this.$nextTick(() => {})
+    this.$nextTick(() => {
+      // this.scroll = new Bscroll(this.$refs.userInfo, {
+      //   mouseWheel: false,
+      //   click: true,
+      //   tap: true,
+      //   preventDefault: true,
+      //   preventDefaultException: { className: /(^|\s)mail-list(\s|$)/ }
+      // })
+    })
   },
   methods: {
+    touchmove(e) {
+      if (this.showMail) {
+        e.preventDefault()
+      }
+    },
     /**
      * 返回
      */

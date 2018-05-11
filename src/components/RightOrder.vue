@@ -29,8 +29,10 @@
         <p>物流公司：<span>{{mailName}}</span></p>
         <p class="mail-no">物流单号：<span>{{mailNo}}</span></p>
       </div>
-      <div class="mail-list">
-        <p v-for="item in mailList">{{item.day}} {{item.hour}} {{item.context}}</p>
+      <div class="mail-list" ref="mailList">
+        <div>
+          <p v-for="item in mailList">{{item.day}} {{item.hour}} {{item.context}}</p>
+        </div>
       </div>
     </div>
 </div>
@@ -92,6 +94,16 @@ export default {
           threshold: 100
         }
       })
+      this.mailScroll = new Bscroll(this.$refs.mailList, {
+        mouseWheel: true,
+        click: true,
+        tap: true,
+        preventDefault: true,
+        preventDefaultException: { className: /(^|\s)text(\s|$)/ },
+        pullUpLoad: {
+          threshold: 100
+        }
+      })
 
       this.scroll.on('scrollStart', res => {
         this.$nextTick(function() {
@@ -126,6 +138,7 @@ export default {
       console.log('right-order =>checkmail =>查询物流')
       this.mailList = []
       this.showMail = true
+      this.$root.eventBus.$emit('scrollStatus', true)
       this.mailName = opts.mailName
       this.mailNo = opts.mailNo
       // opts.mailNo = 'JY0005333765'
@@ -142,6 +155,7 @@ export default {
      */
     closeMail() {
       this.showMail = false
+      this.$root.eventBus.$emit('scrollStatus', false)
     },
     /**
      * 查看更多订单
@@ -306,7 +320,7 @@ export default {
         border-radius: 100px;
         height: 36px;
         line-height: 36px;
-        width: 64px;
+        width: 80px;
         text-align: center;
         // display: inline-block;
         margin-left: 24px;
@@ -380,11 +394,12 @@ export default {
       font-size: 24px;
       color: #888888;
       letter-spacing: 2px;
-      padding: 36px;
-      overflow: scroll;
+      overflow: hidden;
       -webkit-overflow-scrolling: touch;
+      > div {
+        padding: 36px 36px 0;
+      }
       p {
-        // height: 33px;
         padding-bottom: 33px;
       }
     }
@@ -395,6 +410,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 99;
     background: rgba(0, 0, 0, 0.25);
   }
 }
@@ -532,9 +548,13 @@ export default {
       font-size: 18px;
       color: #888888;
       letter-spacing: 2px;
-      padding: 24px;
       line-height: 28px;
       overflow: scroll;
+
+      height: 300px;
+      > div {
+        padding: 24px 24px 0;
+      }
       p {
         padding-bottom: 28px;
       }
