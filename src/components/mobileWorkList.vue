@@ -196,6 +196,7 @@ export default {
         click: true,
         tap: true,
         preventDefault: true,
+        preventDefaultException: { className: /(^|\s)content(\s|$)/ },
         pullUpLoad: {
           threshold: 100
         }

@@ -18,7 +18,7 @@
         </div>
 
         <div class="nomore" v-show="over && orderList.length>0 && !showMoreBtn">没有更多订单了</div>
-        <div class="more" @click="checkMoreOrder" v-show="showMoreBtn && orderList.length>1">查看历史订单</div>
+        <div class="more" @click="checkMoreOrder" v-show="showMoreBtn && orderList.length!==0">查看历史订单</div>
         <div class="slot"></div>
       </div>
       <div class="noList" v-show="orderList.length==0">暂无订单</div>

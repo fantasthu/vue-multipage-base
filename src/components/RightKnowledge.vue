@@ -72,8 +72,7 @@ export default {
       mouseWheel: true,
       click: true,
       tap: true,
-      preventDefault: true,
-      preventDefaultException: { className: /(^|\s)text(\s|$)/ },
+      preventDefault: false,
       pullUpLoad: {
         threshold: 100
       }
