@@ -49,6 +49,10 @@ export default {
       height: 24px;
       z-index: 10;
     }
+    .pos {
+      position: absolute;
+      top: -900px;
+    }
     input {
       height: 72px;
       margin: 0 42px;
