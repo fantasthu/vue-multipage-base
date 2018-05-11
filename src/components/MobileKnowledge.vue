@@ -13,8 +13,8 @@
         <div class="work-list flex-h" v-for="item in knowledgeList">
           <div class="left-dot"></div>
           <div class="right-wrap flex-1 flex-v">
-            <div class="question">问题：{{item.problem}}</div>
-            <div class="answer">{{item.answer}}</div>
+            <div class="question text">问题：{{item.problem}}</div>
+            <div class="answer text">{{item.answer}}</div>
             <div class="flex-h sendBtn">
               <div class="sendAnswer" @click.stop="sendAnswer(item.answer)">发送答案</div>
             </div>

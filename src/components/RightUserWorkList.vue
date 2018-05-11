@@ -9,7 +9,7 @@
           <div class="work-list flex-h" v-for="item,index in workList" @click.stop="toCreateWorkList(item)">
             <div class="left-dot"></div>
             <div class="right-wrap flex-1 flex-v">
-              <div class="content">{{item.des}}</div>
+              <div class="orderDes">{{item.des}}</div>
               <div class="time">{{item.createtime}}</div>
               <div class="flex-h btns-wrap">
                 <div class="flex-h">
@@ -242,7 +242,7 @@ export default {
         mouseWheel: true,
         click: true,
         tap: true,
-        preventDefault: true,
+        preventDefault: false,
         pullUpLoad: {
           threshold: 100
         }
@@ -505,12 +505,13 @@ img {
         margin-top: 12px;
       }
       .right-wrap {
-        .content {
+        .orderDes {
           color: #353535;
           line-height: 28px;
           font-size: 18px;
           letter-spacing: 2px;
           text-align: justify;
+          user-select: text;
         }
         .time {
           font-size: 12px;
