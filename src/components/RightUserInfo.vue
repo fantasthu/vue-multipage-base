@@ -41,11 +41,11 @@
           </el-form-item>
 
           <el-form-item label="标题" :label-width="formLabelWidth">
-            <el-input v-model="orderForm.title" auto-complete="off"></el-input>
+            <el-input v-model="orderForm.title" auto-complete="off" placeholder="请输入标题"></el-input>
           </el-form-item>
 
           <el-form-item label="描述" :label-width="formLabelWidth">
-            <el-input v-model="orderForm.describe" auto-complete="off"></el-input>
+            <el-input type="textarea" :rows="3" v-model="orderForm.describe" auto-complete="off" placeholder="请输入描述"></el-input>
           </el-form-item>
 
           <div class="orderPicsNum flex-h">{{orderPics.length}}/{{picsLimit}}</div>
