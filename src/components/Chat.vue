@@ -368,6 +368,7 @@ export default {
 
       // 如果mobileEmojiHandled 为false,触发input的focus时间
       if (!this.mobileEmojiHandled) {
+        this.isShowToolBox = false
         this.focusMobileInput()
       }
     },

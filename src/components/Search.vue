@@ -39,6 +39,10 @@ export default {
   .search {
     position: relative;
     height: 110px;
+    .pos {
+      position: absolute;
+      top: -900px;
+    }
     img {
       position: absolute;
       left: 84px;
