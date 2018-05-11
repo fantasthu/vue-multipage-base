@@ -432,6 +432,9 @@ export default {
       // 发送图片表情
       this.sendVeloEmoji(index)
       this.showEmoji = false
+      setTimeout(() => {
+        this.scroll.scrollTo(0, this.scroll.maxScrollY)
+      }, 500)
     },
     /**
      * 手机端每个表情的点击事件

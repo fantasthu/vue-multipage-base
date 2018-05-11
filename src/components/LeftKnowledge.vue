@@ -33,7 +33,7 @@
       <el-form :model="knowledgeForm">
          <el-form-item label="类型">
           <el-select v-model="knowledgeForm.category" placeholder="请选择类型">
-            <el-option v-for="(item,index) in categories" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            <el-option v-for="(item,index) in categories" :key="item.id" :label="item.name" :value="item.name"></el-option>
           </el-select>
         </el-form-item>
 
@@ -192,13 +192,11 @@ export default {
     }
   },
   created() {
-    // this.$root.eventBus.$on('updatePcKnowledge', () => {
     // 查询知识
     this.searchCategory()
 
     // 查询知识
     this.searchKnowledge()
-    // })
   },
   mounted() {},
   methods: {
@@ -326,6 +324,10 @@ export default {
      * 修改知识按钮确定
      */
     updateKnowledge() {
+      console.log(
+        'LeftKnowledge=>updateKnowledge=>this.knowledgeForm',
+        this.knowledgeForm
+      )
       axios
         .post('http://cs.velo.top/customerService/csapi/updateknowledge', {
           category: this.knowledgeForm.category,

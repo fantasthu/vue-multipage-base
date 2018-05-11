@@ -333,6 +333,7 @@ export default {
         if (!this.currentPageIsActive) {
           this.startNotice()
         }
+        console.log('this.socket=>userMsg回执消息', obj)
         this.$root.eventBus.$emit('userMsg', obj)
       })
       // 如果发送超过五条toast提示
