@@ -1309,7 +1309,7 @@ export default {
               font-size: 18px;
               color: #bbbbbb;
               letter-spacing: 0;
-              min-width: 200px;
+              min-width: 300px;
             }
             .content {
               .text {
