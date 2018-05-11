@@ -10,11 +10,11 @@
         </el-form-item>
 
         <el-form-item label="问题" :label-width="formLabelWidth">
-          <el-input v-model="knowledgeForm.problem" auto-complete="off"></el-input>
+          <el-input v-model="knowledgeForm.problem" auto-complete="off" placeholder="请输入问题"></el-input>
         </el-form-item>
         
         <el-form-item label="答案" :label-width="formLabelWidth">
-          <el-input v-model="knowledgeForm.answer" auto-complete="off"></el-input>
+          <el-input type="textarea" :rows="3" v-model="knowledgeForm.answer" auto-complete="off" placeholder="请输入答案"></el-input>
         </el-form-item>
 
         <el-form-item label="创建人" :label-width="formLabelWidth">
@@ -38,11 +38,11 @@
         </el-form-item>
 
         <el-form-item label="问题" :label-width="formLabelWidth">
-          <el-input v-model="knowledgeForm.problem" auto-complete="off"></el-input>
+          <el-input v-model="knowledgeForm.problem" auto-complete="off" placeholder="请输入问题"></el-input>
         </el-form-item>
         
         <el-form-item label="答案" :label-width="formLabelWidth">
-          <el-input v-model="knowledgeForm.answer" auto-complete="off"></el-input>
+          <el-input type="textarea" :rows="3" v-model="knowledgeForm.answer" auto-complete="off" placeholder="请输入答案"></el-input>
         </el-form-item>
 
         <el-form-item label="创建人" :label-width="formLabelWidth">
@@ -524,6 +524,7 @@ export default {
         creator: '',
         region: ''
       }
+      this.knowledgeForm.creator = this.getWaiterName()
     },
     /**
      * 搜索知识输入

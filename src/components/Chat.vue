@@ -132,7 +132,7 @@
     <!-- 移动端右侧菜单 -->
     <div class="rightMenu" v-show="showMenuStatus" @click.stop="closeRightMenu" @touchmove.stop="preventScroll">
       <div class="rightMenuList" @click.stop=''>
-        <div class="rightMenuTitle flex-h flex-cc">用户信息</div>
+        <div class="rightMenuTitle flex-h flex-cc">当前用户</div>
         <div class="rightMenuUser flex-v flex-cc" @click.stop="toUserInfo">
           <img src="../assets/img/user-head.png" alt="">
           <div class="menuDes">用户信息</div>
@@ -377,6 +377,8 @@ export default {
       // 如果mobileEmojiHandled 为false,触发input的focus时间
       if (!this.mobileEmojiHandled) {
         this.isShowToolBox = false
+        // 重置消息盒子
+        this.resetMessageBox()
         this.focusMobileInput()
       }
     },

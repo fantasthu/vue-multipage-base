@@ -10,7 +10,7 @@
           <div class="work-list flex-h" v-for="item,index in workList" @click.stop="toEditWork(item,index)">
             <div class="left-dot"></div>
             <div class="right-wrap flex-1 flex-v">
-              <div class="content">{{item.des}}</div>
+              <div class="content">{{item.title}}</div>
               <div class="time">{{item.createtime}}</div>
               <div class="flex-h btns-wrap">
                 <div class="flex-h">
