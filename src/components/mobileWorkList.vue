@@ -261,7 +261,7 @@ img {
     }
     .wrapper {
       position: absolute;
-      top: 92px;
+      top: 120px;
       left: 0;
       right: 0;
       bottom: 0;
