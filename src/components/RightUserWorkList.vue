@@ -183,6 +183,7 @@ export default {
         this.orderForm.ordertype = obj.ordertype
         this.orderForm.title = obj.title
         this.orderForm.describe = obj.des
+        this.orderForm.ordernum = obj.ordernum
         this.orderPics = JSON.parse(obj.imgurls)
         this.updateUserId = obj.id
         // this.orderForm.customer = this.getWaiterName()

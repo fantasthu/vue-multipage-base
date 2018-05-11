@@ -46,6 +46,11 @@ export default {
     font-size: 36px;
     color: #000;
     padding-top: 5px;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    display: flex;
   }
   .mintui-back {
     font-size: 32 px;
