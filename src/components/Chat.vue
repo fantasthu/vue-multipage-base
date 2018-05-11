@@ -681,6 +681,7 @@ export default {
         return
       }
       this.$emit('sendWaiterMsgToUser', obj)
+      this.$parent.socket.emit('receiveThisUserMsg', this.currentUserOpenId)
     },
     /**
      * pc端发送图片消息
@@ -839,8 +840,6 @@ export default {
       this.$emit('sendWaiterMsgToUser', obj)
     },
     mobileInputFocus(e) {
-      this.isShowToolBox = false
-      this.mobileEmojiHandled = false
       var agent = navigator.userAgent.toLowerCase()
       var version
       if (agent.indexOf('like mac os x') > 0) {
@@ -855,9 +854,11 @@ export default {
 
       // 重置message显示框的高度
       setTimeout(() => {
+        this.mobileEmojiHandled = false
+        this.isShowToolBox = false
+        this.toolIndex = 0
         this.resetMessageBox()
       }, 500)
-      this.isShowToolBox = false
     },
     getScreenWidth() {
       return window.document.documentElement.clientWidth
