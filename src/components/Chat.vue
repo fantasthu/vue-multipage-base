@@ -252,10 +252,14 @@ export default {
     })
     this.$root.eventBus.$on('waiterInfo', waiterInfo => {
       this.waiterInfo = waiterInfo
+      if (!this.waiterInfo) {
+        this.waiterInfo = this.getWaiter()
+      }
       console.log('chat-waiterInfo', this.waiterInfo)
     })
     // 获取用户所以消息
     this.$root.eventBus.$on('userAllMsg', obj => {
+      console.log('Chat=>userAllMsg=>接收到所有消息')
       if (obj.userAllMsg[0].openId !== this.currentUserOpenId) return
       this.currentUserAllMsg = obj.userAllMsg.map(item => {
         if (item.msg) {
@@ -334,6 +338,10 @@ export default {
     })
   },
   methods: {
+    getWaiter() {
+      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo') || '{}')
+      return waiterInfo
+    },
     /**
      * 过滤敏感词汇
      */
@@ -412,10 +420,9 @@ export default {
       return `<img class="text-img" src='${emoji}'/>`
     },
     sendVeloEmoji(index) {
-      const img = VeloEmoji.alias[index]
-      // const img = ''
+      let img = VeloEmoji.alias[index]
       const image = new Image()
-      image.crossOrigin = ''
+      image.crossOrigin = 'anonymous'
       image.src = img
       image.onload = () => {
         const base64Img = this.getBase64Image(image)
