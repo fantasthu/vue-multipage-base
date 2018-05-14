@@ -853,15 +853,15 @@ export default {
       //   }
       // }
       // 滚动到底部
-      const scrollHeight =
-        document.documentElement.scrollHeight || document.body.scrollHeight
-      console.log('scrollHeight', scrollHeight)
-      window.scrollTo(0, scrollHeight)
+
       this.mobileEmojiHandled = false
       this.isShowToolBox = false
       this.toolIndex = 0
       // 重置message显示框的高度
       setTimeout(() => {
+        const scrollHeight =
+          document.documentElement.scrollHeight || document.body.scrollHeight
+        window.scrollTo(0, scrollHeight)
         this.resetMessageBox()
       }, 500)
     },
