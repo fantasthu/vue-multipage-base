@@ -1,4 +1,4 @@
-const envSwitch = 0
+const envSwitch = 1
 
 const env = envSwitch ? 'production' : 'develop'
 let config = null

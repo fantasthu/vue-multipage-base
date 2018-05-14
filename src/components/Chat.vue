@@ -840,20 +840,26 @@ export default {
       this.$emit('sendWaiterMsgToUser', obj)
     },
     mobileInputFocus(e) {
-      var agent = navigator.userAgent.toLowerCase()
+      // var agent = navigator.userAgent.toLowerCase()
+
+      // var version
+      // if (agent.indexOf('like mac os x') > 0) {
+      //   // ios
+      //   var reg = /os [\d._]*/gi
+      //   var verinfo = agent.match(reg)
+      //   version = (verinfo + '').replace(/[^0-9|_.]/gi, '').replace(/_/gi, '.')
+      //   if (version.indexOf('11.2') > -1) {
+      //     return
+      //   }
+      // }
+      // 滚动到底部
+      const scrollHeight =
+        document.documentElement.scrollHeight || document.body.scrollHeight
+      console.log('scrollHeight', scrollHeight)
+      window.scrollTo(0, scrollHeight)
       this.mobileEmojiHandled = false
       this.isShowToolBox = false
       this.toolIndex = 0
-      var version
-      if (agent.indexOf('like mac os x') > 0) {
-        // ios
-        var reg = /os [\d._]*/gi
-        var verinfo = agent.match(reg)
-        version = (verinfo + '').replace(/[^0-9|_.]/gi, '').replace(/_/gi, '.')
-        if (version.indexOf('11.2') > -1) {
-          return
-        }
-      }
       // 重置message显示框的高度
       setTimeout(() => {
         this.resetMessageBox()
