@@ -31,7 +31,7 @@
       </div>
       <div class="mail-list" ref="mailList">
         <div>
-          <p v-for="item in mailList">{{item.day}} {{item.hour}} {{item.context}}</p>
+          <p v-for="item in mailList" class="msg">{{item.day}} {{item.hour}} {{item.context}}</p>
         </div>
       </div>
     </div>
@@ -98,8 +98,8 @@ export default {
         mouseWheel: true,
         click: true,
         tap: true,
-        preventDefault: true,
-        preventDefaultException: { className: /(^|\s)text(\s|$)/ },
+        preventDefault: scrollPrevent,
+        preventDefaultException: { className: /(^|\s)msg(\s|$)/ },
         pullUpLoad: {
           threshold: 100
         }
