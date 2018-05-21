@@ -476,7 +476,7 @@ export default {
     },
     getWaiterName() {
       const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
-      return waiterInfo.name || ''
+      return waiterInfo ? waiterInfo.name : ''
     },
     /**
      * 添加分类确认按钮
