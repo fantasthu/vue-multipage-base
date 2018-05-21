@@ -316,7 +316,7 @@ export default {
 
         // 把客服信息写入localstorage
         this.localWaiterInfo(waiterInfo[0])
-        console.log('this.waiterInfo', this.waiterInfo)
+        console.log('前端接受后台sendWaiterInfo=>', this.waiterInfo)
         this.$root.eventBus.$emit('waiterInfo', waiterInfo[0])
       })
       // 获取左侧的用户列表
