@@ -268,7 +268,8 @@ export default {
       if (wtoi.innerHTML) {
         this.waiterOpenId = wtoi.innerHTML
       } else {
-        this.waiterOpenId = this.getCookie('waiterOpenId') || ''
+        this.waiterOpenId =
+          (this.getCookie && this.getCookie('waiterOpenId')) || ''
       }
       this.socket = socketio.connect('cs.velo.top')
       // 判断是显示pc端的chat还是mobile端的chat
@@ -470,7 +471,7 @@ export default {
       const that = this
       let width = window.document.documentElement.clientWidth
       this.$root.eventBus.showWidth = width
-      let wtoi = document.querySelector('.wtoi')
+      // let wtoi = document.querySelector('.wtoi')
       // pc端
       if (width > 768) {
         this.platForm = 'pc'
@@ -488,12 +489,12 @@ export default {
         that.showLeftMenu = true
         that.showRightMenu = width > 1170
       } else if (width < 768) {
-        if (!wtoi.innerHTML) {
-          // 不在微信端
-          if (!this.getCookie('waiterOpenId')) {
-            return
-          }
-        }
+        // if (!wtoi.innerHTML) {
+        //   // 不在微信端
+        //   if (!this.getCookie('waiterOpenId')) {
+        //     return
+        //   }
+        // }
         this.platForm = 'mobile'
         this.startSocket()
         console.log('移动端')
@@ -506,7 +507,7 @@ export default {
         width = window.document.documentElement.clientWidth
         that.$root.eventBus.showWidth = width
         // wtoi如果有值则在微信端
-        let wtoi = document.querySelector('.wtoi')
+        // let wtoi = document.querySelector('.wtoi')
 
         // pc端
         if (width > 768) {
@@ -519,12 +520,12 @@ export default {
           // 告知chat组件重新定义message滚动
           that.$root.eventBus.$emit('pcChatHandler')
         } else if (width < 768) {
-          if (!wtoi.innerHTML) {
-            // 不在微信端
-            if (!this.getCookie('waiterOpenId')) {
-              return
-            }
-          }
+          // if (!wtoi.innerHTML) {
+          //   // 不在微信端
+          //   if (!(this.getCookie && this.getCookie('waiterOpenId'))) {
+          //     return
+          //   }
+          // }
           that.platForm = 'mobile'
           if (that.showChat && !that.showSession) {
             that.showChat = true
