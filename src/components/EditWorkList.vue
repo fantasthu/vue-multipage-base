@@ -85,7 +85,7 @@ export default {
       workDes: '',
       isUpdate: false,
       type: '',
-      customer: '',
+      customer: '玩味小妹',
       ordernum: '',
       identity: '' // 提交的用户名
     }
