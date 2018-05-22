@@ -165,7 +165,7 @@ export default {
       this.getWorkList()
     },
     getWaiterName() {
-      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      const waiterInfo = JSON.parse(sessionStorage.getItem('waiterInfo'))
       return waiterInfo.name || ''
     },
     /**

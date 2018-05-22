@@ -393,7 +393,7 @@ export default {
       this.orderPics = []
     },
     getWaiterName() {
-      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      const waiterInfo = JSON.parse(sessionStorage.getItem('waiterInfo'))
       return waiterInfo.name || ''
     },
     updateWorkOrderClick(index, item) {
