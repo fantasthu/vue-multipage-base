@@ -2,15 +2,15 @@
 <div>
   <div id="right-work-list-wrap" :class="{'top0':needTop}">
     <div class="edit-wrapper ">
-      <div class="list">所属客服：<span>{{customer}}</span></div>
+      <div class="list flex-h"><div>所属客服：</div><input class="flex-1" type="text" v-model="customer" placeholder="所属客服"></div>
       <div class="work-status list flex-h">处理状态：
         <div class="flex-h">
           <div v-for="item,index in statusList" :class="['tag flex-h flex-cc' ,{'statusActive':status==item} ] " @click.stop="choiceStatus(item)">{{item}}</div>
         </div>
       </div>
       <div class="list flex-h">用户昵称/微信ID：<span class="flex-1 name">{{identity||name}}</span></div>
-      <!-- <div class="list" v-if="ordernum">订单号：<span>{{ordernum||'无'}}</span></div> -->
       <div class="list flex-h"><div>订单号：</div><input class="flex-1" type="text" v-model="ordernum" placeholder="订单号"></div>
+
       <div class="list flex-h flex-bc choice-type" @click.stop="toChoice">
         <div>类型：<span>{{choice}}</span></div>
         <img v-show='showType' src="../assets/img/up.png" alt="">
@@ -18,7 +18,6 @@
       </div>
       <div v-show="showType" :class="['type',{'typeSelect':type==item}]" v-for="item,index in typeList" @click.stop="choiceType(item)">{{item}}</div>
       
-      <!-- <div class="list input-title"><input type="text" v-model="workTitle" placeholder="标题"></div> -->
       <div class="list flex-h"><div>标题：</div><input class="flex-1" type="text" v-model="workTitle" placeholder="标题"></div>
       
       <div class="des">
@@ -86,7 +85,7 @@ export default {
       workDes: '',
       isUpdate: false,
       type: '',
-      customer: '客服',
+      customer: '',
       ordernum: '',
       identity: '' // 提交的用户名
     }
@@ -104,7 +103,7 @@ export default {
     // 判断创建或修改
     this.$root.eventBus.$on('updateWorkList', (info, index) => {
       console.log(info, index)
-      this.initworkData(info)
+      this.initworkData(info || '')
       console.log('this.isUpdate', this.isUpdate)
     })
     this.$root.eventBus.$on('openEditWork', orderNo => {
