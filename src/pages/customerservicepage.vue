@@ -235,9 +235,11 @@ export default {
     },
     localWaiterInfo(waiterInfo = {}) {
       if (waiterInfo.name) {
-        localStorage.setItem('waiterInfo', JSON.stringify(waiterInfo))
+        sessionStorage.setItem('waiterInfo', JSON.stringify(waiterInfo))
       } else {
-        this.waiterInfo = JSON.parse(localStorage.getItem('waiterInfo') || '{}')
+        this.waiterInfo = JSON.parse(
+          sessionStorage.getItem('waiterInfo') || '{}'
+        )
       }
     },
     /**
@@ -315,7 +317,7 @@ export default {
       this.socket.on('sendWaiterInfo', waiterInfo => {
         this.waiterInfo = waiterInfo[0]
 
-        // 把客服信息写入localstorage
+        // 把客服信息写入sessionStorage
         this.localWaiterInfo(waiterInfo[0])
         console.log('前端接受后台sendWaiterInfo=>', this.waiterInfo)
         this.$root.eventBus.$emit('waiterInfo', waiterInfo[0])
@@ -412,10 +414,10 @@ export default {
               this.waiterOpenId,
               typeof this.waiterOpenId
             )
-            // localStorage.setItem('waiterOpenId', this.waiterOpenId)
+            // sessionStorage.setItem('waiterOpenId', this.waiterOpenId)
             this.addCookie('waiterOpenId', this.waiterOpenId)
             console.log(
-              'localStorage.setItem-waiterOpenId',
+              'sessionStorage.setItem-waiterOpenId',
               _.data.obj.waiterOpenId
             )
             this.showSession = true
@@ -439,7 +441,7 @@ export default {
      * 获取登录状态
      */
     getLoginStatus() {
-      // this.waiterOpenId = localStorage.getItem('waiterOpenId') || ''
+      // this.waiterOpenId = sessionStorage.getItem('waiterOpenId') || ''
       this.waiterOpenId = this.getCookie('waiterOpenId')
       if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
         this.popupVisible = false

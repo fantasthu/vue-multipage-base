@@ -475,7 +475,7 @@ export default {
       this.knowledgeForm.creator = this.getWaiterName()
     },
     getWaiterName() {
-      const waiterInfo = JSON.parse(localStorage.getItem('waiterInfo'))
+      const waiterInfo = JSON.parse(sessionStorage.getItem('waiterInfo'))
       return waiterInfo ? waiterInfo.name : ''
     },
     /**
